@@ -34,7 +34,6 @@ repositories { mavenCentral() }
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     compile "org.jetbrains.kotlin:kotlin-reflect"
-    testCompile "com.nhaarman:mockito-kotlin:${mockitoKotlin}"
     testCompile "org.jetbrains.kotlin:kotlin-test"
     compile "org.jetbrains.kotlin:kotlin-test-junit"
     compile("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
