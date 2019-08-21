@@ -1,0 +1,4 @@
+rootProject.name = 'konsumers'
+
+include 'library'
+include 'application'
