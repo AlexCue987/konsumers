@@ -1,4 +1,4 @@
-package com.tgt.trans.common.examples2
+package com.tgt.trans.common.examples
 
 import com.tgt.trans.common.aggregator2.consumers.*
 import java.math.BigDecimal
@@ -10,8 +10,8 @@ class MinMaxCountAvg {
     @Test
     fun iterateOnceGetSeveralResults() {
         val actual = (1..10).asSequence()
-            .consume(min2(),
-                max2(),
+            .consume(min(),
+                max(),
                 counter(),
                 avgOfInt())
 

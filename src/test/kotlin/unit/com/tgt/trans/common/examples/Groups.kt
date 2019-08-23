@@ -1,7 +1,7 @@
-package com.tgt.trans.common.examples2
+package com.tgt.trans.common.examples
 
 import com.tgt.trans.common.aggregator2.consumers.*
-import com.tgt.trans.common.aggregator2.decorators.allOf2
+import com.tgt.trans.common.aggregator2.decorators.allOf
 import com.tgt.trans.common.aggregator2.decorators.groupBy
 import com.tgt.trans.common.aggregator2.decorators.mapTo
 import java.util.*
@@ -20,7 +20,7 @@ class Groups {
     fun `compute aggregates for groups`() {
         val actual = (1..10).asSequence()
                 .consume(
-                         groupBy { a: Int -> a % 3 }.allOf2(asList(), min2(), max2())
+                         groupBy { a: Int -> a % 3 }.allOf(asList(), min(), max())
                     )
 
         assertEquals(

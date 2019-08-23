@@ -1,9 +1,9 @@
-package com.tgt.trans.common.examples2
+package com.tgt.trans.common.examples
 
 import com.tgt.trans.common.aggregator2.consumers.consume
 import com.tgt.trans.common.aggregator2.consumers.counter
-import com.tgt.trans.common.aggregator2.consumers.max2
-import com.tgt.trans.common.aggregator2.consumers.min2
+import com.tgt.trans.common.aggregator2.consumers.max
+import com.tgt.trans.common.aggregator2.consumers.min
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -12,8 +12,8 @@ class Statistics {
     @Test
     fun iterateOnceGetSeveralResults() {
         val actual = (1..10).asSequence()
-                .consume(min2(),
-                    max2(),
+                .consume(min(),
+                    max(),
                     counter())
 
         assertEquals(

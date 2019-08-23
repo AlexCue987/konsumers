@@ -1,15 +1,11 @@
-package com.tgt.trans.common.examples2
+package com.tgt.trans.common.examples
 
 import com.tgt.trans.common.aggregator2.consumers.always
 import com.tgt.trans.common.aggregator2.consumers.consume
 import com.tgt.trans.common.aggregator2.consumers.never
 import com.tgt.trans.common.aggregator2.consumers.sometimes
-import com.tgt.trans.common.aggregator2.decorators.mapTo
-import java.math.BigDecimal
 import kotlin.test.assertEquals
 import kotlin.test.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class AlwaysSometimesNever {
     @Test

@@ -9,13 +9,13 @@ import kotlin.test.assertEquals
 class ConsumerTest {
     @Test
     fun worksWithSequence() {
-        val actual = (1..3).asSequence().consume(max2())
+        val actual = (1..3).asSequence().consume(max())
         assertEquals(listOf(Optional.of(3)), actual)
     }
 
     @Test
     fun worksWithIterable() {
-        val actual = (1..3).asIterable().consume(max2())
+        val actual = (1..3).asIterable().consume(max())
         assertEquals(listOf(Optional.of(3)), actual)
     }
 

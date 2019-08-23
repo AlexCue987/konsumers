@@ -6,7 +6,7 @@ import com.tgt.trans.common.aggregator2.conditions.lastItemCondition
 import com.tgt.trans.common.aggregator2.consumers.asList
 import com.tgt.trans.common.aggregator2.consumers.consume
 import com.tgt.trans.common.aggregator2.consumers.counter
-import com.tgt.trans.common.aggregator2.consumers.max2
+import com.tgt.trans.common.aggregator2.consumers.max
 import java.lang.Math.abs
 import java.util.*
 import kotlin.test.assertEquals
@@ -23,13 +23,13 @@ class ResetterOnConditionTest {
 
     @Test
     fun `resetWhen handles empty series`() {
-        val actual = listOf<Int>().consume(max2<Int>().resetWhen(positive, intermediateResultsTransformerToLong, asList()))
+        val actual = listOf<Int>().consume(max<Int>().resetWhen(positive, intermediateResultsTransformerToLong, asList()))
         assertEquals(listOf<Optional<Int>>(), actual[0])
     }
 
     @Test
     fun `resetAfter handles empty series`() {
-        val actual = listOf<Int>().consume(max2<Int>().resetAfter(positive, intermediateResultsTransformerToLong, asList()))
+        val actual = listOf<Int>().consume(max<Int>().resetAfter(positive, intermediateResultsTransformerToLong, asList()))
         assertEquals(listOf<Optional<Int>>(), actual[0])
     }
 

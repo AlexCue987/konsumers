@@ -1,13 +1,10 @@
-package com.tgt.trans.common.examples2
+package com.tgt.trans.common.examples
 
 import com.tgt.trans.common.aggregator2.consumers.consume
 import com.tgt.trans.common.aggregator2.consumers.topNBy
-import com.tgt.trans.common.aggregator2.decorators.filterOn
 import org.junit.jupiter.api.assertAll
 import kotlin.test.assertEquals
 import kotlin.test.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 data class Thing(val name: String, val quantity: Int)
 

@@ -1,12 +1,11 @@
-package com.tgt.trans.common.examples2
+package com.tgt.trans.common.examples
 
 import com.tgt.trans.common.aggregator2.WeatherByDay
 import com.tgt.trans.common.aggregator2.WeatherReading
 import com.tgt.trans.common.aggregator2.conditions.FirstItemCondition
 import com.tgt.trans.common.aggregator2.conditions.notSameProjectionAsFirst
-import com.tgt.trans.common.aggregator2.conditions.sameProjectionAsFirst
 import com.tgt.trans.common.aggregator2.consumers.*
-import com.tgt.trans.common.aggregator2.decorators.allOf2
+import com.tgt.trans.common.aggregator2.decorators.allOf
 import com.tgt.trans.common.aggregator2.decorators.groupBy
 import com.tgt.trans.common.aggregator2.decorators.mapTo
 import com.tgt.trans.common.aggregator2.decorators.peek
@@ -38,7 +37,7 @@ class DailyWeatherTest {
         val actual = allWeatherReadings.consume(
             groupBy<WeatherReading, LocalDate> { it.takenAt.toLocalDate() }
                 .mapTo { it.degrees }
-                .allOf2(min2(), max2()))
+                .allOf(min(), max()))
         print(actual)
     }
 
@@ -67,7 +66,7 @@ class DailyWeatherTest {
         val actual = allWeatherReadings.consume(
                 mapTo<WeatherReading, BigDecimal> { it.degrees }
                     .peek { print("Consuming weather reading $it\n") }
-                .allOf2(min2(), max2())
+                .allOf(min(), max())
                     .withResetting(resetTrigger = resetOnDayChange(),
                         intermediateResultsTransformer = intermediateResultsTransformer,
                         finalConsumer = finalConsumer)

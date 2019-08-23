@@ -19,7 +19,7 @@ class ListOfConsumers<T>(vararg consumersArgs: Consumer<T>): Consumer<T> {
     override fun stop() = consumers.forEach { it.stop() }
 }
 
-fun<T> allOf2(vararg aggregatorsArgs: Consumer<T>) = ListOfConsumers(*aggregatorsArgs)
+fun<T> allOf(vararg aggregatorsArgs: Consumer<T>) = ListOfConsumers(*aggregatorsArgs)
 
-fun<S, T> ConsumerBuilder<S, T>.allOf2(vararg aggregatorsArgs: Consumer<T>) =
+fun<S, T> ConsumerBuilder<S, T>.allOf(vararg aggregatorsArgs: Consumer<T>) =
         this.build(ListOfConsumers(*aggregatorsArgs))

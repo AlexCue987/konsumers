@@ -16,9 +16,9 @@ class Min<T: Comparable<T>> : Consumer<T> {
     override fun isEmpty() = !min.isPresent
 }
 
-fun<T: Comparable<T>> min2() = Min<T>()
+fun<T: Comparable<T>> min() = Min<T>()
 
-fun<S, T: Comparable<T>> ConsumerBuilder<S, T>.min2() = this.build(Min<T>())
+fun<S, T: Comparable<T>> ConsumerBuilder<S, T>.min() = this.build(Min<T>())
 
 class Max<T: Comparable<T>> : Consumer<T> {
     private var max = Optional.empty<T>()
@@ -34,9 +34,9 @@ class Max<T: Comparable<T>> : Consumer<T> {
     override fun isEmpty() = !max.isPresent
 }
 
-fun<T: Comparable<T>> max2() = Max<T>()
+fun<T: Comparable<T>> max() = Max<T>()
 
-fun<S, T: Comparable<T>> ConsumerBuilder<S, T>.max2() = this.build(Max<T>())
+fun<S, T: Comparable<T>> ConsumerBuilder<S, T>.max() = this.build(Max<T>())
 
 
 

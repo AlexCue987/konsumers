@@ -1,4 +1,4 @@
-package com.tgt.trans.common.examples2
+package com.tgt.trans.common.examples
 
 import com.tgt.trans.common.aggregator2.WeatherReading
 import com.tgt.trans.common.aggregator2.conditions.firstItemCondition
@@ -11,8 +11,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class SameDayAsFirstItem {
     val mondayMorningWeather = WeatherReading(LocalDateTime.of(2019, 7, 15, 7, 6), BigDecimal(55))

@@ -1,4 +1,4 @@
-package com.tgt.trans.common.examples2
+package com.tgt.trans.common.examples
 
 import com.tgt.trans.common.aggregator2.conditions.decreasing
 import com.tgt.trans.common.aggregator2.conditions.increasing

@@ -1,11 +1,7 @@
-package com.tgt.trans.common.examples2
+package com.tgt.trans.common.examples
 
 import com.tgt.trans.common.aggregator2.consumers.*
-import com.tgt.trans.common.aggregator2.decorators.batches
-import com.tgt.trans.common.aggregator2.decorators.filterOn
 import com.tgt.trans.common.aggregator2.decorators.roundRobin
-import io.mockk.*
-import java.math.BigDecimal
 import kotlin.test.*
 
 class RoundRobin {

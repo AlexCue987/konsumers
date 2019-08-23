@@ -1,6 +1,5 @@
-package com.tgt.trans.common.examples2
+package com.tgt.trans.common.examples
 
-import com.tgt.trans.common.aggregator2.conditions.FirstItemEvaluation
 import com.tgt.trans.common.aggregator2.conditions.lastItemCondition
 import com.tgt.trans.common.aggregator2.consumers.asList
 import com.tgt.trans.common.aggregator2.consumers.consume

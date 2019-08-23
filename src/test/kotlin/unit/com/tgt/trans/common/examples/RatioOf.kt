@@ -1,4 +1,4 @@
-package com.tgt.trans.common.examples2
+package com.tgt.trans.common.examples
 
 import com.tgt.trans.common.aggregator2.consumers.Ratio2
 import com.tgt.trans.common.aggregator2.consumers.consume
