@@ -55,4 +55,30 @@ class BranchingAfterTransformation {
         println(dayCount.results())
         println(allResults)
     }
+
+    @Test
+    fun `nested calls`() {
+        val minTemperature = min<Int>()
+
+        val maxTemperature = max<Int>()
+
+        val rainyDaysCount = counter<DailyWeather>()
+
+        val allDaysCount = counter<DailyWeather>()
+
+        val verySlowFilter = filterOn<DailyWeather> { it -> it.rainAmount > BigDecimal.ZERO }
+        val verySlowMapping = mapTo<DailyWeather, Int> { it -> it.low }
+
+        val allResults = dailyWeather.consume(
+            verySlowFilter.allOf(
+                verySlowMapping.allOf(minTemperature, maxTemperature),
+                rainyDaysCount),
+            allDaysCount)
+
+        println(minTemperature.results())
+        println(maxTemperature.results())
+        println(rainyDaysCount.results())
+        println(allDaysCount.results())
+        println(allResults)
+    }
 }

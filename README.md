@@ -69,6 +69,8 @@ The following example shows how to apply a slow filtering condition to three con
             dayCount)
 ```
 
+For a complete working example, refer to `examples/basics/BranchingAfterTransformation.kt`, test named `reuses filtering`.
+
 Likewise, we can apply one slow mapping to several consumers:
 
 ```kotlin
@@ -85,7 +87,30 @@ Likewise, we can apply one slow mapping to several consumers:
             dayCount)
 ```
 
-For a complete working example, refer to `examples/basics/BranchingAfterTransformation.kt`.
+For a complete working example, refer to `examples/basics/BranchingAfterTransformation.kt`, test named `reuses mapping`.
+
+Calls to `allOf` can be nested, as shown in the following example:
+
+```kotlin
+        val minTemperature = min<Int>()
+
+        val maxTemperature = max<Int>()
+
+        val rainyDaysCount = counter<DailyWeather>()
+
+        val allDaysCount = counter<DailyWeather>()
+
+        val verySlowFilter = filterOn<DailyWeather> { it -> it.rainAmount > BigDecimal.ZERO }
+        val verySlowMapping = mapTo<DailyWeather, Int> { it -> it.low }
+
+        val allResults = dailyWeather.consume(
+            verySlowFilter.allOf(
+                verySlowMapping.allOf(minTemperature, maxTemperature),
+                rainyDaysCount),
+            allDaysCount)
+```
+
+For a complete working example, refer to `examples/basics/BranchingAfterTransformation.kt`, test named `nested calls`.
 
 [Complete list of consumers](#consumers)
 
