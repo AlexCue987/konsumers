@@ -12,7 +12,6 @@ interface Consumer<T> {
     fun stop() {}
 }
 
-
 fun<T> Iterable<T>.consume(vararg consumers: Consumer<T>): List<Any> {
     val consumersList = consumers.toList()
     val iterator = iterator()
