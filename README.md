@@ -2,11 +2,11 @@
 
 Advanced work with Kotlin sequences. Developed to improve performance in cases when iterating the sequence and/or transforming its items is slow.
 
+* Practical library designed to solve real-world problems.
 * Pure Kotlin.
-* Easy to use and extend.
-* Powerful control-of-flow abilities.
+* Improves performance by doing less sequence iterations and less transformations.
 * A rich set of filtering, mapping, and other transformations.
-* Compute multiple results while iterating a sequence once, boosting performance.
+* Easy to use and etend.
 
 ## Basics
 
@@ -71,7 +71,7 @@ The following example shows how to apply a slow filtering condition to three con
 
 For a complete working example, refer to `examples/basics/BranchingAfterTransformation.kt`.
 
-### Reusing one filtering to process filtered out items
+### Process filtered out items
 
 When we process a sequence and filter out items, we may also need to process rejected items by another consumer.
 To improve performance, we can use `branchOn` to compute a filter condition only once, and process both accepted and rejected items by two different consumers.
@@ -95,6 +95,66 @@ Rejected items: [201]
 ```
 
 For a complete working example, refer to `examples/basics/IfOrElse.kt`.
+
+### Advanced transformations
+
+The following advantages will be discussed below, one example at a time.
+
+* Filters can have a state, which allows for easy solution to many common problems.
+* Mappings also can have a state, with same benefits.
+* Mappings do not have to produce an outgoing value for every incoming one, allowing us to solve problems without creating many short-lived objects.
+* In general, transformations process an incoming value, and provide one outgoing value, or several, or none at all.
+
+#### Stateful filters.
+In the following example we are processing a sequence of bank account deposits and withdrawals, and our filter makes sure that the account balance is never negative. The filter has a state which stores the current account balance, which allows for an easy solution.
+
+```kotlin
+fun nonNegativeBalance(): Condition<BigDecimal> =
+    ConditionOnState(state = sumOfBigDecimal()) { currentSum: BigDecimal, change: BigDecimal -> (currentSum + change) >= BigDecimal.ZERO }
+
+(snip)
+
+        val changeToReject = BigDecimal("-2")
+        val changes = listOf(BigDecimal.ONE, BigDecimal("-1"), changeToReject, BigDecimal.ONE)
+        val condition = nonNegativeBalance()
+        val acceptedChanges = changes.consume(filterOn(condition).asList())[0]
+        assertEquals(listOf(BigDecimal.ONE, BigDecimal("-1"), BigDecimal.ONE), acceptedChanges)
+```
+
+For a complete working example, refer to `examples/basics/StatefulFilter.kt`.
+
+#### Stateful mappings.
+
+In the following example we are converting a sequence of bank account deposits and withdrawals into a sequence of current balances. The mapping has a state which stores the current account balance, which allows for an easy solution.
+
+```kotlin
+class CurrentBalanceConsumerBuilder(): ConsumerBuilder<BigDecimal, BigDecimal> {
+    override fun build(innerConsumer: Consumer<BigDecimal>): Consumer<BigDecimal> = TransformationWithState(state = sumOfBigDecimal(),
+        condition = { currentSum: BigDecimal, change: BigDecimal -> (currentSum + change) >= BigDecimal.ZERO},
+        transformation = {stateValue: BigDecimal, incomingValue: BigDecimal -> sequenceOf(stateValue)},
+        innerConsumer = innerConsumer
+    )
+}
+
+fun toCurrentBalance() = CurrentBalanceConsumerBuilder()
+
+(snip)
+
+        val changes = listOf(BigDecimal.TEN, BigDecimal("-1"), BigDecimal("-1"), BigDecimal.ONE)
+        val currentBalance = changes.consume(toCurrentBalance().asList())[0]
+        print(currentBalance)
+        assertEquals(listOf(BigDecimal.TEN, BigDecimal("9"), BigDecimal("8"), BigDecimal("9")), currentBalance)
+```
+
+For a complete working example, refer to `examples/basics/StatefulMapping.kt`.
+
+#### Mappings do not have to produce an outgoing value for every incoming one.
+
+Typically a `filter` will accept or reject items without transforming them, and a `map` must produce a transformed item for every incoming one.
+
+Sometimes this approach means that we have to produce a lot of short-lived objects. The following example demonstrates that:
+
+We can both filter and transform in the same transformation, eliminating the need to create short-lived-objects, as follows:
 
 [Complete list of consumers](#consumers)
 
