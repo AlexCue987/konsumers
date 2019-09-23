@@ -1,5 +1,7 @@
 package com.tgt.trans.common.examples.basics
 
+import com.tgt.trans.common.aggregator2.consumers.Consumer
+import com.tgt.trans.common.aggregator2.consumers.ConsumerBuilder
 import com.tgt.trans.common.aggregator2.consumers.asList
 import com.tgt.trans.common.aggregator2.consumers.consume
 import java.math.BigDecimal

@@ -152,7 +152,12 @@ For a complete working example, refer to `examples/basics/StatefulMapping.kt`.
 
 Typically a `filter` will accept or reject items without transforming them, and a `map` must produce a transformed item for every incoming one.
 
-Sometimes this approach means that we have to produce a lot of short-lived objects. The following example demonstrates that:
+Sometimes this approach means that we have to produce a lot of short-lived objects. For example, suppose that whenever more than a half of the amount on a bank account is withdrawn at once, we need to do something, such as trigger an alert. Traditionally, we would:
+* map an incoming transaction amount into an instance of another class with two fields, `(previousBalance, transactionAmount)`
+* filter these instances
+* alert
+
+This is demonstrated in the following example:
 
 We can both filter and transform in the same transformation, eliminating the need to create short-lived-objects, as follows:
 
