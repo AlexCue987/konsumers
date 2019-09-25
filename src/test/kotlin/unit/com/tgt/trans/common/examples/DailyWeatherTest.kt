@@ -32,14 +32,14 @@ class DailyWeatherTest {
         WeatherByDay(tuesday, BigDecimal.valueOf(55L), BigDecimal.valueOf(88L))
     )
 
-    @Test
-    fun `Monday aggregates available only after consuming all data`() {
-        val actual = allWeatherReadings.consume(
-            groupBy<WeatherReading, LocalDate> { it.takenAt.toLocalDate() }
-                .mapTo { it.degrees }
-                .allOf(min(), max()))
-        print(actual)
-    }
+//    @Test
+//    fun `Monday aggregates available only after consuming all data`() {
+//        val actual = allWeatherReadings.consume(
+//            groupBy<WeatherReading, LocalDate> { it.takenAt.toLocalDate() }
+//                .mapTo { it.degrees }
+//                .allOf(min(), max()))
+//        print(actual)
+//    }
 
     fun getSeriesDate(resetter: ResetterOnCondition<WeatherReading>): LocalDate {
         val condition = resetter.condition as FirstItemCondition

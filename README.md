@@ -148,7 +148,7 @@ fun toCurrentBalance() = CurrentBalanceConsumerBuilder()
 
 For a complete working example, refer to `examples/basics/StatefulMapping.kt`.
 
-#### Mappings do not have to produce an outgoing value for every incoming one.
+#### Combining mapping and filtering in one transformation.
 
 Typically a `filter` will accept or reject items without transforming them, and a `map` must produce a transformed item for every incoming one.
 
@@ -159,14 +159,79 @@ Sometimes this approach means that we have to produce a lot of short-lived objec
 
 This is demonstrated in the following example:
 
+```kotlin
+        val amounts = listOf(BigDecimal(100), BigDecimal(-10), BigDecimal(-1), BigDecimal(-50))
+        val largeWithdrawals = amounts.consume(toTransactionWithCurrentBalance()
+            .peek { println("Before filtering: $it") }
+            .filterOn { -it.amount > it.currentBalance * BigDecimal("0.5") }
+            .peek { println("After filtering: $it") }
+            .asList())
+
+Before filtering: TransactionWithCurrentBalance(currentBalance=100, amount=100)
+Before filtering: TransactionWithCurrentBalance(currentBalance=90, amount=-10)
+Before filtering: TransactionWithCurrentBalance(currentBalance=89, amount=-1)
+Before filtering: TransactionWithCurrentBalance(currentBalance=39, amount=-50)
+After filtering: TransactionWithCurrentBalance(currentBalance=39, amount=-50)
+```
+
 We can both filter and transform in the same transformation, eliminating the need to create short-lived-objects, as follows:
 
+```kotlin
+        val amounts = listOf(BigDecimal(100), BigDecimal(-10), BigDecimal(-1), BigDecimal(-50))
+        val largeWithdrawals = amounts.consume(toLargeWithdrawal()
+            .peek { println("After mapping and filtering: $it") }
+            .asList())
+
+After mapping and filtering: TransactionWithCurrentBalance(currentBalance=39, amount=-50)
+```
+
+### Grouping and Resetting
+
+#### Basic Grouping
+
+We can group items by any key, which is equivalent to the standard function `associateBy``. Unlike in previous examples, we do not provide a consumer Instead, we provide a lambda that creates consumers as needed. Here is a basic example:
+
+```kotlin
+        val things = listOf(Thing("Amber", "Circle"),
+            Thing("Amber", "Square"),
+            Thing("Red", "Oval"))
+
+        val actual = things
+                .consume(groupBy(keyFactory =  { it: Thing -> it.color },
+                    innerConsumerFactory = { counter() }))
+        assertEquals(mapOf("Amber" to 2L, "Red" to 1L), actual[0])
+```
+
+#### Grouping with multiple consumers
+
+After grouping by a key, we can submit values to more than one consumer:
+
+```kotlin
+        val actual = things
+            .consume(groupBy(keyFactory =  { it: Thing -> it.color },
+                innerConsumerFactory = { allOf(counter(), mapTo { it: Thing -> it.shape }.asList()) }))
+        assertEquals(mapOf("Amber" to listOf(2L, listOf("Circle", "Square")), "Red" to listOf(1L, listOf("Oval"))), actual[0])
+```
+
+#### Nested groups
+
+Groups can be nested In the following example we group things by color, then group by shape:
+
+```kotlin
+        val actual = things.consume(groupBy(keyFactory = { a: Thing -> a.color },
+            innerConsumerFactory = {
+                allOf(counter(), groupBy(keyFactory = { a: Thing -> a.shape },
+                    innerConsumerFactory = { allOf(counter()) }))
+            })
+        )
+```
+
+#### Why resetting?
+
+#### Resetting
 [Complete list of consumers](#consumers)
 
 [Complete list of transformations](#transformations)
 
 [Implementing your own consumer](#implementing-your-own-consumer)
 
-### Grouping
-
-### Resetting
