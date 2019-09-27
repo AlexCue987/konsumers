@@ -142,7 +142,6 @@ fun toCurrentBalance() = CurrentBalanceConsumerBuilder()
 
         val changes = listOf(BigDecimal.TEN, BigDecimal("-1"), BigDecimal("-1"), BigDecimal.ONE)
         val currentBalance = changes.consume(toCurrentBalance().asList())[0]
-        print(currentBalance)
         assertEquals(listOf(BigDecimal.TEN, BigDecimal("9"), BigDecimal("8"), BigDecimal("9")), currentBalance)
 ```
 
@@ -184,6 +183,7 @@ We can both filter and transform in the same transformation, eliminating the nee
 
 After mapping and filtering: TransactionWithCurrentBalance(currentBalance=39, amount=-50)
 ```
+For a complete working example, refer to `examples/basics/LargeWithdrawals.kt`.
 
 ### Grouping and Resetting
 
@@ -202,6 +202,8 @@ We can group items by any key, which is equivalent to the standard function `ass
         assertEquals(mapOf("Amber" to 2L, "Red" to 1L), actual[0])
 ```
 
+For a complete working example, refer to `examples/basics/BasicGroups.kt`.
+
 #### Grouping with multiple consumers
 
 After grouping by a key, we can submit values to more than one consumer:
@@ -212,6 +214,8 @@ After grouping by a key, we can submit values to more than one consumer:
                 innerConsumerFactory = { allOf(counter(), mapTo { it: Thing -> it.shape }.asList()) }))
         assertEquals(mapOf("Amber" to listOf(2L, listOf("Circle", "Square")), "Red" to listOf(1L, listOf("Oval"))), actual[0])
 ```
+
+For a complete working example, refer to `examples/basics/BasicGroups.kt`.
 
 #### Nested groups
 
@@ -225,6 +229,8 @@ Groups can be nested In the following example we group things by color, then gro
             })
         )
 ```
+
+For a complete working example, refer to `examples/basics/BasicGroups.kt`.
 
 #### Why resetting?
 
