@@ -228,6 +228,8 @@ Groups can be nested In the following example we group things by color, then gro
 
 #### Why resetting?
 
+Suppose that we are consuming a time series of weather readings, as follows:
+
 #### Resetting
 [Complete list of consumers](#consumers)
 
