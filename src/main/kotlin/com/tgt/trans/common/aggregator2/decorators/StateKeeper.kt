@@ -41,7 +41,6 @@ class StateKeeperBuilder<T>(private val stateToKeep: Consumer<T>): ConsumerBuild
 
 fun<T> keepState(stateToKeep: Consumer<T>) = StateKeeperBuilder(stateToKeep)
 
-
 class ChainedStateKeeperBuilder<T, V>(private val previousBuilder: ConsumerBuilder<T, V>,
                                       private val stateToKeep: Consumer<V>): ConsumerBuilder<T, V> {
     override fun build(innerConsumer: Consumer<V>): Consumer<T> =
