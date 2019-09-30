@@ -28,10 +28,6 @@ class WithPreceding<T>(val count: Int, val provideIncomplete: Boolean, val inner
 
     override fun results() = innerConsumer.results()
 
-    override fun emptyCopy() = WithPreceding(count, provideIncomplete, innerConsumer.emptyCopy())
-
-    override fun isEmpty() = innerConsumer.isEmpty()
-
     override fun value() = buffer[(itemsProcessed - 1) % count] as T
 
     override fun preceding(offset: Int): T {

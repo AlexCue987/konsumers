@@ -17,10 +17,6 @@ class Last<T>(private val count: Int, private val innerConsumer: Consumer<T>): C
 
     override fun results() = innerConsumer.results()
 
-    override fun emptyCopy() = Last(count, innerConsumer.emptyCopy())
-
-    override fun isEmpty() = innerConsumer.isEmpty()
-
     override fun stop() {
         (maxOf(itemsProcessed - count, 0) until itemsProcessed)
             .forEach { innerConsumer.process(buffer[it % count] as T) }

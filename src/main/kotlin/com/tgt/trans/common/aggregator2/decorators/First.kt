@@ -18,10 +18,6 @@ class First<T>(private val count: Int, private val innerConsumer: Consumer<T>): 
 
     override fun results() = innerConsumer.results()
 
-    override fun emptyCopy() = First(count, innerConsumer.emptyCopy())
-
-    override fun isEmpty() = innerConsumer.isEmpty()
-
     override fun stop() { innerConsumer.stop() }
 }
 

@@ -36,11 +36,4 @@ class BranchTest {
         val actual = listOf(1, -1).consume(sut)
         assertEquals(listOf(listOf<Int>(1), listOf<Int>(-1)), actual[0])
     }
-
-    @Test
-    fun`provides empty copy`() {
-        listOf(1, -1).consume(sut)
-        val actual = sut.emptyCopy()
-        assertEquals(listOf(listOf<Int>(), listOf<Int>()), actual.results())
-    }
 }

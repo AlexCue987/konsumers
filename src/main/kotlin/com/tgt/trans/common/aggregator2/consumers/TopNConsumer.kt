@@ -35,10 +35,6 @@ class TopNConsumer<T>(val count: Int,
     }
 
     override fun results() = items.filter { it.isNotEmpty() }
-
-    override fun emptyCopy() = TopNConsumer(count, comparator)
-
-    override fun isEmpty() = items.all {  it.isEmpty() }
 }
 
 fun<T> topNBy(count: Int, comparator: (a:T, b:T) -> Int) =

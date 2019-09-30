@@ -31,13 +31,4 @@ class RatioConsumerTest {
         val actual = listOf(1, 2, 3).consume(sut)
         assertEquals(Ratio2(1L, 3L), actual[0])
     }
-
-    @Test
-    fun providesEmptyCopy() {
-        val originalConsumer = ratioOf { a: Int -> a > 0 }
-        val actual = listOf(42).consume(originalConsumer)
-        assertEquals(Ratio2(1L, 1L), actual[0], "Guardian assumption: not empty")
-        val sut = originalConsumer.emptyCopy()
-        assertEquals<Ratio2>(Ratio2(0L, 0L), sut.results())
-    }
 }

@@ -17,13 +17,4 @@ class CounterTest {
         val actual = listOf(42).consume(counter())
         assertEquals(1L, actual[0])
     }
-
-    @Test
-    fun providesEmptyCopy() {
-        val originalConsumer = counter<Int>()
-        val actual = listOf(42).consume(originalConsumer)
-        assertEquals(1L, actual[0], "Guardian assumption: not empty")
-        val sut = originalConsumer.emptyCopy()
-        assertEquals(0L, sut.results())
-    }
 }

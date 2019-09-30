@@ -46,18 +46,6 @@ class AvgConsumerTest {
     }
 
     @Test
-    fun providesEmptyCopy() {
-        val sut = avgOfInt()
-        sut.process(42)
-        val actual = sut.emptyCopy()
-        assertAll(
-                { assertFalse(sut.isEmpty()) },
-                { assertTrue(actual.isEmpty()) },
-                { assertTrue(actual is AvgConsumer<*, *>)}
-        )
-    }
-
-    @Test
     fun `avgOfLong Works`() {
         val actual = listOf(42L, 43L, 44L, 45L).consume(
             avgOfLong(2),

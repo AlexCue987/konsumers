@@ -52,15 +52,6 @@ class StepTest {
     }
 
     @Test
-    fun providesEmptyCopy() {
-        val originalConsumer = step<Int>(2).count()
-        listOf(42, 43).consume(originalConsumer)
-        assertFalse(originalConsumer.isEmpty(), "Guardian assumption: not empty")
-        val sut = originalConsumer.emptyCopy()
-        assertTrue(sut.isEmpty())
-    }
-
-    @Test
     fun passesStopCall() {
         val consumer = mockk<Consumer<Int>> {
             every { stop() } just Runs

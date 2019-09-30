@@ -35,14 +35,6 @@ class TransformationWithState<T, V, O>(private val state: State<T, V>,
     }
 
     override fun results() = innerConsumer.results()
-
-    override fun emptyCopy(): Consumer<T> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun isEmpty(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 }
 
 class TransformationWithStateOfIncoming<T, V, O>(private val state: State<T, V>,
@@ -57,14 +49,6 @@ class TransformationWithStateOfIncoming<T, V, O>(private val state: State<T, V>,
     }
 
     override fun results() = innerConsumer.results()
-
-    override fun emptyCopy(): Consumer<T> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun isEmpty(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 }
 
 class Aggregate<T>(initialValue: T,

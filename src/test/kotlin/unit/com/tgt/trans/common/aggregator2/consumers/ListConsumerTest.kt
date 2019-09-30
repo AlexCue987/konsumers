@@ -22,13 +22,4 @@ class ListConsumerTest {
             filterOn { a: Int -> a > 0 }.asList())
         assertEquals(listOf(listOf(answer), listOf(answer)), actual)
     }
-
-    @Test
-    fun providesEmptyCopy() {
-        val originalConsumer = asList<Int>()
-        listOf(42).consume(originalConsumer)
-        assertFalse("Guardian assumption: not empty") { originalConsumer.isEmpty() }
-        val sut = originalConsumer.emptyCopy()
-        assertTrue { sut.isEmpty() }
-    }
 }

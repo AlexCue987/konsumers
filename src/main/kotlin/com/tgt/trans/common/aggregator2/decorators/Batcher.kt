@@ -17,10 +17,6 @@ class Batcher2<T> (private val batchSize: Int,
 
     override fun results() = consumer.results()
 
-    override fun emptyCopy() = Batcher2(batchSize, consumer.emptyCopy())
-
-    override fun isEmpty() = consumer.isEmpty() && currentBatch.isEmpty()
-
     override fun stop() {
         if (currentBatch.isNotEmpty()) {
             consumer.process(currentBatch.toList())

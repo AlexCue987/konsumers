@@ -21,10 +21,6 @@ class Stopper<T>(private val innerConsumer: Consumer<T>,
 
     override fun results() = innerConsumer.results()
 
-    override fun emptyCopy() = Stopper(innerConsumer.emptyCopy(), keepBreakingPoint, condition)
-
-    override fun isEmpty() = innerConsumer.isEmpty()
-
     override fun stop() = innerConsumer.stop()
 }
 

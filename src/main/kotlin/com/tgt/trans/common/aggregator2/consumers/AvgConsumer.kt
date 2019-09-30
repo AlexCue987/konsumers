@@ -6,8 +6,6 @@ import java.util.*
 
 class AvgConsumer<T, V> (private val adder: (a: T, b: T) -> T,
                         private val divider: (a: T, b: Int) -> V): Consumer<T> {
-    override fun emptyCopy(): Consumer<T> = AvgConsumer(adder, divider)
-
     private var sum: T? = null
 
     private var count = 0
@@ -22,7 +20,7 @@ class AvgConsumer<T, V> (private val adder: (a: T, b: T) -> T,
         else Optional.of(divider(sum!!, count))
     }
 
-    override fun isEmpty() = (count == 0)
+    fun isEmpty() = (count == 0)
 }
 
 fun avgOfInt(scaleMargin: Int = 2) = avgIntToDecimalConsumer(scaleMargin)

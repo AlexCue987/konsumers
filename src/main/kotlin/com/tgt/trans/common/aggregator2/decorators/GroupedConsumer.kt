@@ -16,12 +16,7 @@ class GroupedConsumer<T, K>(private val keyFactory: (a: T) -> K,
     }
 
     override fun results() = groups.entries
-            .filter { !it.value.isEmpty() }
             .associateBy({it.key}, {it.value.results()})
-
-    override fun emptyCopy(): Consumer<T> = GroupedConsumer(keyFactory, innerConsumerFactory)
-
-    override fun isEmpty() = groups.values.all { it -> it.isEmpty() }
 }
 
 fun<T, K> groupBy(keyFactory: (a: T) -> K, innerConsumerFactory: () -> Consumer<T>) =

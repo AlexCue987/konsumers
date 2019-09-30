@@ -12,10 +12,6 @@ class RatioCounter<T>(val condition: (a: T) -> Boolean) : Consumer<T> {
     }
 
     override fun results() = Ratio2(conditionMet, outOf)
-
-    override fun emptyCopy() = RatioCounter<T>(condition)
-
-    override fun isEmpty() = outOf == 0L
 }
 
 data class Ratio2(val conditionMet: Long, val outOf: Long)

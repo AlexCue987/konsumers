@@ -15,10 +15,6 @@ class FilterConsumer<T>(val filter: Condition<T>, val innerConsumer: Consumer<T>
 
     override fun results() = innerConsumer.results()
 
-    override fun emptyCopy() = FilterConsumer(filter.emptyCopy(), innerConsumer.emptyCopy())
-
-    override fun isEmpty() = innerConsumer.isEmpty()
-
     override fun stop() {
         innerConsumer.stop()
     }

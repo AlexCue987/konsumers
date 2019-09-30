@@ -63,13 +63,4 @@ class Batcher2Test {
             filterOn { a: Int -> a > 0 }.batches(batchSize).asList())
         assertEquals(listOf(listOf(batch1, batch2), listOf(batch1, batch2)), actual)
     }
-
-    @Test
-    fun providesEmptyCopy() {
-        val originalConsumer = asList<Int>()
-        listOf(42).consume(originalConsumer)
-        assertFalse("Guardian assumption: not empty") { originalConsumer.isEmpty() }
-        val sut = originalConsumer.emptyCopy()
-        assertTrue { sut.isEmpty() }
-    }
 }

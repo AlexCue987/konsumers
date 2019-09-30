@@ -7,8 +7,6 @@ interface ConsumerBuilder<T, V> {
 interface Consumer<T> {
     fun process(value: T)
     fun results(): Any
-    fun emptyCopy(): Consumer<T>
-    fun isEmpty(): Boolean
     fun stop() {}
 }
 

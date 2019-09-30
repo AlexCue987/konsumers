@@ -12,10 +12,6 @@ class Peek<T>(private val action: (a: T) -> Unit, private val innerConsumer: Con
 
     override fun results() = innerConsumer.results()
 
-    override fun emptyCopy() = Peek(action, innerConsumer.emptyCopy())
-
-    override fun isEmpty() = innerConsumer.isEmpty()
-
     override fun stop() { innerConsumer.stop() }
 }
 

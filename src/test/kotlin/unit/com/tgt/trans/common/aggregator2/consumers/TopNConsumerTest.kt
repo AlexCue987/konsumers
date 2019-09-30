@@ -76,15 +76,6 @@ class TopNConsumerTest {
             { assertEquals(expected, actual[3], "chained projection") }
         )
     }
-
-    @Test
-    fun providesEmptyCopy() {
-        val originalConsumer = sutLambda
-        originalConsumer.process(puck)
-        assertFalse(originalConsumer.isEmpty(), "Guardian assumption: not empty")
-        val sut = originalConsumer.emptyCopy()
-        assertTrue(sut.isEmpty())
-    }
 }
 
 private data class Thing(val name: String, val quantity: Int)

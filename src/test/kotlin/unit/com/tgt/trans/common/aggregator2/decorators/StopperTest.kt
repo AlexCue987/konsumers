@@ -44,15 +44,6 @@ class StopperTest {
     }
 
     @Test
-    fun providesEmptyCopy() {
-        val originalConsumer = stopWhen<Int> { it > 1 }.count()
-        listOf(42).consume(originalConsumer)
-        assertFalse(originalConsumer.isEmpty(), "Guardian assumption: not empty")
-        val sut = originalConsumer.emptyCopy()
-        assertTrue(sut.isEmpty())
-    }
-
-    @Test
     fun passesStopCall() {
         val consumer = mockk<Consumer<Int>> {
             every { stop() } just Runs

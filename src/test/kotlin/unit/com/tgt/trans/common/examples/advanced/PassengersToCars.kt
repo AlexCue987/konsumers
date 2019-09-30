@@ -39,14 +39,6 @@ class Bagger(private val innerConsumer: Consumer<Bag>,
     private fun currentItems() = (0 until itemsCount).asSequence().map { buffer[it]!! }.toList()
 
     override fun results() = innerConsumer.results()
-
-    override fun emptyCopy(): Consumer<GroceryItem> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun isEmpty(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 }
 
 data class GroceryItem(val name: String, val weight: Int)

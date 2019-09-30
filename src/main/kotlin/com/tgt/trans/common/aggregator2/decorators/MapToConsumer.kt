@@ -11,10 +11,6 @@ class MapToConsumer<T, V>(val mapper: (a: T) -> V, val innerConsumer: Consumer<V
 
     override fun results() = innerConsumer.results()
 
-    override fun emptyCopy() = MapToConsumer(mapper, innerConsumer.emptyCopy())
-
-    override fun isEmpty() = innerConsumer.isEmpty()
-
     override fun stop() {
         innerConsumer.stop()
     }

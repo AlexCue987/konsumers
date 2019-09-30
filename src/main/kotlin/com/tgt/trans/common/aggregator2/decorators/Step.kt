@@ -18,10 +18,6 @@ class Step<T>(private val step: Int, private val innerConsumer: Consumer<T>): Co
 
     override fun results() = innerConsumer.results()
 
-    override fun emptyCopy() = Step(step, innerConsumer.emptyCopy())
-
-    override fun isEmpty() = innerConsumer.isEmpty()
-
     override fun stop() { innerConsumer.stop() }
 }
 

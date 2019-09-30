@@ -19,12 +19,6 @@ class BranchConsumer<T>(val condition: Condition<T>,
 
     override fun results() = listOf(consumerForAccepted.results(), consumerForRejected.results())
 
-    override fun emptyCopy() = BranchConsumer(condition.emptyCopy(),
-        consumerForAccepted.emptyCopy(),
-        consumerForRejected.emptyCopy())
-
-    override fun isEmpty() = consumerForAccepted.isEmpty() && consumerForRejected.isEmpty()
-
     override fun stop() {
         consumerForAccepted.stop()
         consumerForRejected.stop()

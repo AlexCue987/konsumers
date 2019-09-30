@@ -52,13 +52,4 @@ class ConditionOnRatioTest {
             projection.sometimes {it > BigDecimal.ONE})
         assertEquals(listOf(false, false, true), actual)
     }
-
-    @Test
-    fun providesEmptyCopy() {
-        val originalConsumer = ratioOf { a: Int -> a > 0 }
-        listOf(42).consume(originalConsumer)
-        assertFalse (originalConsumer.isEmpty(), "Guardian assumption: not empty")
-        val sut = originalConsumer.emptyCopy()
-        assertTrue { sut.isEmpty() }
-    }
 }

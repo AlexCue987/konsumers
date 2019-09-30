@@ -99,15 +99,6 @@ class WithPrecedingTest {
     }
 
     @Test
-    fun providesEmptyCopy() {
-        val originalConsumer = toPairs<Int>().asList()
-        listOf(42, 43).consume(originalConsumer)
-        assertFalse(originalConsumer.isEmpty(), "Guardian assumption: not empty")
-        val sut = originalConsumer.emptyCopy()
-        assertTrue(sut.isEmpty())
-    }
-
-    @Test
     fun passesStopCall() {
         val consumer = mockk<Consumer<IWithPreceding<Int>>> {
             every { stop() } just Runs

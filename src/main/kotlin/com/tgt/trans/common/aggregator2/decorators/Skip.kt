@@ -18,10 +18,6 @@ class Skip<T>(private val count: Int, private val innerConsumer: Consumer<T>): C
 
     override fun results() = innerConsumer.results()
 
-    override fun emptyCopy() = Skip(count, innerConsumer.emptyCopy())
-
-    override fun isEmpty() = innerConsumer.isEmpty()
-
     override fun stop() { innerConsumer.stop() }
 }
 

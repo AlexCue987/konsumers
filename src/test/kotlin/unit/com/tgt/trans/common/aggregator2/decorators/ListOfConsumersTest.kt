@@ -47,16 +47,4 @@ class ListOfConsumersTest {
         )
         assertEquals(listOf(Optional.of(element), Optional.of(element), 1L), actual[0])
     }
-
-    @Test
-    fun providesEmptyCopy() {
-        val element = 42
-        val nonEmptyConsumer = allOf<Int>(min(), max(), counter())
-        val actual = listOf(element).consume(
-                nonEmptyConsumer
-        )
-        assertEquals(listOf(Optional.of(element), Optional.of(element), 1L), actual[0], "Guardian assumption: not empty")
-        val sut = nonEmptyConsumer.emptyCopy()
-        assertEquals(listOf(Optional.empty<Int>(), Optional.empty<Int>(), 0L), (sut.results() as List<Any>))
-    }
 }

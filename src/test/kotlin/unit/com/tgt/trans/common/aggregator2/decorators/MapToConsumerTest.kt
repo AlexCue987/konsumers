@@ -38,15 +38,6 @@ class MapToConsumerTest {
     }
 
     @Test
-    fun providesEmptyCopy() {
-        val originalConsumer = mapTo<Int, BigDecimal> { BigDecimal.valueOf(it.toLong()) }.count()
-        val actual = listOf(42).consume(originalConsumer)
-        assertEquals(1L, actual[0], "Guardian assumption: not empty")
-        val sut = originalConsumer.emptyCopy()
-        assertEquals(0L, sut.results())
-    }
-
-    @Test
     fun passesStopCall() {
         val consumer = mockk<Consumer<BigDecimal>> {
             every { stop() } just Runs
