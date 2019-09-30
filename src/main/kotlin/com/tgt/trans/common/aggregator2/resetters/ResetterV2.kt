@@ -33,7 +33,7 @@ class Resetter2<T, V>(private val intermediateConsumerFactory: () -> Consumer<T>
 
     override fun results() = finalConsumer.results()
 
-    override fun emptyCopy() = Resetter(intermediateConsumer.emptyCopy(),
+    override fun emptyCopy() = Resetter2(intermediateConsumerFactory,
         resetTrigger,
         intermediateResultsTransformer,
         finalConsumer.emptyCopy())
