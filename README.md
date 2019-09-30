@@ -234,9 +234,110 @@ For a complete working example, refer to `examples/basics/BasicGroups.kt`.
 
 #### Why resetting?
 
-Suppose that we are consuming a time series of weather readings, as follows:
+Suppose that we are consuming a time series of weather readings like this,
 
-#### Resetting
+```kotlin
+    data class Temperature(val takenAt: LocalDateTime, val temperature: Int) {
+        fun getDate() = takenAt.toLocalDate()
+    }
+
+    val monday = LocalDate.of(2019, 9, 23)
+    val tuesday = LocalDate.of(2019, 9, 24)
+    val morning = LocalTime.of(7, 15)
+    val night = LocalTime.of(17, 20)
+    private val temperatures = listOf(
+        Temperature(monday.atTime(morning), 46),
+        Temperature(monday.atTime(night), 58),
+        Temperature(tuesday.atTime(morning), 44),
+        Temperature(tuesday.atTime(night), 61)
+    )
+```
+and need to provide daily aggregates, high and low temperatures, as follows:
+
+```kotlin
+    data class DailyWeather(val date: LocalDate, val low: Int, val high: Int)
+```
+
+The following code accomplishes that:
+
+```kotlin
+        val rawDailyAggregates = temperatures.consume(
+            groupBy(keyFactory = { it: Temperature -> it.getDate() },
+                innerConsumerFactory = { mapTo { it: Temperature -> it.temperature }.allOf(min(), max()) }
+            ))
+        print(rawDailyAggregates)
+
+[{2019-09-23=[Optional[46], Optional[58]], 2019-09-24=[Optional[44], Optional[61]]}]
+
+        val finalDailyAggregates = (rawDailyAggregates[0] as Map<LocalDate, List<Optional<Int>>>)
+            .entries
+            .map { DailyWeather(it.key, it.value[0].get(), it.value[1].get()) }
+        val expected = listOf(
+            DailyWeather(monday, 46, 58),
+            DailyWeather(tuesday, 44, 61))
+        assertEquals(expected, finalDailyAggregates)
+```
+
+This code works, but the daily aggregates are not available until we have consumed the whole sequence.
+
+Yet we know that we are consuming a time series, the data points are ordered by time, so as soon as we get a data point for Tuesday, we should be able to produce Monday's aggregates. This is why we need resetting, which is explained in the next section.
+
+For a complete working example, refer to `examples/basics/HighAndLowTemperature.kt`.
+
+#### Resetting 101
+
+In the following example we shall produce daily the same aggregates without grouping by date, using resetting instead. We shall accomplish that in several simple steps.
+
+First, we shall be just consuming the incoming data as it flows in. The consumer is unaware that it is producing daily aggregates, it just computes high and low temperatures:
+
+```kotlin
+        val intermediateConsumer = peek<Temperature> { println("Consuming $it") }
+            .mapTo { it: Temperature -> it.temperature }
+            .allOf(min(), max())
+```
+
+Second, we need to specify that we shall stop consuming whenever the day changes:
+
+```kotlin
+    fun resetOnDayChange() =
+        ResetterOnCondition(keepValueThatTriggeredReset = false,
+            condition = notSameProjectionAsFirst { a: Temperature -> a.getDate() },
+            seriesDescriptor = { it -> getSeriesDate(it) } )
+```
+
+Next, we need to transform the data collected by the consumer into the format that we need, which is similar to populating of `finalDailyAggregates` in the previous section.
+
+```kotlin
+    fun mapResultsToDailyWeather(intermediateResults: Any, day: Any): DailyWeather {
+        val consumers = intermediateResults as List<Any>
+        val lowTemperature = consumers[0] as Optional<Int>
+        val highTemperature = consumers[1] as Optional<Int>
+        return DailyWeather(day as LocalDate, lowTemperature.get(), highTemperature.get())
+    }
+```
+
+Finally, let us plug all these pieces together:
+
+```kotlin
+        val dailyAggregates = temperatures.consume(
+            consumeWithResetting2(
+                intermediateConsumerFactory = { intermediateConsumer },
+                resetTrigger = resetOnDayChange(),
+                intermediateResultsTransformer = intermediateResultsTransformer,
+                finalConsumer = peek<DailyWeather> { println("Consuming $it") }.asList()))
+
+Consuming Temperature(takenAt=2019-09-23T07:15, temperature=46)
+Consuming Temperature(takenAt=2019-09-23T17:20, temperature=58)
+Consuming DailyWeather(date=2019-09-23, low=46, high=58)
+Consuming Temperature(takenAt=2019-09-24T07:15, temperature=44)
+Consuming Temperature(takenAt=2019-09-24T17:20, temperature=61)
+Consuming DailyWeather(date=2019-09-24, low=44, high=61)
+```
+
+As we have seen, a `DailyWeather` daily aggregate is available as soon as a data point for another day comes.
+
+For a complete working example, refer to `examples/basics/HighAndLowTemperature.kt`.
+
 [Complete list of consumers](#consumers)
 
 [Complete list of transformations](#transformations)

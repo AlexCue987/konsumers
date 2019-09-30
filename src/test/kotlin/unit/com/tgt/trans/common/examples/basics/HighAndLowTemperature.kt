@@ -1,7 +1,5 @@
 package com.tgt.trans.common.examples.basics
 
-import com.tgt.trans.common.aggregator2.WeatherByDay
-import com.tgt.trans.common.aggregator2.WeatherReading
 import com.tgt.trans.common.aggregator2.conditions.FirstItemCondition
 import com.tgt.trans.common.aggregator2.conditions.notSameProjectionAsFirst
 import com.tgt.trans.common.aggregator2.consumers.asList
@@ -13,8 +11,7 @@ import com.tgt.trans.common.aggregator2.decorators.groupBy
 import com.tgt.trans.common.aggregator2.decorators.mapTo
 import com.tgt.trans.common.aggregator2.decorators.peek
 import com.tgt.trans.common.aggregator2.resetters.ResetterOnCondition
-import com.tgt.trans.common.aggregator2.resetters.withResetting
-import java.math.BigDecimal
+import com.tgt.trans.common.aggregator2.resetters.consumeWithResetting2
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -40,16 +37,17 @@ class HighAndLowTemperature {
 
     @Test
     fun `aggregate temperatures the usual way`() {
-        val dailyAggregates = temperatures.consume(
+        val rawDailyAggregates = temperatures.consume(
             groupBy(keyFactory = { it: Temperature -> it.getDate() },
                 innerConsumerFactory = { mapTo { it: Temperature -> it.temperature }.allOf(min(), max()) }
             ))
-        print(dailyAggregates)
-        val expected = mapOf(
-            monday to listOf(Optional.of(46), Optional.of(58)),
-            tuesday to listOf(Optional.of(44), Optional.of(61))
-        )
-        assertEquals(expected, dailyAggregates[0])
+        print(rawDailyAggregates)
+        val finalDailyAggregates = (rawDailyAggregates[0] as Map<LocalDate, List<Optional<Int>>>)
+            .entries
+            .map { DailyWeather(it.key, it.value[0].get(), it.value[1].get()) }
+        val expected = listOf(DailyWeather(monday, 46, 58),
+            DailyWeather(tuesday, 44, 61))
+        assertEquals(expected, finalDailyAggregates)
     }
 
     fun getSeriesDate(resetter: ResetterOnCondition<Temperature>): LocalDate {
@@ -64,22 +62,23 @@ class HighAndLowTemperature {
 
     fun mapResultsToDailyWeather(intermediateResults: Any, day: Any): DailyWeather {
         val consumers = intermediateResults as List<Any>
-        val minConsumer = consumers[0] as Optional<Int>
-        val maxConsumer = consumers[1] as Optional<Int>
-        return DailyWeather(day as LocalDate, minConsumer.get(), maxConsumer.get())
+        val lowTemperature = consumers[0] as Optional<Int>
+        val highTemperature = consumers[1] as Optional<Int>
+        return DailyWeather(day as LocalDate, lowTemperature.get(), highTemperature.get())
     }
 
     @Test
     fun `daily aggregates available as soon as day ends`() {
         val intermediateResultsTransformer = { intermediateResults: Any, day: Any -> mapResultsToDailyWeather(intermediateResults, day) }
-        val finalConsumer = peek<DailyWeather> { println("Consuming $it") }.asList()
+        val intermediateConsumer = peek<Temperature> { println("Consuming $it") }
+            .mapTo { it: Temperature -> it.temperature }
+            .allOf(min(), max())
         val dailyAggregates = temperatures.consume(
-            peek<Temperature> { println("Consuming $it") }
-                .mapTo { it: Temperature -> it.temperature }
-                .allOf(min(), max())
-                .withResetting(resetTrigger = resetOnDayChange(),
-                    intermediateResultsTransformer = intermediateResultsTransformer,
-                    finalConsumer = finalConsumer))
+            consumeWithResetting2(
+                intermediateConsumerFactory = { intermediateConsumer },
+                resetTrigger = resetOnDayChange(),
+                intermediateResultsTransformer = intermediateResultsTransformer,
+                finalConsumer = peek<DailyWeather> { println("Consuming $it") }.asList()))
         print(dailyAggregates)
         val expected = listOf(DailyWeather(monday, 46, 58),
             DailyWeather(tuesday, 44, 61))

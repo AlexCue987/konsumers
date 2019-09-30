@@ -2,10 +2,11 @@ package com.tgt.trans.common.aggregator2.resetters
 
 import com.tgt.trans.common.aggregator2.consumers.Consumer
 
-class Resetter<T, V>(private var intermediateConsumer: Consumer<T>,
+class Resetter2<T, V>(private val intermediateConsumerFactory: () -> Consumer<T>,
                      private val resetTrigger: ResetTrigger<T>,
                      private val intermediateResultsTransformer: (intermediateResults: Any, seriesDescription: Any) -> V,
                      private val finalConsumer: Consumer<V>): Consumer<T> {
+    private var intermediateConsumer: Consumer<T> = intermediateConsumerFactory()
 
     override fun process(value: T) {
         resetTrigger.process(value)
@@ -23,14 +24,11 @@ class Resetter<T, V>(private var intermediateConsumer: Consumer<T>,
     }
 
     private fun processEndOfSeries() {
-        intermediateConsumer.stop()
-        if (!intermediateConsumer.isEmpty()) {
-            val transformedResults = intermediateResultsTransformer(intermediateConsumer.results(),
-                resetTrigger.describeSeries())
-            finalConsumer.process(transformedResults)
-        }
+        val transformedResults = intermediateResultsTransformer(intermediateConsumer.results(),
+            resetTrigger.describeSeries())
+        finalConsumer.process(transformedResults)
         resetTrigger.resetState()
-        intermediateConsumer = intermediateConsumer.emptyCopy()
+        intermediateConsumer = intermediateConsumerFactory()
     }
 
     override fun results() = finalConsumer.results()
@@ -47,16 +45,9 @@ class Resetter<T, V>(private var intermediateConsumer: Consumer<T>,
     }
 }
 
-interface ResetTrigger<T> {
-    fun process(value: T)
-    fun needsResetting(): Boolean
-    fun describeSeries(): Any
-    val keepValueThatTriggeredReset: Boolean
-    fun resetState()
-}
-
-fun<T, V> Consumer<T>.withResetting(resetTrigger: ResetTrigger<T>,
-                                                                               intermediateResultsTransformer: (a: Any, b: Any) -> V,
-                                                                               finalConsumer: Consumer<V>): Consumer<T> =
-    Resetter(this, resetTrigger, intermediateResultsTransformer, finalConsumer)
+fun<T, V> consumeWithResetting2(intermediateConsumerFactory: () -> Consumer<T>,
+    resetTrigger: ResetTrigger<T>,
+                                   intermediateResultsTransformer: (a: Any, b: Any) -> V,
+                                   finalConsumer: Consumer<V>): Consumer<T> =
+    Resetter2(intermediateConsumerFactory, resetTrigger, intermediateResultsTransformer, finalConsumer)
 

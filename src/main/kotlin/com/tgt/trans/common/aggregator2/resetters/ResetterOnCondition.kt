@@ -17,7 +17,7 @@ class ResetterOnCondition<T>(override val keepValueThatTriggeredReset: Boolean,
 
     override fun describeSeries() = seriesDescriptor(this)
 
-    override fun seriesReset() {
+    override fun resetState() {
         resettingDetected = false
         condition = condition.emptyCopy()
     }
