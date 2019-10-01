@@ -98,13 +98,42 @@ For a complete working example, refer to `examples/basics/IfOrElse.kt`.
 
 ### Keeping and using states
 
+As we are iterating items in our sequence, we can store any data in a state. This allows for easy solutions to many common problems.
 
+For instance, in the following example we are converting a time series of temperature readings into a time series of temperature changes:
 
-### Advanced transformations
+```kotlin
+        val lastTwoItems = LastN<Temperature>(2)
+        val changes = temperatures.consume(
+            keepState(lastTwoItems)
+                .peek { println("current item $it") }
+                .skip(1)
+                .peek { println("  last two items: ${lastTwoItems.results()}") }
+                .mapTo { it ->
+                    val previousTemperature = lastTwoItems.results().last().temperature
+                    TemperatureChange(it.takenAt, it.temperature, it.temperature - previousTemperature)
+                }
+                .peek { println("  change: $it") }
+                .asList())
 
-The following advantages will be discussed below, one example at a time.
+current item Temperature(takenAt=2019-09-23T07:15, temperature=46)
+current item Temperature(takenAt=2019-09-23T17:20, temperature=58)
+  last two items: [Temperature(takenAt=2019-09-23T07:15, temperature=46)]
+  change: TemperatureChange(takenAt=2019-09-23T17:20, temperature=58, change=12)
+current item Temperature(takenAt=2019-09-24T07:15, temperature=44)
+  last two items: [Temperature(takenAt=2019-09-23T07:15, temperature=46), Temperature(takenAt=2019-09-23T17:20, temperature=58)]
+  change: TemperatureChange(takenAt=2019-09-24T07:15, temperature=44, change=-14)
+```
 
-* Filters and mappings can have a state, which allows for easy solution to many common problems.
+For a complete working example, refer to `examples/basics/TemperatureChanges.kt`.
+
+Any consumer can be used as a state. Multiple states can be collected at the same time.
+
+### Using states in transformations
+
+Using states in transformations, such as mappings and filters, allows for multiple advantages. They will be discussed below, one example at a time.
+
+* Filters and mappings can use a state, or have their own state, which allows for easy solution to many common problems.
 * Mappings do not have to produce an outgoing value for every incoming one, allowing us to solve problems without creating many short-lived objects.
 * In general, transformations process an incoming value, and provide one outgoing value, or several, or none at all.
 
