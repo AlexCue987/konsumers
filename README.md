@@ -96,12 +96,15 @@ Rejected items: [201]
 
 For a complete working example, refer to `examples/basics/IfOrElse.kt`.
 
+### Keeping and using states
+
+
+
 ### Advanced transformations
 
 The following advantages will be discussed below, one example at a time.
 
-* Filters can have a state, which allows for easy solution to many common problems.
-* Mappings also can have a state, with same benefits.
+* Filters and mappings can have a state, which allows for easy solution to many common problems.
 * Mappings do not have to produce an outgoing value for every incoming one, allowing us to solve problems without creating many short-lived objects.
 * In general, transformations process an incoming value, and provide one outgoing value, or several, or none at all.
 
