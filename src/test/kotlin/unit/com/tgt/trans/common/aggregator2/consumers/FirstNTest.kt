@@ -4,9 +4,9 @@ import kotlin.test.assertEquals
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class LastNTest {
+class FirstNTest {
     val count = 2
-    private val sut = LastN<Int>(count)
+    private val sut = FirstN<Int>(count)
 
     @Test
     fun `handles no items`() {
@@ -31,6 +31,6 @@ class LastNTest {
     fun `handles more than buffer size`() {
         val items = listOf(42, 43, 44)
         val actual = items.consume(sut)
-        assertEquals(items.takeLast(2), actual[0])
+        assertEquals(items.take(count), actual[0])
     }
 }

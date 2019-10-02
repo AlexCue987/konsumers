@@ -7,6 +7,7 @@ import com.tgt.trans.common.aggregator2.consumers.ConsumerBuilder
 import com.tgt.trans.common.aggregator2.consumers.asList
 import com.tgt.trans.common.aggregator2.consumers.consume
 import com.tgt.trans.common.aggregator2.decorators.filterOn
+import com.tgt.trans.common.aggregator2.decorators.keepState
 import java.math.BigDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,6 +22,19 @@ class StatefulFilter {
         print(acceptedChanges)
         assertEquals(listOf(BigDecimal.ONE, BigDecimal("-1"), BigDecimal.ONE), acceptedChanges)
     }
+
+//    @Test
+//    fun `use state to prevent withdrawing more than account balance`() {
+//        val changeToReject = BigDecimal("-2")
+//        val changes = listOf(BigDecimal.ONE, BigDecimal("-1"), changeToReject, BigDecimal.ONE)
+//        val condition = nonNegativeBalance()
+//        val currentBalance = sumOfBigDecimal()
+//        val acceptedChanges = changes.consume(filterOn(condition)
+//            .keepState(currentBalance)
+//            .asList())[0]
+//        print(acceptedChanges)
+//        assertEquals(listOf(BigDecimal.ONE, BigDecimal("-1"), BigDecimal.ONE), acceptedChanges)
+//    }
 }
 
 class TransformationWithState<T, V, O>(private val state: State<T, V>,
@@ -96,24 +110,3 @@ class CurrentBalanceConsumerBuilder(): ConsumerBuilder<BigDecimal, BigDecimal> {
 fun toCurrentBalance() = CurrentBalanceConsumerBuilder()
 
 
-class Index<T>(startIndex: Int =0) : State<T, Int> {
-    private var currentIndex = startIndex
-
-    override fun process(value: T) {
-        currentIndex++
-    }
-
-    override fun stateValue() = currentIndex
-}
-
-class IndexConditionConsumerBuilder<T>(private val conditionOnIndex: (index: Int) -> Boolean): ConsumerBuilder<T, T> {
-    override fun build(innerConsumer: Consumer<T>): Consumer<T> {
-        return TransformationWithStateOfIncoming<T, Int, T>(state = Index<T>(),
-            condition = { currentIndex: Int, incomingValue: T -> conditionOnIndex(currentIndex)},
-            transformation = {currentIndex: Int, incomingValue: T -> sequenceOf(incomingValue)},
-            innerConsumer = innerConsumer
-        )
-    }
-}
-
-fun<T> conditionOnIndex(conditionOnIndex: (index: Int) -> Boolean) = IndexConditionConsumerBuilder<T>(conditionOnIndex)
