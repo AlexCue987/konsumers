@@ -5,9 +5,9 @@ import com.tgt.trans.common.aggregator2.consumers.consume
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class BranchTest {
+class BranchChainedTest {
     private val rejected = asList<Int>()
-    val sut = branchOn(condition = { a: Int -> a > 0 },
+    val sut = filterOn<Int> { it < 100 }. branchOn(condition = { a: Int -> a > 0 },
         consumerForRejected = rejected).asList()
 
     @Test
