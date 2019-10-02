@@ -37,10 +37,10 @@ class TemperatureChanges {
         val changes = temperatures.consume(
             keepState(lastTwoItems)
                 .peek { println("current item $it") }
-                .skip(1)
                 .peek { println("  last two items: ${lastTwoItems.results()}") }
+                .skip(1)
                 .mapTo { it ->
-                    val previousTemperature = lastTwoItems.results().last().temperature
+                    val previousTemperature = lastTwoItems.results()[0].temperature
                     TemperatureChange(it.takenAt, it.temperature, it.temperature - previousTemperature)
                 }
                 .peek { println("  change: $it") }
