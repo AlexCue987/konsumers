@@ -13,7 +13,9 @@ class Sum<T>(initialValue: T,
 
     override fun results() = aggregate as Any
 
-    fun sum() = aggregate
+    fun sum(): T {
+        return aggregate
+    }
 }
 
 fun sumOfBigDecimal(): Sum<BigDecimal> = Sum(initialValue = BigDecimal.ZERO) { a: BigDecimal, b: BigDecimal -> a + b}

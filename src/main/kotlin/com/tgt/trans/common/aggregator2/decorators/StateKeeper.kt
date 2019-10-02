@@ -25,8 +25,8 @@ import com.tgt.trans.common.aggregator2.consumers.ConsumerBuilder
 
 class StateKeeper<T>(private val innerConsumer: Consumer<T>, private val stateToKeep: Consumer<T>): Consumer<T> {
     override fun process(value: T) {
-        innerConsumer.process(value)
         stateToKeep.process(value)
+        innerConsumer.process(value)
     }
 
     override fun results() = innerConsumer.results()
