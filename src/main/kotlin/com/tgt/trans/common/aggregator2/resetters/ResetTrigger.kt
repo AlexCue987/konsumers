@@ -2,11 +2,11 @@ package com.tgt.trans.common.aggregator2.resetters
 
 import com.tgt.trans.common.aggregator2.consumers.Consumer
 
-class ResetterOnCondition2<T>(override val keepValueThatTriggeredReset: Boolean,
-                              private val stateFactory: () -> Consumer<T>,
-                              private val stateType: StateType,
-                              private val condition: (state: Consumer<T>, value: T) -> Boolean,
-                              private val seriesDescriptor: (state: Consumer<T>) -> Any): ResetTrigger<T> {
+class ResetTrigger<T>(override val keepValueThatTriggeredReset: Boolean,
+                      private val stateFactory: () -> Consumer<T>,
+                      private val stateType: StateType,
+                      private val condition: (state: Consumer<T>, value: T) -> Boolean,
+                      private val seriesDescriptor: (state: Consumer<T>) -> Any): IResetTrigger<T> {
     override fun describeSeries()= seriesDescriptor(state)
 
     var resettingDetected = false

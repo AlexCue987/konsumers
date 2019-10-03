@@ -5,8 +5,8 @@ import com.tgt.trans.common.aggregator2.decorators.allOf
 import com.tgt.trans.common.aggregator2.decorators.groupBy
 import com.tgt.trans.common.aggregator2.decorators.mapTo
 import com.tgt.trans.common.aggregator2.decorators.peek
-import com.tgt.trans.common.aggregator2.resetters.ResetterOnCondition2
-import com.tgt.trans.common.aggregator2.resetters.consumeWithResetting3
+import com.tgt.trans.common.aggregator2.resetters.ResetTrigger
+import com.tgt.trans.common.aggregator2.resetters.consumeWithResetting
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -46,9 +46,9 @@ class HighAndLowTemperature {
     }
 
     fun resetOnDayChange() =
-        ResetterOnCondition2(keepValueThatTriggeredReset = false,
+        ResetTrigger(keepValueThatTriggeredReset = false,
             stateFactory = { FirstN<Temperature>(1) },
-            stateType = ResetterOnCondition2.StateType.Before,
+            stateType = ResetTrigger.StateType.Before,
             condition = { state: Consumer<Temperature>, value: Temperature -> (state as FirstN).results()[0].getDate() != value.getDate()},
             seriesDescriptor = { state: Consumer<Temperature> -> (state as FirstN).results()[0].getDate()} )
 
@@ -66,7 +66,7 @@ class HighAndLowTemperature {
             .mapTo { it: Temperature -> it.temperature }
             .allOf(min(), max())
         val dailyAggregates = temperatures.consume(
-            consumeWithResetting3(
+            consumeWithResetting(
                 intermediateConsumerFactory = { intermediateConsumer },
                 resetTrigger = resetOnDayChange(),
                 intermediateResultsTransformer = intermediateResultsTransformer,
