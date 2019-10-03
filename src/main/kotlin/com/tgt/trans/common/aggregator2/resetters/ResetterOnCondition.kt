@@ -1,62 +1,33 @@
 package com.tgt.trans.common.aggregator2.resetters
 
-import com.tgt.trans.common.aggregator2.conditions.Condition
-import com.tgt.trans.common.aggregator2.conditions.VanillaCondition
 import com.tgt.trans.common.aggregator2.consumers.Consumer
 
-class ResetterOnCondition<T>(override val keepValueThatTriggeredReset: Boolean,
-                             var condition: Condition<T>,
-                             private val seriesDescriptor: (a: ResetterOnCondition<T>) -> Any = { it -> it.toString() }): ResetTrigger<T> {
+class ResetterOnCondition2<T>(override val keepValueThatTriggeredReset: Boolean,
+                              private val stateFactory: () -> Consumer<T>,
+                              private val stateType: StateType,
+                              private val condition: (state: Consumer<T>, value: T) -> Boolean,
+                              private val seriesDescriptor: (state: Consumer<T>) -> Any): ResetTrigger<T> {
+    override fun describeSeries()= seriesDescriptor(state)
+
     var resettingDetected = false
+    private var state = stateFactory()
 
     override fun process(value: T) {
-        resettingDetected = condition[value]
+        if (stateType == StateType.Before) {
+            state.process(value)
+        }
+        resettingDetected = condition(state, value)
+        if (stateType == StateType.After) {
+            state.process(value)
+        }
     }
 
     override fun needsResetting() = resettingDetected
 
-    override fun describeSeries() = seriesDescriptor(this)
-
     override fun resetState() {
         resettingDetected = false
-        condition = condition.emptyCopy()
+        state = stateFactory()
     }
+
+    enum class StateType{ Before, After }
 }
-
-//private fun<T> defaultDescriptor(a: ResetterOnCondition<T>) = "ResetterOnCondition"
-
-//fun<T, V> Consumer<T>.resetWhen(condition: Condition<T>,
-//                                intermediateResultsTransformer: (a: Any, b: Any) -> V,
-//                                finalConsumer: Consumer<V>,
-//                                descriptor: (a: ResetterOnCondition<T>) -> String = { it -> defaultDescriptor(it) } ): Consumer<T> =
-//    Resetter(this,
-//        ResetterOnCondition(keepValueThatTriggeredReset = false, condition = condition, seriesDescriptor = descriptor),
-//        intermediateResultsTransformer,
-//        finalConsumer)
-//
-//fun<T, V> Consumer<T>.resetAfter(condition: Condition<T>,
-//                                intermediateResultsTransformer: (a: Any, b: Any) -> V,
-//                                finalConsumer: Consumer<V>,
-//                                descriptor: (a: ResetterOnCondition<T>) -> String = { it -> defaultDescriptor(it) }): Consumer<T> =
-//    Resetter(this,
-//        ResetterOnCondition(keepValueThatTriggeredReset = true, condition = condition, seriesDescriptor = descriptor),
-//        intermediateResultsTransformer,
-//        finalConsumer)
-//
-//fun<T, V> Consumer<T>.resetWhen(condition: (value: T) -> Boolean,
-//                                intermediateResultsTransformer: (a: Any, b: Any) -> V,
-//                                finalConsumer: Consumer<V>,
-//                                descriptor: (a: ResetterOnCondition<T>) -> String = { it -> defaultDescriptor(it) }): Consumer<T> =
-//    Resetter(this,
-//        ResetterOnCondition(keepValueThatTriggeredReset = false, condition = VanillaCondition(condition), seriesDescriptor = descriptor),
-//        intermediateResultsTransformer,
-//        finalConsumer)
-//
-//fun<T, V> Consumer<T>.resetAfter(condition: (value: T) -> Boolean,
-//                                 intermediateResultsTransformer: (a: Any, b: Any) -> V,
-//                                 finalConsumer: Consumer<V>,
-//                                 descriptor: (a: ResetterOnCondition<T>) -> String = { it -> defaultDescriptor(it) }): Consumer<T> =
-//    Resetter(this,
-//        ResetterOnCondition(keepValueThatTriggeredReset = true, condition = VanillaCondition(condition), seriesDescriptor = descriptor),
-//        intermediateResultsTransformer,
-//        finalConsumer)

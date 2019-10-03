@@ -1,11 +1,10 @@
 package com.tgt.trans.common.aggregator2.resetters
 
 import com.tgt.trans.common.aggregator2.consumers.Consumer
-
-class Resetter2<T, V>(private val intermediateConsumerFactory: () -> Consumer<T>,
-                     private val resetTrigger: ResetTrigger<T>,
-                     private val intermediateResultsTransformer: (intermediateResults: Any, seriesDescription: Any) -> V,
-                     private val finalConsumer: Consumer<V>): Consumer<T> {
+class Resetter3<T, V>(private val intermediateConsumerFactory: () -> Consumer<T>,
+                      private val resetTrigger: ResetTrigger<T>,
+                      private val intermediateResultsTransformer: (intermediateResults: Any, seriesDescription: Any) -> V,
+                      private val finalConsumer: Consumer<V>): Consumer<T> {
     private var intermediateConsumer: Consumer<T> = intermediateConsumerFactory()
 
     override fun process(value: T) {
@@ -38,9 +37,10 @@ class Resetter2<T, V>(private val intermediateConsumerFactory: () -> Consumer<T>
     }
 }
 
-fun<T, V> consumeWithResetting2(intermediateConsumerFactory: () -> Consumer<T>,
-    resetTrigger: ResetTrigger<T>,
-                                   intermediateResultsTransformer: (a: Any, b: Any) -> V,
-                                   finalConsumer: Consumer<V>): Consumer<T> =
-    Resetter2(intermediateConsumerFactory, resetTrigger, intermediateResultsTransformer, finalConsumer)
+
+fun<T, V> consumeWithResetting3(intermediateConsumerFactory: () -> Consumer<T>,
+                                resetTrigger: ResetTrigger<T>,
+                                intermediateResultsTransformer: (a: Any, b: Any) -> V,
+                                finalConsumer: Consumer<V>): Consumer<T> =
+    Resetter3(intermediateConsumerFactory, resetTrigger, intermediateResultsTransformer, finalConsumer)
 

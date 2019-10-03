@@ -1,17 +1,12 @@
 package com.tgt.trans.common.examples.basics
 
-import com.tgt.trans.common.aggregator2.conditions.FirstItemCondition
-import com.tgt.trans.common.aggregator2.conditions.notSameProjectionAsFirst
-import com.tgt.trans.common.aggregator2.consumers.asList
-import com.tgt.trans.common.aggregator2.consumers.consume
-import com.tgt.trans.common.aggregator2.consumers.max
-import com.tgt.trans.common.aggregator2.consumers.min
+import com.tgt.trans.common.aggregator2.consumers.*
 import com.tgt.trans.common.aggregator2.decorators.allOf
 import com.tgt.trans.common.aggregator2.decorators.groupBy
 import com.tgt.trans.common.aggregator2.decorators.mapTo
 import com.tgt.trans.common.aggregator2.decorators.peek
-import com.tgt.trans.common.aggregator2.resetters.ResetterOnCondition
-import com.tgt.trans.common.aggregator2.resetters.consumeWithResetting2
+import com.tgt.trans.common.aggregator2.resetters.ResetterOnCondition2
+import com.tgt.trans.common.aggregator2.resetters.consumeWithResetting3
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -50,15 +45,12 @@ class HighAndLowTemperature {
         assertEquals(expected, finalDailyAggregates)
     }
 
-    fun getSeriesDate(resetter: ResetterOnCondition<Temperature>): LocalDate {
-        val condition = resetter.condition as FirstItemCondition
-        return condition.getFirstValue()!!.takenAt.toLocalDate()
-    }
-
     fun resetOnDayChange() =
-        ResetterOnCondition(keepValueThatTriggeredReset = false,
-            condition = notSameProjectionAsFirst { a: Temperature -> a.getDate() },
-            seriesDescriptor = { it -> getSeriesDate(it) } )
+        ResetterOnCondition2(keepValueThatTriggeredReset = false,
+            stateFactory = { FirstN<Temperature>(1) },
+            stateType = ResetterOnCondition2.StateType.Before,
+            condition = { state: Consumer<Temperature>, value: Temperature -> (state as FirstN).results()[0].getDate() != value.getDate()},
+            seriesDescriptor = { state: Consumer<Temperature> -> (state as FirstN).results()[0].getDate()} )
 
     fun mapResultsToDailyWeather(intermediateResults: Any, day: Any): DailyWeather {
         val consumers = intermediateResults as List<Any>
@@ -74,7 +66,7 @@ class HighAndLowTemperature {
             .mapTo { it: Temperature -> it.temperature }
             .allOf(min(), max())
         val dailyAggregates = temperatures.consume(
-            consumeWithResetting2(
+            consumeWithResetting3(
                 intermediateConsumerFactory = { intermediateConsumer },
                 resetTrigger = resetOnDayChange(),
                 intermediateResultsTransformer = intermediateResultsTransformer,
