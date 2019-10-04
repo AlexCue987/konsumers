@@ -96,15 +96,12 @@ Rejected items: [201]
 
 For a complete working example, refer to `examples/basics/IfOrElse.kt`.
 
+
 ### Using states in transformations
 
 As we are iterating items in our sequence, we can store any data in a state. This allows for easy solutions to many common problems.
 
-For instance, in the following example we are:
-
-* consuming a time series of temperature readings
-* storing the previous reading in a state
-* using the sate to transform temperature readings into a time series of temperature changes:
+For instance, in the following example we are using a state named `lastTwoItems` to transform a series of temperature reading into a series of temperature changes:
 
 ```kotlin
         val lastTwoItems = LastN<Temperature>(2)
@@ -131,17 +128,10 @@ current item Temperature(takenAt=2019-09-24T07:15, temperature=44)
 
 For a complete working example, refer to `examples/basics/TemperatureChanges.kt`.
 
-Any consumer can be used to store a state. Multiple states can be collected at the same time, or at different times. This is demonstrated in `examples/basics/TemperatureChanges.kt`.
-
-### Using states in transformations
-
-Using states in transformations, such as mappings and filters, allows for multiple advantages. They will be discussed below, one example at a time.
-
-* Filters and mappings can use a state, or have their own state, which allows for easy solution to many common problems.
-* Mappings do not have to produce an outgoing value for every incoming one, allowing us to solve problems without creating many short-lived objects.
-* In general, transformations process an incoming value, and provide one outgoing value, or several, or none at all.
+Any implementation of `Consumer` can be used to store a state. Multiple states can be collected at the same time, or at different times. This is demonstrated in `examples/basics/RaceResults.kt`.
 
 #### Stateful filters.
+
 In the following example we are processing a sequence of bank account deposits and withdrawals, and our filter makes sure that the account balance is never negative. The filter has a state which stores the current account balance, which allows for an easy solution.
 
 ```kotlin
