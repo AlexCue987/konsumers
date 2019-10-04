@@ -6,8 +6,8 @@ import com.tgt.trans.common.aggregator2.consumers.ConsumerBuilder
 class MultipleStatesKeeper<T>(private val innerConsumer: Consumer<T>,
                               private val states: List<Consumer<T>>): Consumer<T> {
     override fun process(value: T) {
-        innerConsumer.process(value)
         states.forEach { it.process(value) }
+        innerConsumer.process(value)
     }
 
     override fun results() = innerConsumer.results()

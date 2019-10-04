@@ -96,11 +96,15 @@ Rejected items: [201]
 
 For a complete working example, refer to `examples/basics/IfOrElse.kt`.
 
-### Keeping and using states
+### Using states in transformations
 
 As we are iterating items in our sequence, we can store any data in a state. This allows for easy solutions to many common problems.
 
-For instance, in the following example we are converting a time series of temperature readings into a time series of temperature changes:
+For instance, in the following example we are:
+
+* consuming a time series of temperature readings
+* storing the previous reading in a state
+* using the sate to transform temperature readings into a time series of temperature changes:
 
 ```kotlin
         val lastTwoItems = LastN<Temperature>(2)
@@ -127,7 +131,7 @@ current item Temperature(takenAt=2019-09-24T07:15, temperature=44)
 
 For a complete working example, refer to `examples/basics/TemperatureChanges.kt`.
 
-Any consumer can be used as a state. Multiple states can be collected at the same time.
+Any consumer can be used to store a state. Multiple states can be collected at the same time, or at different times. This is demonstrated in `examples/basics/TemperatureChanges.kt`.
 
 ### Using states in transformations
 

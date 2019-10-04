@@ -22,4 +22,7 @@ class GroupedConsumer<T, K>(private val keyFactory: (a: T) -> K,
 fun<T, K> groupBy(keyFactory: (a: T) -> K, innerConsumerFactory: () -> Consumer<T>) =
     GroupedConsumer(keyFactory, innerConsumerFactory)
 
+fun<T, V, K> ConsumerBuilder<T, V>.groupBy(keyFactory: (a: V) -> K,
+                                           innerConsumerFactory: () -> Consumer<V>) =
+    this.build(GroupedConsumer(keyFactory, innerConsumerFactory))
 
