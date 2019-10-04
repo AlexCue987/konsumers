@@ -5,8 +5,8 @@ Advanced work with Kotlin sequences. Developed to improve performance in cases w
 * Practical library designed to solve real-world problems.
 * Pure Kotlin.
 * Improves performance by doing less sequence iterations and less transformations.
-* A rich set of filtering, mapping, and other transformations.
-* Easy to use and etend.
+* A rich set of transformations, beyond basic filters and mappings.
+* Easy to use and extend.
 
 ## Basics
 
@@ -128,61 +128,46 @@ current item Temperature(takenAt=2019-09-24T07:15, temperature=44)
 
 For a complete working example, refer to `examples/basics/TemperatureChanges.kt`.
 
-Any implementation of `Consumer` can be used to store a state. Multiple states can be collected at the same time, or at different times. This is demonstrated in `examples/basics/RaceResults.kt`.
+Any implementation of `Consumer` can be used to store a state. Multiple states can be collected at the same time, or at different times. All this is demonstrated in `examples/advanced/RaceResults.kt`.
 
-#### Stateful filters.
+#### Using states with filters.
 
-In the following example we are processing a sequence of bank account deposits and withdrawals, and our filter makes sure that the account balance is never negative. The filter has a state which stores the current account balance, which allows for an easy solution.
+In the following example we are processing a sequence of bank account deposits and withdrawals, and our filter makes sure that the account balance is never negative. The filter uses a state which stores the current account balance.
 
 ```kotlin
-fun nonNegativeBalance(): Condition<BigDecimal> =
-    ConditionOnState(state = sumOfBigDecimal()) { currentSum: BigDecimal, change: BigDecimal -> (currentSum + change) >= BigDecimal.ZERO }
-
-(snip)
-
+        val currentBalance = sumOfBigDecimal()
         val changeToReject = BigDecimal("-2")
-        val changes = listOf(BigDecimal.ONE, BigDecimal("-1"), changeToReject, BigDecimal.ONE)
-        val condition = nonNegativeBalance()
-        val acceptedChanges = changes.consume(filterOn(condition).asList())[0]
-        assertEquals(listOf(BigDecimal.ONE, BigDecimal("-1"), BigDecimal.ONE), acceptedChanges)
+        val changes = listOf(BigDecimal("3"), BigDecimal("-2"), changeToReject, BigDecimal.ONE)
+        val acceptedChanges = changes.consume(
+            peek<BigDecimal> { println("Before filtering: $it, current balance : ${currentBalance.sum()}") }
+                .filterOn { (currentBalance.sum() + it) >= BigDecimal.ZERO }
+                .keepState(currentBalance)
+                .peek { println("After filtering, change: $it, current balance: ${currentBalance.sum()}") }
+                .asList()
+        )[0]
+        assertEquals(listOf(BigDecimal("3"), BigDecimal("-2"), BigDecimal.ONE), acceptedChanges)
+
+Before filtering: 3, current balance : 0
+After filtering, change: 3, current balance: 3
+Before filtering: -2, current balance : 3
+After filtering, change: -2, current balance: 1
+Before filtering: -2, current balance : 1
+Before filtering: 1, current balance : 1
+After filtering, change: 1, current balance: 2
 ```
 
-For a complete working example, refer to `examples/basics/StatefulFilter.kt`.
-
-#### Stateful mappings.
-
-In the following example we are converting a sequence of bank account deposits and withdrawals into a sequence of current balances. The mapping has a state which stores the current account balance, which allows for an easy solution.
-
-```kotlin
-class CurrentBalanceConsumerBuilder(): ConsumerBuilder<BigDecimal, BigDecimal> {
-    override fun build(innerConsumer: Consumer<BigDecimal>): Consumer<BigDecimal> = TransformationWithState(state = sumOfBigDecimal(),
-        condition = { currentSum: BigDecimal, change: BigDecimal -> (currentSum + change) >= BigDecimal.ZERO},
-        transformation = {stateValue: BigDecimal, incomingValue: BigDecimal -> sequenceOf(stateValue)},
-        innerConsumer = innerConsumer
-    )
-}
-
-fun toCurrentBalance() = CurrentBalanceConsumerBuilder()
-
-(snip)
-
-        val changes = listOf(BigDecimal.TEN, BigDecimal("-1"), BigDecimal("-1"), BigDecimal.ONE)
-        val currentBalance = changes.consume(toCurrentBalance().asList())[0]
-        assertEquals(listOf(BigDecimal.TEN, BigDecimal("9"), BigDecimal("8"), BigDecimal("9")), currentBalance)
-```
-
-For a complete working example, refer to `examples/basics/StatefulMapping.kt`.
+For a complete working example, refer to `examples/basics/NonNegativeAccountBalance.kt`.
 
 #### Combining mapping and filtering in one transformation.
 
 Typically a `filter` will accept or reject items without transforming them, and a `map` must produce a transformed item for every incoming one.
 
-Sometimes this approach means that we have to produce a lot of short-lived objects. For example, suppose that whenever more than a half of the amount on a bank account is withdrawn at once, we need to do something, such as trigger an alert. Traditionally, we would:
+Sometimes this approach forces us to produce a lot of short-lived objects. For example, suppose that whenever more than a half of the amount on a bank account is withdrawn at once, we need to do something, such as trigger an alert. Traditionally, we would:
 * map an incoming transaction amount into an instance of another class with two fields, `(previousBalance, transactionAmount)`
 * filter these instances
 * alert
 
-This is demonstrated in the following example:
+This is demonstrated in the following example, where four instances of `TransactionWithCurrentBalance` are created, and only one is actually used:
 
 ```kotlin
         val amounts = listOf(BigDecimal(100), BigDecimal(-10), BigDecimal(-1), BigDecimal(-50))
@@ -199,23 +184,31 @@ Before filtering: TransactionWithCurrentBalance(currentBalance=39, amount=-50)
 After filtering: TransactionWithCurrentBalance(currentBalance=39, amount=-50)
 ```
 
-We can both filter and transform in the same transformation, eliminating the need to create short-lived-objects, as follows:
+Using `konsumers`, we can both filter and transform in the same transformation, eliminating the need to create short-lived-objects, as follows:
 
 ```kotlin
+        val currentBalance = com.tgt.trans.common.aggregator2.consumers.sumOfBigDecimal()
         val amounts = listOf(BigDecimal(100), BigDecimal(-10), BigDecimal(-1), BigDecimal(-50))
-        val largeWithdrawals = amounts.consume(toLargeWithdrawal()
+        val largeWithdrawals = amounts.consume(
+            keepState(currentBalance)
+                .peek { println("Before filtering and mapping: item $it, currentBalance ${currentBalance.sum()}") }
+                .transformTo(condition = {value:BigDecimal -> -value > currentBalance.sum() * BigDecimal("0.5") },
+                    transformation = {value:BigDecimal -> sequenceOf(TransactionWithCurrentBalance(currentBalance.sum(), value))}
+                    )
             .peek { println("After mapping and filtering: $it") }
             .asList())
 
 After mapping and filtering: TransactionWithCurrentBalance(currentBalance=39, amount=-50)
 ```
+
 For a complete working example, refer to `examples/basics/LargeWithdrawals.kt`.
+
 
 ### Grouping and Resetting
 
 #### Basic Grouping
 
-We can group items by any key, which is equivalent to the standard function `associateBy``. Unlike in previous examples, we do not provide a consumer Instead, we provide a lambda that creates consumers as needed. Here is a basic example:
+We can group items by any key, which is equivalent to the standard function `associateBy``. Unlike in previous examples, we do not provide a consumer. Instead, we provide a lambda that creates consumers as needed. Here is a basic example:
 
 ```kotlin
         val things = listOf(Thing("Amber", "Circle"),
@@ -304,17 +297,17 @@ The following code accomplishes that:
         assertEquals(expected, finalDailyAggregates)
 ```
 
-This code works, but the daily aggregates are not available until we have consumed the whole sequence.
-
-Yet we know that we are consuming a time series, the data points are ordered by time, so as soon as we get a data point for Tuesday, we should be able to produce Monday's aggregates. This is why we need resetting, which is explained in the next section.
-
 For a complete working example, refer to `examples/basics/HighAndLowTemperature.kt`.
 
-#### Resetting 101
+This code works, but the daily aggregates are not available until we have consumed the whole sequence.
 
-In the following example we shall produce daily the same aggregates without grouping by date, using resetting instead. We shall accomplish that in several simple steps.
+Yet we know that we are consuming a time series, which means that the data points are ordered by time. As soon as we get a data point for Tuesday, we know that we are done consuming Monday's data. As such, we should be able to produce Monday's aggregates. This is why we need resetting, which is explained in the next section.
 
-First, we shall be just consuming the incoming data as it flows in. The consumer is unaware that it is producing daily aggregates, it just computes high and low temperatures:
+#### Resetting
+
+In the following example we shall produce the same aggregates using resetting. We shall accomplish that in several simple steps.
+
+First, we need to define a consumer for the incoming data. The consumer is unaware that it is producing daily aggregates, it just computes high and low temperatures:
 
 ```kotlin
         val intermediateConsumer = peek<Temperature> { println("Consuming $it") }
