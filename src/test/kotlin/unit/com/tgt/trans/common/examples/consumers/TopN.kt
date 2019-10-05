@@ -18,7 +18,8 @@ class TopNConsumerTest {
 
     @Test
     fun `both buckets filled some items rejected`() {
-        val actual = listOf(ball, puck, ski, pole, boot)
+        val things = listOf(ball, puck, ski, pole, boot)
+        val actual = things
             .consume(
                 topNBy(2) { a: Thing, b:Thing -> a.quantity.compareTo(b.quantity)},
                 topNBy(2) { a: Thing -> a.quantity }
