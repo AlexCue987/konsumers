@@ -684,6 +684,58 @@ Example:
 Complete example: `examples/transformations/FirstSkipLastStep`
 
 
+### KeepState
+
+Passes items to a consumer which stores a state, and passes these items, unchanged, downstream to the next consumer.
+
+Example:
+
+```kotlin
+        val maximum = max<Int>()
+        val numbers = listOf(1, 3, 2, 4)
+        val actual = numbers.consume(
+            keepState(maximum)
+                .peek { println("Processing item $it, state: ${maximum.results()}") }
+                .asList()
+        )
+
+        assertEquals(numbers, actual[0], "Items are passed through peek unchanged")
+
+Processing item 1, state: Optional[1]
+Processing item 3, state: Optional[3]
+Processing item 2, state: Optional[3]
+Processing item 4, state: Optional[4]
+```
+
+Complete example: `examples/transformations/KeepStateExample`
+
+### KeepStates
+
+Passes items to several consumers which stores several states, and passes these items, unchanged, downstream to the next consumer.
+
+Example:
+
+```kotlin
+        val minimum = min<Int>()
+        val maximum = max<Int>()
+        val numbers = listOf(2, 3, 1, 4)
+        val actual = numbers.consume(
+            keepStates(minimum, maximum)
+                .peek { println("Processing item $it, minimum: ${minimum.results()}, maximum: ${maximum.results()}") }
+                .asList()
+        )
+
+        assertEquals(numbers, actual[0], "Items are passed through peek unchanged")
+
+Processing item 2, minimum: Optional[2], maximum: Optional[2]
+Processing item 3, minimum: Optional[2], maximum: Optional[3]
+Processing item 1, minimum: Optional[1], maximum: Optional[3]
+Processing item 4, minimum: Optional[1], maximum: Optional[4]
+```
+
+Complete example: `examples/transformations/KeepSeveralStatesExample`
+
+
 ### Last
 
 Example:
@@ -708,6 +760,16 @@ Complete example: `examples/transformations/FirstSkipLastStep`
 
 Transform an incoming item into exactly one item.
 
+Example:
+
+```kotlin
+        val names = orderItems.consume(
+            mapTo<OrderItem, String> { it.name }.asList()
+        )
+        assertEquals(listOf("Apple", "Orange"), names[0])
+```
+
+Complete example: `examples/transformations/MapToExample`
 
 
 ### Skip
