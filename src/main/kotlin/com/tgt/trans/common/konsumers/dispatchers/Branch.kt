@@ -3,9 +3,9 @@ package com.tgt.trans.common.konsumers.dispatchers
 import com.tgt.trans.common.konsumers.consumers.Consumer
 import com.tgt.trans.common.konsumers.consumers.ConsumerBuilder
 
-class BranchConsumer<T>(val condition: (value: T) -> Boolean,
-                      private val consumerForAccepted: Consumer<T>,
-                      private val consumerForRejected: Consumer<T>) : Consumer<T> {
+class Branch<T>(val condition: (value: T) -> Boolean,
+                private val consumerForAccepted: Consumer<T>,
+                private val consumerForRejected: Consumer<T>) : Consumer<T> {
 
     override fun process(value: T) {
         if (condition(value)) {
@@ -23,18 +23,18 @@ class BranchConsumer<T>(val condition: (value: T) -> Boolean,
     }
 }
 
-class ChainedBranchConsumerBuilder<T>(val previousBuilder: ConsumerBuilder<T, T>,
-                                       val condition: (value: T) -> Boolean,
-                                       val consumerForRejected: Consumer<T>): ConsumerBuilder<T, T> {
-    override fun build(innerConsumer: Consumer<T>): Consumer<T> = previousBuilder.build(BranchConsumer(condition, innerConsumer, consumerForRejected))
+class ChainedBranchBuilder<T>(val previousBuilder: ConsumerBuilder<T, T>,
+                              val condition: (value: T) -> Boolean,
+                              val consumerForRejected: Consumer<T>): ConsumerBuilder<T, T> {
+    override fun build(innerConsumer: Consumer<T>): Consumer<T> = previousBuilder.build(Branch(condition, innerConsumer, consumerForRejected))
 }
 
-class BranchConsumerBuilder<T>(val condition: (value: T) -> Boolean,
-                             val consumerForRejected: Consumer<T>): ConsumerBuilder<T, T> {
-    override fun build(innerConsumer: Consumer<T>): Consumer<T> = BranchConsumer(condition, innerConsumer, consumerForRejected)
+class BranchBuilder<T>(val condition: (value: T) -> Boolean,
+                       val consumerForRejected: Consumer<T>): ConsumerBuilder<T, T> {
+    override fun build(innerConsumer: Consumer<T>): Consumer<T> = Branch(condition, innerConsumer, consumerForRejected)
 }
 
 fun<T> ConsumerBuilder<T, T>.branchOn(condition: (value: T) -> Boolean, consumerForRejected: Consumer<T>) =
-    ChainedBranchConsumerBuilder<T>(this, condition, consumerForRejected)
+    ChainedBranchBuilder<T>(this, condition, consumerForRejected)
 
-fun<T> branchOn(condition: (value: T) -> Boolean, consumerForRejected: Consumer<T>) = BranchConsumerBuilder(condition, consumerForRejected)
+fun<T> branchOn(condition: (value: T) -> Boolean, consumerForRejected: Consumer<T>) = BranchBuilder(condition, consumerForRejected)

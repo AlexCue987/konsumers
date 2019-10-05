@@ -75,14 +75,15 @@ For a complete working example, refer to `examples/basics/BranchingAfterTransfor
 ### Process both accepted and rejected items
 
 When we process a sequence and filter out items, we may also need to process rejected items by another consumer.
-To improve performance, we can use `BranchConsumer` to compute a filter condition only once, and process both accepted and rejected items by two different consumers.
+To improve performance, we can use a `Branch` to compute a filter condition only once, and process both accepted and rejected items by two different consumers.
 In the following example, some passenger have arrived at their final destination, while other need to transfer to another flight:
 
 ```kotlin
         val leavingSpaceport = asList<Passenger>()
         val transferringToAnotherFlight = asList<Passenger>()
-        passengers.consume(BranchConsumer({ it: Passenger -> it.destination == "Tattoine"},
-            consumerForAccepted=leavingSpaceport,
+
+        passengers.consume(Branch({ it: Passenger -> it.destination == "Tattoine"},
+            consumerForAccepted = leavingSpaceport,
             consumerForRejected = transferringToAnotherFlight))
 
         println("Left spaceport: ${leavingSpaceport.results()}")
@@ -566,6 +567,56 @@ We can also project items to `Comparable` values, and find top values by that pr
 
 Complete example: `examples/consumers/TopN`
 
+
+## Dispatchers
+
+### Branch
+
+Example:
+
+```kotlin
+        val leavingSpaceport = asList<Passenger>()
+        val transferringToAnotherFlight = asList<Passenger>()
+
+        passengers.consume(Branch({ it: Passenger -> it.destination == "Tattoine" },
+            consumerForAccepted = leavingSpaceport,
+            consumerForRejected = transferringToAnotherFlight))
+```
+
+Complete example: `examples/basics/Passengers`
+
+
+## Transformations
+
+### Batch
+
+Example:
+
+```kotlin
+        val actual = listOf(1, 2, 3)
+            .consume(
+                batches<Int>(batchSize = 2).asList()
+            )
+        assertEquals(listOf(listOf(1, 2), listOf(3)), actual[0])
+```
+
+Complete example: `examples/transformations/Batches`
+
+Note: each batch is accumulated in a list, which is passed downstream only when it is completed. Alternatively, we can use resetting and consume batches of data without the need to materialize batches in lists.
+
+### Filter
+
+Example:
+
+```kotlin
+        val actual = (1..5).asSequence().consume(
+            filterOn<Int> { it%2 == 0 }.asList()
+        )
+
+        assertEquals(listOf(2, 4), actual[0])
+```
+
+Complete example: `examples/transformations/FilterExample`
 
 [Complete list of consumers](#consumers)
 

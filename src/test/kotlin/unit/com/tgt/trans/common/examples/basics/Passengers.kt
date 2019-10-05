@@ -2,7 +2,7 @@ package com.tgt.trans.common.examples.basics
 
 import com.tgt.trans.common.konsumers.consumers.asList
 import com.tgt.trans.common.konsumers.consumers.consume
-import com.tgt.trans.common.konsumers.dispatchers.BranchConsumer
+import com.tgt.trans.common.konsumers.dispatchers.Branch
 import org.junit.jupiter.api.assertAll
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -26,7 +26,7 @@ class Passengers {
     fun `passengers leaving spaceport or transferring to another flight`() {
         val leavingSpaceport = asList<Passenger>()
         val transferringToAnotherFlight = asList<Passenger>()
-        passengers.consume(BranchConsumer({ it: Passenger -> it.destination == "Tattoine" },
+        passengers.consume(Branch({ it: Passenger -> it.destination == "Tattoine" },
             consumerForAccepted = leavingSpaceport,
             consumerForRejected = transferringToAnotherFlight))
 
