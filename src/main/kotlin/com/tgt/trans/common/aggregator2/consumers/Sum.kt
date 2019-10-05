@@ -23,3 +23,9 @@ fun sumOfBigDecimal(): Sum<BigDecimal> = Sum(initialValue = BigDecimal.ZERO) { a
 fun sumOfLong(): Sum<Long> = Sum(initialValue = 0L) { a: Long, b: Long -> a + b}
 
 fun sumOfInt(): Sum<Int> = Sum(initialValue = 0) { a: Int, b: Int -> a + b}
+
+fun<T> ConsumerBuilder<T, BigDecimal>.toSumOfBigDecimal() = this.build(sumOfBigDecimal())
+
+fun<T> ConsumerBuilder<T, Long>.toSumOfLong() = this.build(sumOfLong())
+
+fun<T> ConsumerBuilder<T, Int>.toSumOfInt() = this.build(sumOfInt())

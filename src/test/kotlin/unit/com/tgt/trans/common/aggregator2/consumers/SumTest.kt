@@ -1,18 +1,30 @@
 package com.tgt.trans.common.aggregator2.consumers
 
+import com.tgt.trans.common.aggregator2.decorators.mapTo
+import java.math.BigDecimal
 import kotlin.test.assertEquals
 import kotlin.test.Test
 
-class CounterTest {
+class SumTest {
     @Test
     fun handlesEmpty() {
-        val actual = listOf<Int>().consume(count())
-        assertEquals(0L, actual[0])
+        val actual = listOf<Int>().consume(sumOfInt())
+        assertEquals(0, actual[0])
     }
 
     @Test
     fun handlesOneItem() {
-        val actual = listOf(42).consume(count())
-        assertEquals(1L, actual[0])
+        val actual = listOf(42).consume(sumOfInt())
+        assertEquals(42, actual[0])
+    }
+
+    @Test
+    fun `handles several items`() {
+        val actual = listOf(1, 2).consume(
+            sumOfInt(),
+            mapTo { it:Int -> it.toLong() }.toSumOfLong(),
+            mapTo { it:Int -> BigDecimal.valueOf(it.toLong()) }.toSumOfBigDecimal())
+
+        assertEquals(listOf(3, 3L, BigDecimal.valueOf(3L)), actual)
     }
 }

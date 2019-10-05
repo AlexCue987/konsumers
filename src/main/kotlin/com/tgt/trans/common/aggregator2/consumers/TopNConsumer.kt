@@ -43,16 +43,8 @@ fun<T> topNBy(count: Int, comparator: (a:T, b:T) -> Int) =
 fun<T, F: Comparable<F>> topNBy(count: Int, projection: (a:T) -> F) =
     TopNConsumer(count, comparator = { a:T, b:T -> projection(a).compareTo(projection(b)) })
 
-fun<T, F: Comparable<F>> maxBy(comparator: (a:T, b:T) -> Int) = topNBy(1, comparator)
-
-fun<T, F: Comparable<F>> maxBy(projection: (a:T) -> F) = topNBy(1, projection)
-
 fun<T, V> ConsumerBuilder<T, V>.topNBy(count: Int, comparator: (a:V, b:V) -> Int) =
     this.build(TopNConsumer(count, comparator))
 
 fun<T, V, F: Comparable<F>> ConsumerBuilder<T, V>.topNBy(count: Int, projection: (a:V) -> F) =
     this.build(TopNConsumer(count, comparator = { a:V, b:V -> projection(a).compareTo(projection(b)) }))
-
-fun<T, V> ConsumerBuilder<T, V>.maxBy(comparator: (a:V, b:V) -> Int) = topNBy(1, comparator)
-
-fun<T, V, F: Comparable<F>> ConsumerBuilder<T, V>.maxBy(projection: (a:V) -> F) = topNBy(1, projection)

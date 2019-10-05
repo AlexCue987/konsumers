@@ -1,4 +1,4 @@
-package com.tgt.trans.common.examples
+package com.tgt.trans.common.examples.consumers
 
 import com.tgt.trans.common.aggregator2.consumers.consume
 import com.tgt.trans.common.aggregator2.consumers.topNBy
@@ -17,18 +17,21 @@ private val boot = Thing("Boot", 2)
 class TopNConsumerTest {
 
     @Test
-    fun `both buckets filled some items rejected`() {
+    fun `compare by a projection`() {
         val things = listOf(ball, puck, ski, pole, boot)
-        val actual = things
-            .consume(
-                topNBy(2) { a: Thing, b:Thing -> a.quantity.compareTo(b.quantity)},
-                topNBy(2) { a: Thing -> a.quantity }
-            )
+        val projection = { a: Thing -> a.quantity }
+        val actual = things.consume(topNBy(2, projection))
         val expected = listOf(listOf(pole), listOf(ski, boot))
-        assertAll(
-            { assertEquals(expected, actual[0], "lambda") },
-            { assertEquals(expected, actual[1], "projection") }
-        )
+        assertEquals(expected, actual[0])
+    }
+
+    @Test
+    fun `provide a comparator`() {
+        val things = listOf(ball, puck, ski, pole, boot)
+        val comparator = { a: Thing, b: Thing -> a.quantity.compareTo(b.quantity) }
+        val actual = things.consume(topNBy(2, comparator))
+        val expected = listOf(listOf(pole), listOf(ski, boot))
+        assertEquals(expected, actual[0])
     }
 }
 

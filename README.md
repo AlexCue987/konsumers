@@ -531,6 +531,43 @@ Example:
 Complete example: `examples/consumers/AlwaysSometimesNever`
 
 
+### Sum
+
+Example:
+
+```kotlin
+        val actual = listOf(1, 2).consume(
+            sumOfInt(),
+            mapTo { it:Int -> it.toLong() }.toSumOfLong(),
+            mapTo { it:Int -> BigDecimal.valueOf(it.toLong()) }.toSumOfBigDecimal())
+
+        assertEquals(listOf(3, 3L, BigDecimal.valueOf(3L)), actual)
+```
+
+Complete example: `examples/consumers/SumExample`
+
+### TopN
+
+In the following example we provide a `Comparator`, and find top two items, with ties:
+
+```kotlin
+        val comparator = { a: Thing, b: Thing -> a.quantity.compareTo(b.quantity) }
+        val actual = things.consume(topNBy(2, comparator))
+
+```
+
+Complete example: `examples/consumers/TopN`
+
+We can also project items to `Comparable` values, and find top values by that projection. In that case all we need to do is to provide a projection to `Comparable`. A built-in `Comparator` for that projection will be used:
+
+
+```kotlin
+        val projection = { a: Thing -> a.quantity }
+        val actual = things.consume(topNBy(2, projection))
+```
+
+Complete example: `examples/consumers/TopN`
+
 
 [Complete list of consumers](#consumers)
 
