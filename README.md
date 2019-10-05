@@ -335,7 +335,7 @@ Next, we need to transform the data collected by the consumer into the format th
     }
 ```
 
-Finally, let us plug all these pieces together:
+Finally, let us show how all these pieces work together:
 
 ```kotlin
         val dailyAggregates = temperatures.consume(
@@ -353,9 +353,184 @@ Consuming Temperature(takenAt=2019-09-24T17:20, temperature=61)
 Consuming DailyWeather(date=2019-09-24, low=44, high=61)
 ```
 
-As we have seen, a `DailyWeather` daily aggregate is available as soon as a data point for another day comes.
+As we have seen, a `DailyWeather` daily aggregate is available as soon we know that we have consumed all the data for the day.
 
 For a complete working example, refer to `examples/basics/HighAndLowTemperature.kt`.
+
+# Consumers
+
+### Always
+
+Example:
+
+```kotlin
+        val actual = listOf(1, -1).consume(
+            never { it > 0 },
+            always { it > 0 },
+            sometimes { it > 0 }
+        )
+        print(actual)
+        assertEquals(listOf(false, false, true), actual)
+```
+
+Complete example: `examples/consumers/AlwaysSometimesNever`
+
+### AsList
+
+Example:
+
+```kotlin
+        val actual = listOf(1, 2, 3)
+            .consume(filterOn<Int> { it > 1 }.asList())
+        assertEquals(listOf(2, 3), actual[0])
+```
+
+Complete example: `examples/consumers/AsList`
+
+### Averages
+
+Example:
+
+```kotlin
+        val actual = (1..10).asSequence()
+            .consume(
+                avgOfInt(),
+                mapTo { it: Int -> it.toLong() }.avgOfLong(),
+                mapTo { it: Int -> BigDecimal.valueOf(it.toLong()) }.avgOfBigDecimal()
+                )
+
+        print(actual)
+
+[Optional[5.50], Optional[5.50], Optional[5.50]]
+```
+
+Complete example: `examples/consumers/MinMaxCountAvg`
+
+### Count
+
+Example:
+
+```kotlin
+        val actual = (1..10).asSequence()
+            .consume(count())                )
+
+        print(actual)
+
+[10]
+```
+
+Complete example: `examples/consumers/MinMaxCountAvg`
+
+### FirstN
+
+Example:
+
+```kotlin
+        val actual = (1..10).asSequence()
+            .consume(FirstN(2), LastN(2))
+
+        print(actual)
+
+        assertEquals(listOf(listOf(1, 2), listOf(9, 10)), actual)
+
+[[1, 2], [9, 10]]
+```
+
+Complete example: `examples/consumers/FirstAndLast`
+
+### LastN
+
+Example:
+
+```kotlin
+        val actual = (1..10).asSequence()
+            .consume(FirstN(2), LastN(2))
+
+        print(actual)
+
+        assertEquals(listOf(listOf(1, 2), listOf(9, 10)), actual)
+
+[[1, 2], [9, 10]]
+```
+
+Complete example: `examples/consumers/FirstAndLast`
+
+### Max
+
+Example:
+
+```kotlin
+        val actual = (1..10).asSequence()
+            .consume(min(), max())
+
+        print(actual)
+
+[Optional[1], Optional[10]]
+```
+
+Complete example: `examples/consumers/MinMaxCountAvg`
+
+### Min
+
+Example:
+
+```kotlin
+        val actual = (1..10).asSequence()
+            .consume(min(), max())
+
+        print(actual)
+
+[Optional[1], Optional[10]]
+```
+
+Complete example: `examples/consumers/MinMaxCountAvg`
+
+### Never
+
+Example:
+
+```kotlin
+        val actual = listOf(1, -1).consume(
+            never { it > 0 },
+            always { it > 0 },
+            sometimes { it > 0 }
+        )
+        print(actual)
+        assertEquals(listOf(false, false, true), actual)
+```
+
+Complete example: `examples/consumers/AlwaysSometimesNever`
+
+### RatioOf
+
+Example:
+
+```kotlin
+        val actual = listOf(1, 2, 3).consume(ratioOf { it%2 == 0 })
+        print(actual)
+
+[Ratio2(conditionMet=1, outOf=3)]
+```
+
+Complete example: `examples/consumers/RatioOf`
+
+### Sometimes
+
+Example:
+
+```kotlin
+        val actual = listOf(1, -1).consume(
+            never { it > 0 },
+            always { it > 0 },
+            sometimes { it > 0 }
+        )
+        print(actual)
+        assertEquals(listOf(false, false, true), actual)
+```
+
+Complete example: `examples/consumers/AlwaysSometimesNever`
+
+
 
 [Complete list of consumers](#consumers)
 

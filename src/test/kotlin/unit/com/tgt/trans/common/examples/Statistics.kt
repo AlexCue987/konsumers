@@ -1,7 +1,7 @@
 package com.tgt.trans.common.examples
 
 import com.tgt.trans.common.aggregator2.consumers.consume
-import com.tgt.trans.common.aggregator2.consumers.counter
+import com.tgt.trans.common.aggregator2.consumers.count
 import com.tgt.trans.common.aggregator2.consumers.max
 import com.tgt.trans.common.aggregator2.consumers.min
 import java.util.*
@@ -14,7 +14,7 @@ class Statistics {
         val actual = (1..10).asSequence()
                 .consume(min(),
                     max(),
-                    counter())
+                    count())
 
         assertEquals(
                 listOf(Optional.of(1),

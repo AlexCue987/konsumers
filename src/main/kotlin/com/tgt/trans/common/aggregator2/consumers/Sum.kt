@@ -19,3 +19,7 @@ class Sum<T>(initialValue: T,
 }
 
 fun sumOfBigDecimal(): Sum<BigDecimal> = Sum(initialValue = BigDecimal.ZERO) { a: BigDecimal, b: BigDecimal -> a + b}
+
+fun sumOfLong(): Sum<Long> = Sum(initialValue = 0L) { a: Long, b: Long -> a + b}
+
+fun sumOfInt(): Sum<Int> = Sum(initialValue = 0) { a: Int, b: Int -> a + b}

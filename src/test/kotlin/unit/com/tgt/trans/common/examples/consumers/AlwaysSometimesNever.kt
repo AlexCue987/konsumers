@@ -1,4 +1,4 @@
-package com.tgt.trans.common.examples
+package com.tgt.trans.common.examples.consumers
 
 import com.tgt.trans.common.aggregator2.consumers.always
 import com.tgt.trans.common.aggregator2.consumers.consume
@@ -15,6 +15,7 @@ class AlwaysSometimesNever {
             always { it > 0 },
             sometimes { it > 0 }
         )
+        print(actual)
         assertEquals(listOf(false, false, true), actual)
     }
 }

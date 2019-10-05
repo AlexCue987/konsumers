@@ -44,7 +44,7 @@ class ConsumerTest {
     fun filterOn_chainedAfter() {
         val actual = listOf(1, 2, 3, 4, 5).consume(
                 com.tgt.trans.common.aggregator2.decorators.mapTo { a: Int -> a + 1 }.filterOn { it: Int -> it % 2 == 0 }.count(),
-                counter())
+            count())
         assertEquals(listOf(3L, 5L), actual)
     }
 
@@ -52,7 +52,7 @@ class ConsumerTest {
     fun filterOnMapTo() {
         val actual = listOf(1, 2, 3, 4, 5).consume(
                 filterOn { it: Int -> it % 2 == 0 }.mapTo{ a: Int -> a + 1}.count(),
-                counter())
+            count())
         assertEquals(listOf(2L, 5L), actual)
     }
 }

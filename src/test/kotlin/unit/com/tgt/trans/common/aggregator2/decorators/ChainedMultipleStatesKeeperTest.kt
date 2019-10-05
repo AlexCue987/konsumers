@@ -2,7 +2,7 @@ package com.tgt.trans.common.aggregator2.decorators
 
 import com.tgt.trans.common.aggregator2.consumers.asList
 import com.tgt.trans.common.aggregator2.consumers.consume
-import com.tgt.trans.common.aggregator2.consumers.counter
+import com.tgt.trans.common.aggregator2.consumers.count
 import org.junit.jupiter.api.assertAll
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -10,7 +10,7 @@ import kotlin.test.assertTrue
 
 class ChainedMultipleStatesKeeperTest {
     private val listToKeep = asList<Int>()
-    private val countToKeep = counter<Int>()
+    private val countToKeep = count<Int>()
     private val sut = filterOn<Int> { it > 0 }.keepStates(listToKeep, countToKeep).asList()
 
     @Test

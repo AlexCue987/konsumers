@@ -10,4 +10,4 @@ class Counter<T> : Consumer<T> {
 
 fun<T, V> ConsumerBuilder<T, V>.count() = this.build(Counter())
 
-fun<T> counter() = Counter<T>()
+fun<T> count() = Counter<T>()

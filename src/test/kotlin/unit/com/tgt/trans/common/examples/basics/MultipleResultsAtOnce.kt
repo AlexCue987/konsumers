@@ -19,7 +19,7 @@ class MultipleResultsAtOnce {
         val lowestTemperature = mapTo<DailyWeather, Int> { it -> it.low }
             .min()
 
-        val dayCount = counter<DailyWeather>()
+        val dayCount = count<DailyWeather>()
 
         val allResults = dailyWeather.consume(highestTemperatureOnSunnyDay, lowestTemperature, dayCount)
 

@@ -1,4 +1,4 @@
-package com.tgt.trans.common.examples
+package com.tgt.trans.common.examples.consumers
 
 import com.tgt.trans.common.aggregator2.consumers.asList
 import com.tgt.trans.common.aggregator2.consumers.consume

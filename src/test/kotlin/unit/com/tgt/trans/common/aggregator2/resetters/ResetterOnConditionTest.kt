@@ -5,7 +5,7 @@
 //import com.tgt.trans.common.aggregator2.conditions.lastItemCondition
 //import com.tgt.trans.common.aggregator2.consumers.asList
 //import com.tgt.trans.common.aggregator2.consumers.consume
-//import com.tgt.trans.common.aggregator2.consumers.counter
+//import com.tgt.trans.common.aggregator2.consumers.count
 //import com.tgt.trans.common.aggregator2.consumers.max
 //import java.lang.Math.abs
 //import java.util.*
@@ -35,19 +35,19 @@
 //
 //    @Test
 //    fun `resetWhen handles exactly one event at start of series`() {
-//        val actual = listOf(1, 0, -1).consume(counter<Int>().resetWhen(positive, intermediateResultsTransformerToLong, asList()))
+//        val actual = listOf(1, 0, -1).consume(count<Int>().resetWhen(positive, intermediateResultsTransformerToLong, asList()))
 //        assertEquals(listOf(3L), actual[0] )
 //    }
 //
 //    @Test
 //    fun `resetAfter handles exactly one event at start of series`() {
-//        val actual = listOf(1, 0, 0).consume(counter<Int>().resetAfter(positive, intermediateResultsTransformerToLong, asList()))
+//        val actual = listOf(1, 0, 0).consume(count<Int>().resetAfter(positive, intermediateResultsTransformerToLong, asList()))
 //        assertEquals(listOf(1L, 2L), actual[0] )
 //    }
 //
 //    @Test
 //    fun `resetWhen handles exactly one event at end of series`() {
-//        val actual = listOf(-1, 0, 1).consume(counter<Int>().resetWhen(positive, intermediateResultsTransformerToLong, asList()))
+//        val actual = listOf(-1, 0, 1).consume(count<Int>().resetWhen(positive, intermediateResultsTransformerToLong, asList()))
 //        assertEquals(listOf(2L, 1L), actual[0] )
 //    }
 //
@@ -59,19 +59,19 @@
 //
 //    @Test
 //    fun `resetAfter handles exactly one event at end of series`() {
-//        val actual = listOf(-1, 0, 1).consume(counter<Int>().resetAfter(positive, intermediateResultsTransformerToLong, asList()))
+//        val actual = listOf(-1, 0, 1).consume(count<Int>().resetAfter(positive, intermediateResultsTransformerToLong, asList()))
 //        assertEquals(listOf(3L), actual[0] )
 //    }
 //
 //    @Test
 //    fun `resetWhen handles exactly one event in the middle of series`() {
-//        val actual = listOf(-1, 0, 1, 0).consume(counter<Int>().resetWhen(positive, intermediateResultsTransformerToLong, asList()))
+//        val actual = listOf(-1, 0, 1, 0).consume(count<Int>().resetWhen(positive, intermediateResultsTransformerToLong, asList()))
 //        assertEquals(listOf(2L, 2L), actual[0] )
 //    }
 //
 //    @Test
 //    fun `resetAfter handles exactly one event in the middle of series`() {
-//        val actual = listOf(-1, 0, 1, 0).consume(counter<Int>().resetAfter(positive, intermediateResultsTransformerToLong, asList()))
+//        val actual = listOf(-1, 0, 1, 0).consume(count<Int>().resetAfter(positive, intermediateResultsTransformerToLong, asList()))
 //        assertEquals(listOf(3L, 1L), actual[0] )
 //    }
 //
@@ -83,13 +83,13 @@
 //
 //    @Test
 //    fun `resetWhen handles two consecutive events`() {
-//        val actual = listOf(1, 2, -1).consume(counter<Int>().resetWhen(positive, intermediateResultsTransformerToLong, asList()))
+//        val actual = listOf(1, 2, -1).consume(count<Int>().resetWhen(positive, intermediateResultsTransformerToLong, asList()))
 //        assertEquals(listOf(1L, 2L), actual[0] )
 //    }
 //
 //    @Test
 //    fun `resetAfter handles two consecutive events`() {
-//        val actual = listOf(1, 2, 0).consume(counter<Int>().resetAfter(positive, intermediateResultsTransformerToLong, asList()))
+//        val actual = listOf(1, 2, 0).consume(count<Int>().resetAfter(positive, intermediateResultsTransformerToLong, asList()))
 //        assertEquals(listOf(1L, 1L, 1L), actual[0] )
 //    }
 //

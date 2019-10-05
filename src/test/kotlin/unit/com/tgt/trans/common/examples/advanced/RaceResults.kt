@@ -23,7 +23,7 @@ class RaceResults {
 
     @Test
     fun `uses states to store overall and age group place and best time`() {
-        val overallPlace = counter<Finisher>()
+        val overallPlace = count<Finisher>()
         val bestTime = FirstN<Finisher>(1)
         val raceResults = finishers.consume(
             keepStates(overallPlace, bestTime)
@@ -48,7 +48,7 @@ class RaceResults {
     }
 
     private fun ageGroupConsumer(overallPlace: Counter<Finisher>, bestTime: FirstN<Finisher>): Consumer<Finisher> {
-        val ageGroupPlace = counter<Finisher>()
+        val ageGroupPlace = count<Finisher>()
         return keepState(ageGroupPlace).mapTo { it: Finisher -> RaceResult(it,
             overallPlace=overallPlace.counter.toInt(),
             ageGroupPlace = ageGroupPlace.counter.toInt(),

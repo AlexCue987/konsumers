@@ -19,9 +19,9 @@ class BranchingAfterTransformation {
         val lowestHighTemperature = mapTo<DailyWeather, Int> { it -> it.high }
             .min()
 
-        val rainyDaysCount = counter<DailyWeather>()
+        val rainyDaysCount = count<DailyWeather>()
 
-        val dayCount = counter<DailyWeather>()
+        val dayCount = count<DailyWeather>()
 
         val verySlowFilter = filterOn<DailyWeather> { it -> it.rainAmount > BigDecimal.ZERO }
 
@@ -42,7 +42,7 @@ class BranchingAfterTransformation {
 
         val maxTemperature = max<Int>()
 
-        val dayCount = counter<DailyWeather>()
+        val dayCount = count<DailyWeather>()
 
         val verySlowMapping = mapTo<DailyWeather, Int> { it -> it.low }
 
@@ -62,9 +62,9 @@ class BranchingAfterTransformation {
 
         val maxTemperature = max<Int>()
 
-        val rainyDaysCount = counter<DailyWeather>()
+        val rainyDaysCount = count<DailyWeather>()
 
-        val allDaysCount = counter<DailyWeather>()
+        val allDaysCount = count<DailyWeather>()
 
         val verySlowFilter = filterOn<DailyWeather> { it -> it.rainAmount > BigDecimal.ZERO }
         val verySlowMapping = mapTo<DailyWeather, Int> { it -> it.low }

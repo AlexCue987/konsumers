@@ -1,4 +1,4 @@
-package com.tgt.trans.common.examples
+package com.tgt.trans.common.examples.consumers
 
 import com.tgt.trans.common.aggregator2.consumers.Ratio2
 import com.tgt.trans.common.aggregator2.consumers.consume
@@ -10,6 +10,7 @@ class RatioOf {
     @Test
     fun `computes ratio`() {
         val actual = listOf(1, 2, 3).consume(ratioOf { it%2 == 0 })
+        print(actual)
         assertEquals(Ratio2(conditionMet = 1L, outOf = 3L), actual[0])
     }
 }
