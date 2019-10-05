@@ -570,7 +570,34 @@ Complete example: `examples/consumers/TopN`
 
 ## Dispatchers
 
+Dispatchers pass incoming items to one or more consumers.
+
+### AllOf
+
+Pass every item to every consumer in the list.
+
+Example:
+
+```kotlin
+       val actual = (1..10).asSequence()
+            .consume(
+                filterOn<Int> { it > 2 }
+                    .mapTo { it * 2 }
+                    .allOf(min(), max()))
+
+        assertEquals(
+            listOf(
+                listOf(Optional.of(6), Optional.of(20))),
+            actual)
+```
+
+Complete example: `examples/transformations/AllOfExample`
+Another example with nested uses of `allOf``: `examples/transformations/AllOfNestedExample`
+
+
 ### Branch
+
+Evaluate an item against a condition, pass it to one of two consumers.
 
 Example:
 
@@ -584,6 +611,25 @@ Example:
 ```
 
 Complete example: `examples/basics/Passengers`
+
+### Group
+
+Example:
+
+```kotlin
+        val actual = things
+            .consume(
+                groupBy(
+                    keyFactory = { it: Thing -> it.color },
+                    innerConsumerFactory = { count() }
+                )
+            )
+
+        assertEquals(mapOf("Amber" to 2L, "Red" to 1L), actual[0])
+```
+
+Complete example: `examples/transformations/GroupsExample`
+Advanced examples: `examples/basics/BasicGroups`
 
 
 ## Transformations
@@ -606,6 +652,8 @@ Note: each batch is accumulated in a list, which is passed downstream only when 
 
 ### Filter
 
+This is basic filtering, not different from the one in standard Kotlin library.
+
 Example:
 
 ```kotlin
@@ -617,6 +665,83 @@ Example:
 ```
 
 Complete example: `examples/transformations/FilterExample`
+
+### First
+
+Example:
+
+```kotlin
+        val actual = (0..10).asSequence()
+            .consume(
+                first<Int>(2).asList()
+            )
+
+        assertEquals(listOf(
+            listOf(0, 1),
+            actual)
+```
+
+Complete example: `examples/transformations/FirstSkipLastStep`
+
+
+### Last
+
+Example:
+
+```kotlin
+        val actual = (0..10).asSequence()
+            .consume(
+                last<Int>(2).asList(),
+                skip<Int>(3).step(2).first(3).asList()
+            )
+
+        assertEquals(listOf(
+            listOf(9, 10),
+            listOf(4, 6, 8)),
+            actual)
+```
+
+Complete example: `examples/transformations/FirstSkipLastStep`
+
+
+### Skip
+
+Example:
+
+```kotlin
+        val actual = (0..10).asSequence()
+            .consume(
+                skip<Int>(8).asList(),
+                skip<Int>(3).step(2).first(3).asList()
+            )
+
+        assertEquals(listOf(
+            listOf(8, 9, 10),
+            listOf(4, 6, 8)),
+            actual)
+```
+
+Complete example: `examples/transformations/FirstSkipLastStep`
+
+
+### Step
+
+Example:
+
+```kotlin
+        val actual = (0..10).asSequence()
+            .consume(
+                step<Int>(4).asList(),
+                skip<Int>(3).step(2).first(3).asList()
+            )
+
+        assertEquals(listOf(
+            listOf(3, 7),
+            listOf(4, 6, 8)),
+            actual)
+```
+
+Complete example: `examples/transformations/FirstSkipLastStep`
 
 [Complete list of consumers](#consumers)
 

@@ -1,4 +1,4 @@
-package com.tgt.trans.common.examples
+package com.tgt.trans.common.examples.transformations
 
 import com.tgt.trans.common.konsumers.consumers.asList
 import com.tgt.trans.common.konsumers.consumers.consume
@@ -17,6 +17,7 @@ class FirstSkipLastStep {
                 step<Int>(4).asList(),
                 skip<Int>(3).step(2).first(3).asList()
             )
+
         assertEquals(listOf(
             listOf(0, 1),
             listOf(8, 9, 10),

@@ -1,9 +1,9 @@
-package com.tgt.trans.common.konsumers.transformations
+package com.tgt.trans.common.konsumers.dispatchers
 
 import com.tgt.trans.common.konsumers.consumers.Consumer
 import com.tgt.trans.common.konsumers.consumers.ConsumerBuilder
 
-class GroupedConsumer<T, K>(private val keyFactory: (a: T) -> K,
+class GroupDispatcher<T, K>(private val keyFactory: (a: T) -> K,
                             private val innerConsumerFactory: () -> Consumer<T>) : Consumer<T> {
     private val groups = mutableMapOf<K, Consumer<T>>()
 
@@ -20,9 +20,9 @@ class GroupedConsumer<T, K>(private val keyFactory: (a: T) -> K,
 }
 
 fun<T, K> groupBy(keyFactory: (a: T) -> K, innerConsumerFactory: () -> Consumer<T>) =
-    GroupedConsumer(keyFactory, innerConsumerFactory)
+    GroupDispatcher(keyFactory, innerConsumerFactory)
 
 fun<T, V, K> ConsumerBuilder<T, V>.groupBy(keyFactory: (a: V) -> K,
                                            innerConsumerFactory: () -> Consumer<V>) =
-    this.build(GroupedConsumer(keyFactory, innerConsumerFactory))
+    this.build(GroupDispatcher(keyFactory, innerConsumerFactory))
 

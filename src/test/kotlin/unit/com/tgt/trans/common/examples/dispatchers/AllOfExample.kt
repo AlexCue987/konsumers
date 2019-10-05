@@ -1,4 +1,4 @@
-package com.tgt.trans.common.examples
+package com.tgt.trans.common.examples.dispatchers
 
 import com.tgt.trans.common.konsumers.consumers.consume
 import com.tgt.trans.common.konsumers.consumers.max
@@ -12,16 +12,16 @@ import kotlin.test.Test
 
 class AllOfExample {
     @Test
-    fun decorateConsumers() {
+    fun `allOf after transformations`() {
         val actual = (1..10).asSequence()
-                .consume(
-                        filterOn<Int> { it > 2 }
-                                .mapTo { it * 2 }
-                                .allOf(min(), max()))
+            .consume(
+                filterOn<Int> { it > 2 }
+                    .mapTo { it * 2 }
+                    .allOf(min(), max()))
 
         assertEquals(
-                listOf(
-                        listOf(Optional.of(6), Optional.of(20))),
-                actual)
+            listOf(
+                listOf(Optional.of(6), Optional.of(20))),
+            actual)
     }
 }

@@ -1,4 +1,4 @@
-package com.tgt.trans.common.examples
+package com.tgt.trans.common.examples.dispatchers
 
 import com.tgt.trans.common.konsumers.consumers.consume
 import com.tgt.trans.common.konsumers.consumers.max

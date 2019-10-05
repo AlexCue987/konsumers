@@ -3,10 +3,11 @@ package com.tgt.trans.common.konsumers.transformations
 import com.tgt.trans.common.konsumers.consumers.asList
 import com.tgt.trans.common.konsumers.consumers.consume
 import com.tgt.trans.common.konsumers.consumers.count
+import com.tgt.trans.common.konsumers.dispatchers.groupBy
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class GroupedConsumerTest {
+class GroupDispatcherTest {
     private val things = listOf(Thing("Amber", "Circle"),
         Thing("Amber", "Square"),
         Thing("Red", "Oval"))
@@ -14,7 +15,7 @@ class GroupedConsumerTest {
     @Test
     fun groups() {
         val actual = things
-                .consume(groupBy(keyFactory =  { it: Thing -> it.color },
+                .consume(groupBy(keyFactory = { it: Thing -> it.color },
                     innerConsumerFactory = { count() }))
         assertEquals(mapOf("Amber" to 2L, "Red" to 1L), actual[0])
     }
@@ -22,7 +23,7 @@ class GroupedConsumerTest {
     @Test
     fun `groups several consumers`() {
         val actual = things
-            .consume(groupBy(keyFactory =  { it: Thing -> it.color },
+            .consume(groupBy(keyFactory = { it: Thing -> it.color },
                 innerConsumerFactory = { allOf(count(), mapTo { it: Thing -> it.shape }.asList()) }))
         assertEquals(mapOf("Amber" to listOf(2L, listOf("Circle", "Square")), "Red" to listOf(1L, listOf("Oval"))), actual[0])
     }

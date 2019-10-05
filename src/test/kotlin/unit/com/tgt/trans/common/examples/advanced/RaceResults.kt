@@ -1,6 +1,7 @@
 package com.tgt.trans.common.examples.advanced
 
 import com.tgt.trans.common.konsumers.consumers.*
+import com.tgt.trans.common.konsumers.dispatchers.groupBy
 import com.tgt.trans.common.konsumers.transformations.*
 import java.time.Duration
 import java.time.LocalTime
