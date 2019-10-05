@@ -1,7 +1,8 @@
-package com.tgt.trans.common.konsumers.transformations
+package com.tgt.trans.common.konsumers.dispatchers
 
 import com.tgt.trans.common.konsumers.consumers.asList
 import com.tgt.trans.common.konsumers.consumers.consume
+import com.tgt.trans.common.konsumers.dispatchers.branchOn
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

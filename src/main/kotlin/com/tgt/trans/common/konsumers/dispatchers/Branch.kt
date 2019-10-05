@@ -1,4 +1,4 @@
-package com.tgt.trans.common.konsumers.transformations
+package com.tgt.trans.common.konsumers.dispatchers
 
 import com.tgt.trans.common.konsumers.consumers.Consumer
 import com.tgt.trans.common.konsumers.consumers.ConsumerBuilder
