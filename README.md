@@ -2,20 +2,21 @@
 
 Advanced work with Kotlin sequences. Developed to improve performance in cases when iterating the sequence and/or transforming its items is slow.
 
+* Allows to iterate a sequence once and simultaneously compute multiple results, improving performance.
+* Allows to use one slow computation, such as filtering or mapping, in multiple results, improving performance.
 * Practical library designed to solve real-world problems.
 * Pure Kotlin.
-* Improves performance by doing less sequence iterations and less transformations.
 * A rich set of transformations, beyond basic filters and mappings.
-* Easy to use and extend.
+* Very easy to extend.
 
 ## Basics
 
-### Computing multiple results while iterating a sequence once.
+### Computing multiple results while iterating a sequence once, to improve performance.
 
-The following example iterates over daily weather data once, and computes the following:
+The following example iterates over daily weather data once, and simultaneously computes the following:
 
-* the coldest days
-* the warmest sunny days
+* the highest temperature on sunny day
+* the lowest temperature
 * number of days
 
 ```kotlin
@@ -47,7 +48,7 @@ Optional[20]
 
 For a complete working example, refer to `examples/basics/MultipleResultsAtOnce.kt`.
 
-### Reusing one filtering or mapping in multiple consumers
+### Reusing one filtering or mapping in multiple consumers, to improve performance.
 
 The following example shows how to apply a slow filtering condition to three consumers, `lowestLowTemperature`, `lowestHighTemperature`, and `rainyDaysCount`:
 
@@ -71,30 +72,27 @@ The following example shows how to apply a slow filtering condition to three con
 
 For a complete working example, refer to `examples/basics/BranchingAfterTransformation.kt`.
 
-### Process filtered out items
+### Process both accepted and rejected items
 
 When we process a sequence and filter out items, we may also need to process rejected items by another consumer.
-To improve performance, we can use `branchOn` to compute a filter condition only once, and process both accepted and rejected items by two different consumers.
-In the following example , we process a sequence of temperature readings, compute min and max when the temperature is in acceptable range, and alert when the temperature is too high:
+To improve performance, we can use `BranchConsumer` to compute a filter condition only once, and process both accepted and rejected items by two different consumers.
+In the following example, some passenger have arrived at their final destination, while other need to transfer to another flight:
 
 ```kotlin
-        val alertOnVeryHighTemperature = asList<Int>()
-        val minimumTemperature = min<Int>()
-        val maximumTemperature = max<Int>()
-        val sut = branchOn(condition = { a: Int -> a < 200 },
-            consumerForRejected = alertOnVeryHighTemperature).allOf(minimumTemperature, maximumTemperature)
-        val veryHighTemperature = 201
-        val actual = listOf(75, 82, 55, veryHighTemperature, 74).consume(sut)
-        println("minimumTemperature: ${minimumTemperature.results()}")
-        println("maximumTemperature: ${maximumTemperature.results()}")
-        println("Rejected items: ${alertOnVeryHighTemperature.results()}")
+        val leavingSpaceport = asList<Passenger>()
+        val transferringToAnotherFlight = asList<Passenger>()
+        passengers.consume(BranchConsumer({ it: Passenger -> it.destination == "Tattoine"},
+            consumerForAccepted=leavingSpaceport,
+            consumerForRejected = transferringToAnotherFlight))
 
-minimumTemperature: Optional[55]
-maximumTemperature: Optional[82]
-Rejected items: [201]
+        println("Left spaceport: ${leavingSpaceport.results()}")
+        println("Transferred: ${transferringToAnotherFlight.results()}")
+
+Left spaceport: [Passenger(name=Yoda, destination=Tattoine), Passenger(name=Chewbacca, destination=Tattoine)]
+Transferred: [Passenger(name=R2D2, destination=Alderaan), Passenger(name=Han Solo, destination=Alderaan)]
 ```
 
-For a complete working example, refer to `examples/basics/IfOrElse.kt`.
+For a complete working example, refer to `examples/basics/Passengers.kt`.
 
 
 ### Using states in transformations
