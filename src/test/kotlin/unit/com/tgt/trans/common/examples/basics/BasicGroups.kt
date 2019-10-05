@@ -1,11 +1,11 @@
 package com.tgt.trans.common.examples.basics
 
-import com.tgt.trans.common.aggregator2.consumers.asList
-import com.tgt.trans.common.aggregator2.consumers.consume
-import com.tgt.trans.common.aggregator2.consumers.count
-import com.tgt.trans.common.aggregator2.decorators.allOf
-import com.tgt.trans.common.aggregator2.decorators.groupBy
-import com.tgt.trans.common.aggregator2.decorators.mapTo
+import com.tgt.trans.common.konsumers.consumers.asList
+import com.tgt.trans.common.konsumers.consumers.consume
+import com.tgt.trans.common.konsumers.consumers.count
+import com.tgt.trans.common.konsumers.transformations.allOf
+import com.tgt.trans.common.konsumers.transformations.groupBy
+import com.tgt.trans.common.konsumers.transformations.mapTo
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -1,12 +1,12 @@
 package com.tgt.trans.common.examples.basics
 
-import com.tgt.trans.common.aggregator2.consumers.*
-import com.tgt.trans.common.aggregator2.decorators.allOf
-import com.tgt.trans.common.aggregator2.decorators.groupBy
-import com.tgt.trans.common.aggregator2.decorators.mapTo
-import com.tgt.trans.common.aggregator2.decorators.peek
-import com.tgt.trans.common.aggregator2.resetters.ResetTrigger
-import com.tgt.trans.common.aggregator2.resetters.consumeWithResetting
+import com.tgt.trans.common.konsumers.consumers.*
+import com.tgt.trans.common.konsumers.transformations.allOf
+import com.tgt.trans.common.konsumers.transformations.groupBy
+import com.tgt.trans.common.konsumers.transformations.mapTo
+import com.tgt.trans.common.konsumers.transformations.peek
+import com.tgt.trans.common.konsumers.resetters.ResetTrigger
+import com.tgt.trans.common.konsumers.resetters.consumeWithResetting
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime

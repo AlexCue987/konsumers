@@ -1,8 +1,8 @@
 package com.tgt.trans.common.examples.consumers
 
-import com.tgt.trans.common.aggregator2.consumers.FirstN
-import com.tgt.trans.common.aggregator2.consumers.LastN
-import com.tgt.trans.common.aggregator2.consumers.consume
+import com.tgt.trans.common.konsumers.consumers.FirstN
+import com.tgt.trans.common.konsumers.consumers.LastN
+import com.tgt.trans.common.konsumers.consumers.consume
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

@@ -1,7 +1,7 @@
 package com.tgt.trans.common.examples.consumers
 
-import com.tgt.trans.common.aggregator2.consumers.*
-import com.tgt.trans.common.aggregator2.decorators.mapTo
+import com.tgt.trans.common.konsumers.consumers.*
+import com.tgt.trans.common.konsumers.transformations.mapTo
 import java.math.BigDecimal
 import java.util.*
 import kotlin.test.Test

@@ -1,12 +1,5 @@
 package com.tgt.trans.common.examples
 
-import com.tgt.trans.common.aggregator2.consumers.*
-import com.tgt.trans.common.aggregator2.decorators.allOf
-import com.tgt.trans.common.aggregator2.decorators.groupBy
-import com.tgt.trans.common.aggregator2.decorators.mapTo
-import java.util.*
-import kotlin.test.assertEquals
-import kotlin.test.Test
 //
 //class Groups {
 //    @Test

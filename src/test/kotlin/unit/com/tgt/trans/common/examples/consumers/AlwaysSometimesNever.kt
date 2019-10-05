@@ -1,9 +1,9 @@
 package com.tgt.trans.common.examples.consumers
 
-import com.tgt.trans.common.aggregator2.consumers.always
-import com.tgt.trans.common.aggregator2.consumers.consume
-import com.tgt.trans.common.aggregator2.consumers.never
-import com.tgt.trans.common.aggregator2.consumers.sometimes
+import com.tgt.trans.common.konsumers.consumers.always
+import com.tgt.trans.common.konsumers.consumers.consume
+import com.tgt.trans.common.konsumers.consumers.never
+import com.tgt.trans.common.konsumers.consumers.sometimes
 import kotlin.test.assertEquals
 import kotlin.test.Test
 

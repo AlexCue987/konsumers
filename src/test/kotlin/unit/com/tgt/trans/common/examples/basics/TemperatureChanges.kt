@@ -1,9 +1,9 @@
 package com.tgt.trans.common.examples.basics
 
-import com.tgt.trans.common.aggregator2.consumers.LastN
-import com.tgt.trans.common.aggregator2.consumers.asList
-import com.tgt.trans.common.aggregator2.consumers.consume
-import com.tgt.trans.common.aggregator2.decorators.*
+import com.tgt.trans.common.konsumers.consumers.LastN
+import com.tgt.trans.common.konsumers.consumers.asList
+import com.tgt.trans.common.konsumers.consumers.consume
+import com.tgt.trans.common.konsumers.transformations.*
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime

@@ -1,11 +1,11 @@
 package com.tgt.trans.common.examples.basics
 
-import com.tgt.trans.common.aggregator2.consumers.asList
-import com.tgt.trans.common.aggregator2.consumers.consume
-import com.tgt.trans.common.aggregator2.decorators.filterOn
-import com.tgt.trans.common.aggregator2.decorators.keepState
-import com.tgt.trans.common.aggregator2.decorators.mapTo
-import com.tgt.trans.common.aggregator2.decorators.peek
+import com.tgt.trans.common.konsumers.consumers.asList
+import com.tgt.trans.common.konsumers.consumers.consume
+import com.tgt.trans.common.konsumers.transformations.filterOn
+import com.tgt.trans.common.konsumers.transformations.keepState
+import com.tgt.trans.common.konsumers.transformations.mapTo
+import com.tgt.trans.common.konsumers.transformations.peek
 import java.math.BigDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,7 +17,7 @@ class LargeWithdrawals {
 
     @Test
     fun `creates many short-lived objects v2`() {
-        val currentBalance = com.tgt.trans.common.aggregator2.consumers.sumOfBigDecimal()
+        val currentBalance = com.tgt.trans.common.konsumers.consumers.sumOfBigDecimal()
         val largeWithdrawals = amountsToProcess.consume(
             keepState(currentBalance)
                 .peek { println("Before filtering and mapping: item $it, currentBalance ${currentBalance.sum()}") }
@@ -31,7 +31,7 @@ class LargeWithdrawals {
 
     @Test
     fun `does not create short-lived objects, maps and filters in one step v2`() {
-        val currentBalance = com.tgt.trans.common.aggregator2.consumers.sumOfBigDecimal()
+        val currentBalance = com.tgt.trans.common.konsumers.consumers.sumOfBigDecimal()
         val amounts = listOf(BigDecimal(100), BigDecimal(-10), BigDecimal(-1), BigDecimal(-50))
         val largeWithdrawals = amounts.consume(
             keepState(currentBalance)

@@ -1,7 +1,7 @@
 package com.tgt.trans.common.examples.advanced
 
-import com.tgt.trans.common.aggregator2.consumers.*
-import com.tgt.trans.common.aggregator2.decorators.*
+import com.tgt.trans.common.konsumers.consumers.*
+import com.tgt.trans.common.konsumers.transformations.*
 import java.time.Duration
 import java.time.LocalTime
 import kotlin.test.Test

@@ -1,8 +1,7 @@
 package com.tgt.trans.common.examples.consumers
 
-import com.tgt.trans.common.aggregator2.consumers.consume
-import com.tgt.trans.common.aggregator2.consumers.topNBy
-import org.junit.jupiter.api.assertAll
+import com.tgt.trans.common.konsumers.consumers.consume
+import com.tgt.trans.common.konsumers.consumers.topNBy
 import kotlin.test.assertEquals
 import kotlin.test.Test
 

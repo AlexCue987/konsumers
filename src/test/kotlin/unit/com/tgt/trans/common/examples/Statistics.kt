@@ -1,9 +1,9 @@
 package com.tgt.trans.common.examples
 
-import com.tgt.trans.common.aggregator2.consumers.consume
-import com.tgt.trans.common.aggregator2.consumers.count
-import com.tgt.trans.common.aggregator2.consumers.max
-import com.tgt.trans.common.aggregator2.consumers.min
+import com.tgt.trans.common.konsumers.consumers.consume
+import com.tgt.trans.common.konsumers.consumers.count
+import com.tgt.trans.common.konsumers.consumers.max
+import com.tgt.trans.common.konsumers.consumers.min
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals

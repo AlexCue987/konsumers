@@ -1,11 +1,11 @@
 package com.tgt.trans.common.examples.basics
 
-import com.tgt.trans.common.aggregator2.consumers.asList
-import com.tgt.trans.common.aggregator2.consumers.consume
-import com.tgt.trans.common.aggregator2.consumers.sumOfBigDecimal
-import com.tgt.trans.common.aggregator2.decorators.filterOn
-import com.tgt.trans.common.aggregator2.decorators.keepState
-import com.tgt.trans.common.aggregator2.decorators.peek
+import com.tgt.trans.common.konsumers.consumers.asList
+import com.tgt.trans.common.konsumers.consumers.consume
+import com.tgt.trans.common.konsumers.consumers.sumOfBigDecimal
+import com.tgt.trans.common.konsumers.transformations.filterOn
+import com.tgt.trans.common.konsumers.transformations.keepState
+import com.tgt.trans.common.konsumers.transformations.peek
 import java.math.BigDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals

@@ -1,16 +1,5 @@
 package com.tgt.trans.common.examples
 
-import com.tgt.trans.common.aggregator2.consumers.consume
-import com.tgt.trans.common.aggregator2.consumers.count
-import com.tgt.trans.common.aggregator2.consumers.max
-import com.tgt.trans.common.aggregator2.consumers.min
-import com.tgt.trans.common.aggregator2.decorators.filterOn
-import com.tgt.trans.common.aggregator2.decorators.groupBy
-import com.tgt.trans.common.aggregator2.decorators.mapTo
-import java.util.*
-import kotlin.test.assertEquals
-import kotlin.test.Test
-
 class Decorators {
 //    @Test
 //    fun decorateConsumers() {

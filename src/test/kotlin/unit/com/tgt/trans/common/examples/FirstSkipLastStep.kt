@@ -1,8 +1,8 @@
 package com.tgt.trans.common.examples
 
-import com.tgt.trans.common.aggregator2.consumers.asList
-import com.tgt.trans.common.aggregator2.consumers.consume
-import com.tgt.trans.common.aggregator2.decorators.*
+import com.tgt.trans.common.konsumers.consumers.asList
+import com.tgt.trans.common.konsumers.consumers.consume
+import com.tgt.trans.common.konsumers.transformations.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

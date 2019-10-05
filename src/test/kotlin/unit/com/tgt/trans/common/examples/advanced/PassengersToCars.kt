@@ -1,6 +1,6 @@
 package com.tgt.trans.common.examples.advanced
 
-import com.tgt.trans.common.aggregator2.consumers.Consumer
+import com.tgt.trans.common.konsumers.consumers.Consumer
 
 class Bagger(private val innerConsumer: Consumer<Bag>,
              private val maxItems: Int,

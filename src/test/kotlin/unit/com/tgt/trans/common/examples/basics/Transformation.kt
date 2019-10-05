@@ -1,7 +1,7 @@
 package com.tgt.trans.common.examples.basics
 
-import com.tgt.trans.common.aggregator2.consumers.Consumer
-import com.tgt.trans.common.aggregator2.consumers.ConsumerBuilder
+import com.tgt.trans.common.konsumers.consumers.Consumer
+import com.tgt.trans.common.konsumers.consumers.ConsumerBuilder
 
 class TransformationConsumer<T, V>(private val condition: (value: T) -> Boolean,
                                        private val transformation: (value: T) -> Sequence<V>,

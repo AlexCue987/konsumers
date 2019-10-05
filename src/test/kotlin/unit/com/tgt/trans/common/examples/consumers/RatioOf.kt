@@ -1,8 +1,8 @@
 package com.tgt.trans.common.examples.consumers
 
-import com.tgt.trans.common.aggregator2.consumers.Ratio2
-import com.tgt.trans.common.aggregator2.consumers.consume
-import com.tgt.trans.common.aggregator2.consumers.ratioOf
+import com.tgt.trans.common.konsumers.consumers.Ratio2
+import com.tgt.trans.common.konsumers.consumers.consume
+import com.tgt.trans.common.konsumers.consumers.ratioOf
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

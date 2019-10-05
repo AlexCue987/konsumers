@@ -1,8 +1,8 @@
 package com.tgt.trans.common.examples.basics
 
-import com.tgt.trans.common.aggregator2.consumers.*
-import com.tgt.trans.common.aggregator2.decorators.filterOn
-import com.tgt.trans.common.aggregator2.decorators.mapTo
+import com.tgt.trans.common.konsumers.consumers.*
+import com.tgt.trans.common.konsumers.transformations.filterOn
+import com.tgt.trans.common.konsumers.transformations.mapTo
 import com.tgt.trans.common.examples.DailyWeather
 import com.tgt.trans.common.examples.WeatherType
 import com.tgt.trans.common.examples.dailyWeather
