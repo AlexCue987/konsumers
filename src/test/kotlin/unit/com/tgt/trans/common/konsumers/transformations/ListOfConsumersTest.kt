@@ -4,6 +4,7 @@ import com.tgt.trans.common.konsumers.consumers.consume
 import com.tgt.trans.common.konsumers.consumers.count
 import com.tgt.trans.common.konsumers.consumers.max
 import com.tgt.trans.common.konsumers.consumers.min
+import com.tgt.trans.common.konsumers.dispatchers.allOf
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals

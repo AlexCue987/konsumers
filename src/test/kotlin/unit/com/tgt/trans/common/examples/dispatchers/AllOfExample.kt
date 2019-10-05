@@ -3,7 +3,7 @@ package com.tgt.trans.common.examples.dispatchers
 import com.tgt.trans.common.konsumers.consumers.consume
 import com.tgt.trans.common.konsumers.consumers.max
 import com.tgt.trans.common.konsumers.consumers.min
-import com.tgt.trans.common.konsumers.transformations.allOf
+import com.tgt.trans.common.konsumers.dispatchers.allOf
 import com.tgt.trans.common.konsumers.transformations.filterOn
 import com.tgt.trans.common.konsumers.transformations.mapTo
 import java.util.*

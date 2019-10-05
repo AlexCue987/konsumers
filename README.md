@@ -704,6 +704,12 @@ Example:
 Complete example: `examples/transformations/FirstSkipLastStep`
 
 
+### MapTo
+
+Transform an incoming item into exactly one item.
+
+
+
 ### Skip
 
 Example:

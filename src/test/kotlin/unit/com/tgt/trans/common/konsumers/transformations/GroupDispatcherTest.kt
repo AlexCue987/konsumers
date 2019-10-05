@@ -3,6 +3,7 @@ package com.tgt.trans.common.konsumers.transformations
 import com.tgt.trans.common.konsumers.consumers.asList
 import com.tgt.trans.common.konsumers.consumers.consume
 import com.tgt.trans.common.konsumers.consumers.count
+import com.tgt.trans.common.konsumers.dispatchers.allOf
 import com.tgt.trans.common.konsumers.dispatchers.groupBy
 import kotlin.test.Test
 import kotlin.test.assertEquals
