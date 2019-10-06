@@ -186,18 +186,28 @@ After filtering: TransactionWithCurrentBalance(currentBalance=39, amount=-50)
 Using `konsumers`, we can both filter and transform in the same transformation, eliminating the need to create short-lived-objects, as follows:
 
 ```kotlin
-        val currentBalance = com.tgt.trans.common.aggregator2.consumers.sumOfBigDecimal()
+        val currentBalance = com.tgt.trans.common.konsumers.consumers.sumOfBigDecimal()
         val amounts = listOf(BigDecimal(100), BigDecimal(-10), BigDecimal(-1), BigDecimal(-50))
+        val transformation =
+            { value: BigDecimal ->
+                when {
+                    -value > (currentBalance.sum() * BigDecimal("0.5")) -> sequenceOf(TransactionWithCurrentBalance(currentBalance.sum(), value))
+                    else -> sequenceOf()
+                }
+            }
+
         val largeWithdrawals = amounts.consume(
             keepState(currentBalance)
-                .peek { println("Before filtering and mapping: item $it, currentBalance ${currentBalance.sum()}") }
-                .transformTo(condition = {value:BigDecimal -> -value > currentBalance.sum() * BigDecimal("0.5") },
-                    transformation = {value:BigDecimal -> sequenceOf(TransactionWithCurrentBalance(currentBalance.sum(), value))}
-                    )
-            .peek { println("After mapping and filtering: $it") }
-            .asList())
+                .peek { println("Before transformation: item $it, currentBalance ${currentBalance.sum()}") }
+                .transformTo(transformation)
+                .peek { println("After transformation: $it") }
+                .asList())
 
-After mapping and filtering: TransactionWithCurrentBalance(currentBalance=39, amount=-50)
+Before transformation: item 100, currentBalance 100
+Before transformation: item -10, currentBalance 90
+Before transformation: item -1, currentBalance 89
+Before transformation: item -50, currentBalance 39
+After transformation: TransactionWithCurrentBalance(currentBalance=39, amount=-50)
 ```
 
 For a complete working example, refer to `examples/basics/LargeWithdrawals.kt`.

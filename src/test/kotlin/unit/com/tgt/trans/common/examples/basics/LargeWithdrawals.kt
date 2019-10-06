@@ -2,10 +2,7 @@ package com.tgt.trans.common.examples.basics
 
 import com.tgt.trans.common.konsumers.consumers.asList
 import com.tgt.trans.common.konsumers.consumers.consume
-import com.tgt.trans.common.konsumers.transformations.filterOn
-import com.tgt.trans.common.konsumers.transformations.keepState
-import com.tgt.trans.common.konsumers.transformations.mapTo
-import com.tgt.trans.common.konsumers.transformations.peek
+import com.tgt.trans.common.konsumers.transformations.*
 import java.math.BigDecimal
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -33,18 +30,19 @@ class LargeWithdrawals {
     fun `does not create short-lived objects, maps and filters in one step v2`() {
         val currentBalance = com.tgt.trans.common.konsumers.consumers.sumOfBigDecimal()
         val amounts = listOf(BigDecimal(100), BigDecimal(-10), BigDecimal(-1), BigDecimal(-50))
-        val transformation = { value: BigDecimal ->
-            when {
-                -value > (currentBalance.sum() * BigDecimal("0.5")) -> sequenceOf(TransactionWithCurrentBalance(currentBalance.sum(), value))
-                else -> sequenceOf()
+        val transformation =
+            { value: BigDecimal ->
+                when {
+                    -value > (currentBalance.sum() * BigDecimal("0.5")) -> sequenceOf(TransactionWithCurrentBalance(currentBalance.sum(), value))
+                    else -> sequenceOf()
+                }
             }
-        }
 
         val largeWithdrawals = amounts.consume(
             keepState(currentBalance)
-                .peek { println("Before filtering and mapping: item $it, currentBalance ${currentBalance.sum()}") }
+                .peek { println("Before transformation: item $it, currentBalance ${currentBalance.sum()}") }
                 .transformTo(transformation)
-                .peek { println("After mapping and filtering: $it") }
+                .peek { println("After transformation: $it") }
                 .asList())
         assertEquals(expected, largeWithdrawals[0])
     }
