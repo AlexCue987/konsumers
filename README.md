@@ -772,6 +772,25 @@ Example:
 Complete example: `examples/transformations/MapToExample`
 
 
+### Peek
+
+Same as `peek` in the standard library. Performs an action and passes an unchanged item downstream.
+
+Example:
+
+```kotlin
+        (0..3).asSequence().consume(
+            peek<Int> { println("Processing item $it") }.asList()
+        )
+
+Processing item 0
+Processing item 1
+Processing item 2
+Processing item 3
+```
+
+Complete example: `examples/transformations/PeekExample`
+
 ### Skip
 
 Example:
