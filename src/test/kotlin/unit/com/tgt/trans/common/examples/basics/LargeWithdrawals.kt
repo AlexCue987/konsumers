@@ -33,14 +33,19 @@ class LargeWithdrawals {
     fun `does not create short-lived objects, maps and filters in one step v2`() {
         val currentBalance = com.tgt.trans.common.konsumers.consumers.sumOfBigDecimal()
         val amounts = listOf(BigDecimal(100), BigDecimal(-10), BigDecimal(-1), BigDecimal(-50))
+        val transformation = { value: BigDecimal ->
+            when {
+                -value > (currentBalance.sum() * BigDecimal("0.5")) -> sequenceOf(TransactionWithCurrentBalance(currentBalance.sum(), value))
+                else -> sequenceOf()
+            }
+        }
+
         val largeWithdrawals = amounts.consume(
             keepState(currentBalance)
                 .peek { println("Before filtering and mapping: item $it, currentBalance ${currentBalance.sum()}") }
-                .transformTo(condition = {value:BigDecimal -> -value > currentBalance.sum() * BigDecimal("0.5") },
-                    transformation = {value:BigDecimal -> sequenceOf(TransactionWithCurrentBalance(currentBalance.sum(), value))}
-                    )
-            .peek { println("After mapping and filtering: $it") }
-            .asList())
+                .transformTo(transformation)
+                .peek { println("After mapping and filtering: $it") }
+                .asList())
         assertEquals(expected, largeWithdrawals[0])
     }
 
