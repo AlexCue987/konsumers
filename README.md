@@ -840,6 +840,38 @@ Example:
 
 Complete example: `examples/transformations/FirstSkipLastStep`
 
+### TransformTo
+
+Combines filtering and mapping in one step. Transforms an incoming item into a `Sequence` of outgoing items: one item, or several, or none at all.
+
+Example:
+
+```kotlin
+    data class ShoppingListItem(val name: String, val quantity: Int)
+
+        val shoppingList = listOf(
+            ShoppingListItem("Apple", 2),
+            ShoppingListItem("Orange", 1)
+        )
+
+        val actual = shoppingList.consume(
+            peek<ShoppingListItem> { println("Processing $it") }
+                .transformTo { item: ShoppingListItem ->
+                    (1..item.quantity).asSequence().map { item.name } }
+                .peek { println("Unpacked to $it") }
+                .asList()
+        )
+
+Processing ShoppingListItem(name=Apple, quantity=2)
+Unpacked to Apple
+Unpacked to Apple
+Processing ShoppingListItem(name=Orange, quantity=1)
+Unpacked to Orange
+```
+
+Complete example: `examples/transformations/TransformationExample`
+
+
 [Complete list of consumers](#consumers)
 
 [Complete list of transformations](#transformations)
