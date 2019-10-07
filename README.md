@@ -1,48 +1,39 @@
 # konsumers
 
-Advanced work with Kotlin sequences. Developed to improve performance in cases when iterating the sequence and/or transforming its items is slow.
+Advanced work with Kotlin sequences. Developed to improve performance in cases when iterating the sequence and/or transforming its items is slow, and to make solving many common problems easier.
 
 * Allows to iterate a sequence once and simultaneously compute multiple results, improving performance.
 * Allows to use one slow computation, such as filtering or mapping, in multiple results, improving performance.
-* Practical library designed to solve real-world problems.
-* Pure Kotlin.
-* A rich set of transformations, beyond basic filters and mappings.
+* Uses stateful transformations, such as filters and mappings, which allows for very easy solutions to many common problems.
 * Very easy to extend.
+* Pure Kotlin.
 
 ## Basics
 
 ### Computing multiple results while iterating a sequence once, to improve performance.
 
-The following example iterates over daily weather data once, and simultaneously computes the following:
+In following example we iterate over daily weather data once, and simultaneously computes the following:
 
-* the highest temperature on sunny day
+* the warmest day
 * the lowest temperature
-* number of days
 
 ```kotlin
-        val highestTemperatureOnSunnyDay = filterOn<DailyWeather> { it.weatherType == WeatherType.Sunny }
-            .mapTo { it -> it.high }
-            .max()
+        val warmestDay = topNBy(count = 1) { it: DailyWeather -> it.high}
 
         val lowestTemperature = mapTo<DailyWeather, Int> { it -> it.low }
             .min()
 
-        val dayCount = counter<DailyWeather>()
-
-        val allResults = dailyWeather.consume(highestTemperatureOnSunnyDay, lowestTemperature, dayCount)
+        val allResults = dailyWeather.consume(warmestDay, lowestTemperature)
 
         //one day with high=75
-        println(highestTemperatureOnSunnyDay.results())
+        println(warmestDay.results())
+
+[[DailyWeather(day=2019-04-05, weatherType=Sunny, rainAmount=0, high=75, low=54)]]
+
         //two days with low=20
         println(lowestTemperature.results())
-        //twelve days
-        println(dayCount.results())
-        println(allResults)
 
-Optional[75]
 Optional[20]
-12
-[Optional[75], Optional[20], 12]
 
 ```
 
@@ -50,24 +41,26 @@ For a complete working example, refer to `examples/basics/MultipleResultsAtOnce.
 
 ### Reusing one filtering or mapping in multiple consumers, to improve performance.
 
-The following example shows how to apply a slow filtering condition to three consumers, `lowestLowTemperature`, `lowestHighTemperature`, and `rainyDaysCount`:
+In The following example we compute a slow filtering condition once, and use it in two consumers, `lowestLowTemperature` and `rainyDaysCount`:
 
 ```kotlin
+        val verySlowFilter = filterOn<DailyWeather> { it -> it.rainAmount > BigDecimal.ZERO }
+
         val lowestLowTemperature = mapTo<DailyWeather, Int> { it -> it.low }
             .min()
 
-        val lowestHighTemperature = mapTo<DailyWeather, Int> { it -> it.high }
-            .min()
-
-        val rainyDaysCount = counter<DailyWeather>()
-
-        val dayCount = counter<DailyWeather>()
-
-        val verySlowFilter = filterOn<DailyWeather> { it -> it.rainAmount > BigDecimal.ZERO }
+        val rainyDaysCount = count<DailyWeather>()
 
         val allResults = dailyWeather.consume(
-            verySlowFilter.allOf(lowestLowTemperature, lowestHighTemperature, rainyDaysCount),
-            dayCount)
+            verySlowFilter.allOf(lowestLowTemperature, rainyDaysCount))
+
+        println(lowestLowTemperature.results())
+
+Optional[20]
+
+        println(rainyDaysCount.results())
+
+6
 ```
 
 For a complete working example, refer to `examples/basics/BranchingAfterTransformation.kt`.
@@ -75,8 +68,8 @@ For a complete working example, refer to `examples/basics/BranchingAfterTransfor
 ### Process both accepted and rejected items
 
 When we process a sequence and filter out items, we may also need to process rejected items by another consumer.
-To improve performance, we can use a `Branch` to compute a filter condition only once, and process both accepted and rejected items by two different consumers.
-In the following example, some passenger have arrived at their final destination, while other need to transfer to another flight:
+We can use a `Branch` to compute a filter condition only once, and process both accepted and rejected items by two different consumers. This may improve performance, and make the code more readable and easier to maintain.
+In the following example, are are processing passengers who have just landed at an airport. Some of them have arrived at their final destination, Tattoine, while others need to transfer to another flight:
 
 ```kotlin
         val leavingSpaceport = asList<Passenger>()

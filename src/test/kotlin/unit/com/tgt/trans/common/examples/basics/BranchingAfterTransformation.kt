@@ -13,26 +13,18 @@ import kotlin.test.Test
 class BranchingAfterTransformation {
     @Test
     fun `reuses filtering`() {
-        val lowestLowTemperature = mapTo<DailyWeather, Int> { it -> it.low }
-            .min()
+        val verySlowFilter = filterOn<DailyWeather> { it -> it.rainAmount > BigDecimal.ZERO }
 
-        val lowestHighTemperature = mapTo<DailyWeather, Int> { it -> it.high }
+        val lowestLowTemperature = mapTo<DailyWeather, Int> { it -> it.low }
             .min()
 
         val rainyDaysCount = count<DailyWeather>()
 
-        val dayCount = count<DailyWeather>()
-
-        val verySlowFilter = filterOn<DailyWeather> { it -> it.rainAmount > BigDecimal.ZERO }
-
         val allResults = dailyWeather.consume(
-            verySlowFilter.allOf(lowestLowTemperature, lowestHighTemperature, rainyDaysCount),
-            dayCount)
+            verySlowFilter.allOf(lowestLowTemperature, rainyDaysCount))
 
-        println(lowestHighTemperature.results())
         println(lowestLowTemperature.results())
         println(rainyDaysCount.results())
-        println(dayCount.results())
         println(allResults)
     }
 
