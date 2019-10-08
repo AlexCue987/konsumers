@@ -1,4 +1,8 @@
-# konsumers
+<p align="center">
+    <img width=200 alt="Kotlin" src="https://upload.wikimedia.org/wikipedia/commons/7/74/Kotlin-logo.svg">
+</p>
+
+# Konsumers
 
 Advanced work with Kotlin sequences. Developed to improve performance in cases when iterating the sequence and/or transforming its items is slow, and to make solving many common problems easier.
 
@@ -12,7 +16,7 @@ Advanced work with Kotlin sequences. Developed to improve performance in cases w
 
 ### Computing multiple results while iterating a sequence once, to improve performance.
 
-In following example we iterate over daily weather data once, and simultaneously computes the following:
+In following example we iterate over daily weather data once, and simultaneously compute the following:
 
 * the warmest day
 * the lowest temperature

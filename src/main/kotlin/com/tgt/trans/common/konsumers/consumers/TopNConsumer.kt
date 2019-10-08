@@ -1,7 +1,11 @@
 package com.tgt.trans.common.konsumers.consumers
 
 class TopNConsumer<T>(val count: Int,
+                      private val extremeValue: Int = -1,
                       private val comparator: (a:T, b:T) -> Int): Consumer<T> {
+    constructor(count: Int,
+                comparator: (a:T, b:T) -> Int) : this(count, -1, comparator)
+
     private val items = (1..count).asIterable()
         .map {mutableListOf<T>()}
         .toMutableList()
@@ -18,12 +22,12 @@ class TopNConsumer<T>(val count: Int,
                     currentList.add(value)
                     return
                 }
-                -1 -> {
+                extremeValue -> {
                     shiftSmallerItemsRight(i)
                     items[i] = mutableListOf(value)
                     return
                 }
-                1 -> {}
+                else -> {}
             }
         }
     }
@@ -48,3 +52,16 @@ fun<T, V> ConsumerBuilder<T, V>.topNBy(count: Int, comparator: (a:V, b:V) -> Int
 
 fun<T, V, F: Comparable<F>> ConsumerBuilder<T, V>.topNBy(count: Int, projection: (a:V) -> F) =
     this.build(TopNConsumer(count, comparator = { a:V, b:V -> projection(a).compareTo(projection(b)) }))
+
+
+fun<T> bottomNBy(count: Int, comparator: (a:T, b:T) -> Int) =
+    TopNConsumer(count, 1, comparator)
+
+fun<T, F: Comparable<F>> bottomNBy(count: Int, projection: (a:T) -> F) =
+    TopNConsumer(count, 1, comparator = { a:T, b:T -> projection(a).compareTo(projection(b)) })
+
+fun<T, V> ConsumerBuilder<T, V>.bottomNBy(count: Int, comparator: (a:V, b:V) -> Int) =
+    this.build(TopNConsumer(count, 1, comparator))
+
+fun<T, V, F: Comparable<F>> ConsumerBuilder<T, V>.bottomNBy(count: Int, projection: (a:V) -> F) =
+    this.build(TopNConsumer(count, 1, comparator = { a:V, b:V -> projection(a).compareTo(projection(b)) }))
