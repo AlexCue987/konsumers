@@ -7,45 +7,35 @@
 Advanced work with Kotlin sequences. Developed to improve performance in cases when iterating the sequence and/or transforming its items is slow, and to make solving many common problems easier.
 
 * Allows to iterate a sequence once and simultaneously compute multiple results, improving performance.
-* Allows to use one slow computation, such as filtering or mapping, in multiple results, improving performance.
-* Uses stateful transformations, such as filters and mappings, which allows for very easy solutions to many common problems.
-* Very easy to extend.
+* Allows to use one computation, such as filtering or mapping, in multiple results, making code shorter and easier to understand, and improving performance.
+* Uses stateful transformations, such as filters and mappings, which allows for easy solutions to many common problems.
+* Conditions and transformations are injected into core classes, so that we do not need to reimplement complex interfaces, which makes the library easy to use and extend.
 * Pure Kotlin.
 
 ## Basics
 
 ### Computing multiple results while iterating a sequence once, to improve performance.
 
-In following example we iterate over daily weather data once, and simultaneously compute the following:
+In following example we are searching for a flight that meets one of the following two criteria:
 
-* the warmest day
-* the lowest temperature
+* Preferably, we want the cheapest flight arriving on Saturday.
+* If this is not possible, then the plan B is the earliest flight arriving after Saturday.
 
 ```kotlin
-        val warmestDay = topNBy(count = 1) { it: DailyWeather -> it.high}
+        val cheapestOnSaturdayPlanA = filterOn<Flight> { it.arrival.toLocalDate() == saturday }
+            .bottomNBy(1) { it: Flight -> it.price }
 
-        val lowestTemperature = mapTo<DailyWeather, Int> { it -> it.low }
-            .min()
+        val earliestAfterSaturdayPlanB = filterOn<Flight> { it.arrival.toLocalDate() > saturday }
+            .bottomNBy(1) { it: Flight -> it.arrival }
 
-        val allResults = dailyWeather.consume(warmestDay, lowestTemperature)
-
-        //one day with high=75
-        println(warmestDay.results())
-
-[[DailyWeather(day=2019-04-05, weatherType=Sunny, rainAmount=0, high=75, low=54)]]
-
-        //two days with low=20
-        println(lowestTemperature.results())
-
-Optional[20]
-
+        val actual = flights.consume(cheapestOnSaturdayPlanA, earliestAfterSaturdayPlanB)
 ```
 
-For a complete working example, refer to `examples/basics/MultipleResultsAtOnce.kt`.
+For a complete working example, refer to `examples/basics/FlightsFinder.kt`.
 
-### Reusing one filtering or mapping in multiple consumers, to improve performance.
+### Reusing one filtering or mapping in multiple consumers.
 
-In The following example we compute a slow filtering condition once, and use it in two consumers, `lowestLowTemperature` and `rainyDaysCount`:
+In the following example we compute a condition once, and use it in two consumers, `lowestLowTemperature` and `rainyDaysCount`. This makes our code terser, easier to understand, and might perform better if computing the condition is slow:
 
 ```kotlin
         val verySlowFilter = filterOn<DailyWeather> { it -> it.rainAmount > BigDecimal.ZERO }
@@ -57,29 +47,25 @@ In The following example we compute a slow filtering condition once, and use it 
 
         val allResults = dailyWeather.consume(
             verySlowFilter.allOf(lowestLowTemperature, rainyDaysCount))
-
-        println(lowestLowTemperature.results())
-
-Optional[20]
-
-        println(rainyDaysCount.results())
-
-6
 ```
 
 For a complete working example, refer to `examples/basics/BranchingAfterTransformation.kt`.
 
-### Process both accepted and rejected items
+### Process both accepted and rejected items: branching instead of filtering.
 
-When we process a sequence and filter out items, we may also need to process rejected items by another consumer.
-We can use a `Branch` to compute a filter condition only once, and process both accepted and rejected items by two different consumers. This may improve performance, and make the code more readable and easier to maintain.
-In the following example, are are processing passengers who have just landed at an airport. Some of them have arrived at their final destination, Tattoine, while others need to transfer to another flight:
+In some case we want to branch, not to filter. For instance, if passenger have arrived at an airport, we may want to make sure that every passenger does exactly one of the two following actions:
+
+* Exit the airport, if arrived at their final destination.
+* Transfer to another flight.
+
+We can use a `Branch` to compute a filter condition only once, and process both accepted and rejected items by two different consumers. This makes our intent more clear, and may improve performance:
 
 ```kotlin
         val leavingSpaceport = asList<Passenger>()
         val transferringToAnotherFlight = asList<Passenger>()
 
-        passengers.consume(Branch({ it: Passenger -> it.destination == "Tattoine"},
+        val spaceportName = "Tattoine"
+        passengers.consume(Branch({ it: Passenger -> it.destination == spaceportName },
             consumerForAccepted = leavingSpaceport,
             consumerForRejected = transferringToAnotherFlight))
 

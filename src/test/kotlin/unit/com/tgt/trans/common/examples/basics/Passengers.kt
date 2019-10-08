@@ -26,7 +26,8 @@ class Passengers {
     fun `passengers leaving spaceport or transferring to another flight`() {
         val leavingSpaceport = asList<Passenger>()
         val transferringToAnotherFlight = asList<Passenger>()
-        passengers.consume(Branch({ it: Passenger -> it.destination == "Tattoine" },
+        val spaceportName = "Tattoine"
+        passengers.consume(Branch({ it: Passenger -> it.destination == spaceportName },
             consumerForAccepted = leavingSpaceport,
             consumerForRejected = transferringToAnotherFlight))
 
