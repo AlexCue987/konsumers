@@ -5,22 +5,36 @@ import com.tgt.trans.common.konsumers.consumers.Consumer
 class Resetter<T, V>(private val intermediateConsumerFactory: () -> Consumer<T>,
                      private val resetTrigger: IResetTrigger<T>,
                      private val intermediateResultsTransformer: (intermediateResults: Any, seriesDescription: Any) -> V,
-                     private val finalConsumer: Consumer<V>): Consumer<T> {
+                     private val finalConsumer: Consumer<V>,
+                     val keepValueThatTriggeredReset: Boolean = false,
+                     val repeatLastValueInNewSeries: Boolean = false): Consumer<T> {
     private var intermediateConsumer: Consumer<T> = intermediateConsumerFactory()
+    private var previousValue: T? = null
 
     override fun process(value: T) {
         resetTrigger.process(value)
         if (resetTrigger.needsResetting()) {
-            if (resetTrigger.keepValueThatTriggeredReset) {
+            if (keepValueThatTriggeredReset) {
                 intermediateConsumer.process(value)
-                processEndOfSeries()
-            } else {
-                processEndOfSeries()
+            }
+
+            processEndOfSeries()
+
+            if (repeatLastValueInNewSeries) {
+                if(keepValueThatTriggeredReset) {
+                    intermediateConsumer.process(value)
+                } else if(previousValue != null) {
+                    intermediateConsumer.process(previousValue!!)
+                }
+            }
+
+            if (!keepValueThatTriggeredReset) {
                 intermediateConsumer.process(value)
             }
         } else {
             intermediateConsumer.process(value)
         }
+        previousValue = value
     }
 
     private fun processEndOfSeries() {

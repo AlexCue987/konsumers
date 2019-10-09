@@ -39,7 +39,7 @@ class WarmingCooling {
         )
 
     private fun resetOnDirectionChange() =
-        ResetTrigger(keepValueThatTriggeredReset = false,
+        ResetTrigger(
             stateFactory = { LastN<Temperature>(3) },
             stateType = ResetTrigger.StateType.Before,
             condition = { state: Consumer<Temperature>, value: Temperature -> changeInAnotherDirection(state as LastN, value)},

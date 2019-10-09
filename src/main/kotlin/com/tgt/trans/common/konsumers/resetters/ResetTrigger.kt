@@ -2,8 +2,7 @@ package com.tgt.trans.common.konsumers.resetters
 
 import com.tgt.trans.common.konsumers.consumers.Consumer
 
-class ResetTrigger<T>(override val keepValueThatTriggeredReset: Boolean,
-                      private val stateFactory: () -> Consumer<T>,
+class ResetTrigger<T>(private val stateFactory: () -> Consumer<T>,
                       private val stateType: StateType,
                       private val condition: (state: Consumer<T>, value: T) -> Boolean,
                       private val seriesDescriptor: (state: Consumer<T>) -> Any): IResetTrigger<T> {

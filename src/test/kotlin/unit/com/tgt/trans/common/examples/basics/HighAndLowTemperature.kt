@@ -46,7 +46,7 @@ class HighAndLowTemperature {
     }
 
     fun resetOnDayChange() =
-        ResetTrigger(keepValueThatTriggeredReset = false,
+        ResetTrigger(
             stateFactory = { FirstN<Temperature>(1) },
             stateType = ResetTrigger.StateType.Before,
             condition = { state: Consumer<Temperature>, value: Temperature -> (state as FirstN).results()[0].getDate() != value.getDate()},
