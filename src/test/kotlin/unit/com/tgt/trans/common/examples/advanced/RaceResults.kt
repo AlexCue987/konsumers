@@ -13,6 +13,7 @@ class RaceResults {
 
     val ageGroup1 = "10-99"
     val ageGroup2 = "100-999"
+
     val yoda = Finisher("Yoda", LocalTime.of(0, 25), ageGroup2)
     val luke = Finisher("Luke", LocalTime.of(0, 26), ageGroup1)
     val r2d2 = Finisher("R2D2", LocalTime.of(0, 27), ageGroup1)

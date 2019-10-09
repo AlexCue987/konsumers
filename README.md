@@ -10,6 +10,7 @@ Advanced work with Kotlin sequences. Developed to improve performance in cases w
 * Allows to use one computation, such as filtering or mapping, in multiple results, making code shorter and easier to understand, and improving performance.
 * Uses stateful transformations, such as filters and mappings, which allows for easy solutions to many common problems.
 * Conditions and transformations are injected into core classes, so that we do not need to reimplement complex interfaces, which makes the library easy to use and extend.
+* When consuming time series, hourly and daily aggregates are available ASAP, not after consuming the whole sequence.
 * Pure Kotlin.
 
 ## Basics
@@ -118,8 +119,10 @@ In the following example we are processing a sequence of bank account deposits a
 
 ```kotlin
         val currentBalance = sumOfBigDecimal()
+
         val changeToReject = BigDecimal("-2")
         val changes = listOf(BigDecimal("3"), BigDecimal("-2"), changeToReject, BigDecimal.ONE)
+
         val acceptedChanges = changes.consume(
             peek<BigDecimal> { println("Before filtering: $it, current balance : ${currentBalance.sum()}") }
                 .filterOn { (currentBalance.sum() + it) >= BigDecimal.ZERO }
@@ -283,9 +286,11 @@ The following code accomplishes that:
         val finalDailyAggregates = (rawDailyAggregates[0] as Map<LocalDate, List<Optional<Int>>>)
             .entries
             .map { DailyWeather(it.key, it.value[0].get(), it.value[1].get()) }
+
         val expected = listOf(
             DailyWeather(monday, 46, 58),
             DailyWeather(tuesday, 44, 61))
+
         assertEquals(expected, finalDailyAggregates)
 ```
 
@@ -297,9 +302,9 @@ Yet we know that we are consuming a time series, which means that the data point
 
 #### Resetting
 
-In the following example we shall produce the same aggregates using resetting. We shall accomplish that in several simple steps.
+In the following example instances of `DailyWeather` will be available as soon as possible, using resetting. We shall accomplish that in several simple steps.
 
-First, we need to define a consumer for the incoming data. The consumer is unaware that it is producing daily aggregates, it just computes high and low temperatures:
+First, we need to define a consumer for the incoming data to compute high and low temperature. The consumer is unaware that it is producing daily aggregates, it just computes high and low temperatures:
 
 ```kotlin
         val intermediateConsumer = peek<Temperature> { println("Consuming $it") }
@@ -855,9 +860,16 @@ Unpacked to Orange
 Complete example: `examples/transformations/TransformationExample`
 
 
-[Complete list of consumers](#consumers)
+## Extending
 
-[Complete list of transformations](#transformations)
+### Developing a new consumer
 
-[Implementing your own consumer](#implementing-your-own-consumer)
+### Developing a new transformation
 
+## Learning by example
+
+### Converting finishers' times to complete race results
+
+Complete example: `examples/advanced/RaceResults`
+
+### Splitting time series of temperature into increasing and decreasing subseries
