@@ -16,25 +16,31 @@ class Resetter<T, V>(private val intermediateConsumerFactory: () -> Consumer<T>,
         if (resetTrigger.needsResetting()) {
             if (keepValueThatTriggeredReset) {
                 intermediateConsumer.process(value)
+                previousValue = value
             }
 
             processEndOfSeries()
 
             if (repeatLastValueInNewSeries) {
                 if(keepValueThatTriggeredReset) {
-                    intermediateConsumer.process(value)
+                    submitToConsumerAndToResetTrigger(value)
                 } else if(previousValue != null) {
-                    intermediateConsumer.process(previousValue!!)
+                    submitToConsumerAndToResetTrigger(previousValue!!)
                 }
             }
 
             if (!keepValueThatTriggeredReset) {
-                intermediateConsumer.process(value)
+                submitToConsumerAndToResetTrigger(value)
             }
         } else {
             intermediateConsumer.process(value)
         }
         previousValue = value
+    }
+
+    private fun submitToConsumerAndToResetTrigger(value: T) {
+        intermediateConsumer.process(value)
+        resetTrigger.process(value)
     }
 
     private fun processEndOfSeries() {
@@ -55,6 +61,9 @@ class Resetter<T, V>(private val intermediateConsumerFactory: () -> Consumer<T>,
 fun<T, V> consumeWithResetting(intermediateConsumerFactory: () -> Consumer<T>,
                                resetTrigger: IResetTrigger<T>,
                                intermediateResultsTransformer: (a: Any, b: Any) -> V,
-                               finalConsumer: Consumer<V>): Consumer<T> =
-    Resetter(intermediateConsumerFactory, resetTrigger, intermediateResultsTransformer, finalConsumer)
+                               finalConsumer: Consumer<V>,
+                               keepValueThatTriggeredReset: Boolean = false,
+                               repeatLastValueInNewSeries: Boolean = false): Consumer<T> =
+    Resetter(intermediateConsumerFactory, resetTrigger, intermediateResultsTransformer, finalConsumer,
+        keepValueThatTriggeredReset, repeatLastValueInNewSeries)
 

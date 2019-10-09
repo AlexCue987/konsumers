@@ -9,15 +9,23 @@ import com.tgt.trans.common.konsumers.transformations.peek
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class WarmingCooling {
+    val wednesdayMorning = LocalDateTime.of(2019, 10, 9, 8, 7)
+    val wednesdayNoon = LocalDateTime.of(2019, 10, 9, 12, 7)
+    val warmestTime = LocalDateTime.of(2019, 10, 9, 15, 7)
+    val midnight = LocalDateTime.of(2019, 10, 9, 23, 59)
+    val coldestTime = LocalDateTime.of(2019, 10, 10, 5, 7)
+    val thursdayMorning = LocalDateTime.of(2019, 10, 10, 11, 7)
+
     private val temperatures = listOf(
-        Temperature(LocalDateTime.of(2019, 10, 9, 8, 7), 44),
-        Temperature(LocalDateTime.of(2019, 10, 9, 12, 7), 49),
-        Temperature(LocalDateTime.of(2019, 10, 9, 15, 7), 56),
-        Temperature(LocalDateTime.of(2019, 10, 9, 18, 7), 48),
-        Temperature(LocalDateTime.of(2019, 10, 10, 5, 7), 42),
-        Temperature(LocalDateTime.of(2019, 10, 10, 11, 7), 49)
+        Temperature(wednesdayMorning, 44),
+        Temperature(wednesdayNoon, 49),
+        Temperature(warmestTime, 56),
+        Temperature(midnight, 48),
+        Temperature(coldestTime, 42),
+        Temperature(thursdayMorning, 49)
         )
 
     @Test
@@ -27,9 +35,16 @@ class WarmingCooling {
         val actual = temperatures.consume(consumeWithResetting(intermediateConsumerFactory = { getStatsConsumer() },
             resetTrigger = resetOnDirectionChange(),
             intermediateResultsTransformer = intermediateResultsTransformer,
-            finalConsumer = peek<SubseriesStats> { println("Consuming $it") }.asList()))
+            finalConsumer = peek<SubseriesStats> { println("Consuming $it") }.asList(),
+            repeatLastValueInNewSeries = true))
 
-        print(actual)
+        val expected = listOf(
+            SubseriesStats(wednesdayMorning, warmestTime, 44, 56),
+            SubseriesStats(warmestTime, coldestTime, 42, 56),
+            SubseriesStats(coldestTime, thursdayMorning, 42, 49)
+        )
+
+        assertEquals(expected, actual[0])
     }
 
     private fun getStatsConsumer() = peek<Temperature> { println("Consuming $it") }.
@@ -43,7 +58,7 @@ class WarmingCooling {
             stateFactory = { LastN<Temperature>(3) },
             stateType = ResetTrigger.StateType.Before,
             condition = { state: Consumer<Temperature>, value: Temperature -> changeInAnotherDirection(state as LastN, value)},
-            seriesDescriptor = { 42} )
+            seriesDescriptor = { 42})
 
     private fun changeInAnotherDirection(state: LastN<Temperature>, newValue: Temperature) = when(state.results().size) {
         1, 2 -> false
@@ -68,7 +83,7 @@ class WarmingCooling {
     private data class Temperature(val takenAt: LocalDateTime, val temperature: Int)
 
     private data class SubseriesStats(val startedAt: LocalDateTime,
-                                 val endedAt: LocalDateTime,
-                                 val temperatureAtStart: Int,
-                                 val temperatureAtEnd: Int)
+                                      val endedAt: LocalDateTime,
+                                      val lowTemperature: Int,
+                                      val highTemperature: Int)
 }
