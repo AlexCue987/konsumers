@@ -1,6 +1,8 @@
 package com.tgt.trans.common.konsumers.resetters
 
 import com.tgt.trans.common.konsumers.consumers.Consumer
+import com.tgt.trans.common.konsumers.consumers.ConsumerBuilder
+import com.tgt.trans.common.konsumers.consumers.sometimes
 
 class Resetter<T, V>(private val intermediateConsumerFactory: () -> Consumer<T>,
                      private val resetTrigger: IResetTrigger<T>,
@@ -60,10 +62,19 @@ class Resetter<T, V>(private val intermediateConsumerFactory: () -> Consumer<T>,
 
 fun<T, V> consumeWithResetting(intermediateConsumerFactory: () -> Consumer<T>,
                                resetTrigger: IResetTrigger<T>,
-                               intermediateResultsTransformer: (a: Any, b: Any) -> V,
+                               intermediateResultsTransformer: (intermediateResults: Any, seriesDescription: Any) -> V,
                                finalConsumer: Consumer<V>,
                                keepValueThatTriggeredReset: Boolean = false,
                                repeatLastValueInNewSeries: Boolean = false): Consumer<T> =
     Resetter(intermediateConsumerFactory, resetTrigger, intermediateResultsTransformer, finalConsumer,
         keepValueThatTriggeredReset, repeatLastValueInNewSeries)
 
+
+fun<S, T, V> ConsumerBuilder<S, T>.consumeWithResetting(intermediateConsumerFactory: () -> Consumer<T>,
+                                                     resetTrigger: IResetTrigger<T>,
+                                                     intermediateResultsTransformer: (intermediateResults: Any, seriesDescription: Any) -> V,
+                                                     finalConsumer: Consumer<V>,
+                                                     keepValueThatTriggeredReset: Boolean = false,
+                                                     repeatLastValueInNewSeries: Boolean = false): Consumer<S> =
+    this.build(Resetter(intermediateConsumerFactory, resetTrigger, intermediateResultsTransformer, finalConsumer,
+        keepValueThatTriggeredReset, repeatLastValueInNewSeries))

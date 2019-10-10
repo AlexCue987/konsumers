@@ -9,7 +9,7 @@ Advanced work with Kotlin sequences. Developed to improve performance in cases w
 * Allows to iterate a sequence once and simultaneously compute multiple results, improving performance.
 * Allows to use one computation, such as filtering or mapping, in multiple results, making code shorter and easier to understand, and improving performance.
 * Uses stateful transformations, such as filters and mappings, which allows for easy solutions to many common problems.
-* Conditions and transformations are injected into core classes, so that we do not need to reimplement complex interfaces, which makes the library easy to use and extend.
+* Easy to use and extend.
 * When consuming time series, hourly and daily aggregates are available ASAP, not after consuming the whole sequence.
 * Pure Kotlin.
 
@@ -866,10 +866,20 @@ Complete example: `examples/transformations/TransformationExample`
 
 ### Developing a new transformation
 
+
 ## Learning by example
 
 ### Converting finishers' times to complete race results
 
+Using two states to compute overall and age group place for race finishers.
+
 Complete example: `examples/advanced/RaceResults`
 
 ### Splitting time series of temperature into increasing and decreasing subseries
+
+Using a `Resetter` to split.
+
+Complete example: `examples/advanced/WarmingCooling`
+
+Note that in this example data points at which the trend changes from warming to cooling or vice versa, is included in both increasing and decreasing subseries.
+
