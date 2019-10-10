@@ -888,3 +888,10 @@ Note that in this example data points at which the trend changes from warming to
 Demonstrates branching and splitting.
 
 Complete example: `examples/advanced/GroceriesToBags`
+
+### Coalescing time series of prices to to time ranges
+
+Yet another example of resetting.
+
+Complete example: `examples/advanced/ValuesToRanges`
+

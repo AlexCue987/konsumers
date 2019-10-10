@@ -25,7 +25,7 @@ class GroceriesToBags {
             keepValueThatTriggeredReset = false,
             repeatLastValueInNewSeries = false)
 
-        val actual = groceries.consume(Branch(condition = { item: GroceryItem -> item.weightPerItem <= MAX_WEIGHT },
+        val actual = groceries.consume(Branch(condition = { item: GroceryItem -> item.weight <= MAX_WEIGHT },
             consumerForAccepted = baggedItemsConsumer,
             consumerForRejected = notBaggedItemsConsumer
         ))
@@ -35,9 +35,9 @@ class GroceriesToBags {
         /* the output
 
     baggedItemsConsumer:
-    [GroceryItem(name=Dozen Eggs, weightPerItem=1.5), GroceryItem(name=Dozen Eggs, weightPerItem=1.5), GroceryItem(name=Bread, weightPerItem=1)]
-    [GroceryItem(name=Pumpkin, weightPerItem=8)]
-    [GroceryItem(name=Bread, weightPerItem=1), GroceryItem(name=Cheese, weightPerItem=2)]
+    [GroceryItem(name=Dozen Eggs, weight=1.5), GroceryItem(name=Dozen Eggs, weight=1.5), GroceryItem(name=Bread, weight=1)]
+    [GroceryItem(name=Pumpkin, weight=8)]
+    [GroceryItem(name=Bread, weight=1), GroceryItem(name=Cheese, weight=2)]
 
          */
 
@@ -51,7 +51,7 @@ class GroceriesToBags {
         println("notBaggedItemsConsumer: ${notBaggedItemsConsumer.results()}")
         /* the output
 
-    notBaggedItemsConsumer: [GroceryItem(name=Milk, weightPerItem=9.5)]
+    notBaggedItemsConsumer: [GroceryItem(name=Milk, weight=9.5)]
 
          */
 
@@ -59,7 +59,7 @@ class GroceriesToBags {
     }
 
     private fun resetWhenExceedsWeightLimit() = ResetTrigger<GroceryItem>(
-        stateFactory = { mapTo<GroceryItem, BigDecimal> { it.weightPerItem }.toSumOfBigDecimal() },
+        stateFactory = { mapTo<GroceryItem, BigDecimal> { it.weight }.toSumOfBigDecimal() },
         stateType = ResetTrigger.StateType.After,
         condition = { state: Consumer<GroceryItem>, value: GroceryItem -> exceedsWeightLimit(state, value)},
         seriesDescriptor = { "Ignored" })
@@ -68,7 +68,7 @@ class GroceriesToBags {
 
     private fun exceedsWeightLimit(state: Consumer<GroceryItem>, value: GroceryItem): Boolean {
         val weightInBag = (state.results() as BigDecimal)
-        return weightInBag.add(value.weightPerItem) > MAX_WEIGHT
+        return weightInBag.add(value.weight) > MAX_WEIGHT
     }
 
 
@@ -87,5 +87,5 @@ class GroceriesToBags {
         cheese
         )
 
-    data class GroceryItem(val name: String, val weightPerItem: BigDecimal)
+    data class GroceryItem(val name: String, val weight: BigDecimal)
 }
