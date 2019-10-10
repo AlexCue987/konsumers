@@ -883,3 +883,8 @@ Complete example: `examples/advanced/WarmingCooling`
 
 Note that in this example data points at which the trend changes from warming to cooling or vice versa, is included in both increasing and decreasing subseries.
 
+### Putting groceries in bags
+
+Demonstrates branching and splitting.
+
+Complete example: `examples/advanced/GroceriesToBags`
