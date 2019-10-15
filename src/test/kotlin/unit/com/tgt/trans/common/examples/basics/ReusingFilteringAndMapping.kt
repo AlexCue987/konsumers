@@ -9,8 +9,7 @@ import com.tgt.trans.common.examples.dailyWeather
 import java.math.BigDecimal
 import kotlin.test.Test
 
-
-class BranchingAfterTransformation {
+class ReusingFilteringAndMapping {
     @Test
     fun `reuses filtering`() {
         val verySlowFilter = filterOn<DailyWeather> { it -> it.rainAmount > BigDecimal.ZERO }

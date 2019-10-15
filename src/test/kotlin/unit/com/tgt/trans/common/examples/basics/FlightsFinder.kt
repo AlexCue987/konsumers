@@ -1,11 +1,13 @@
 package com.tgt.trans.common.examples.basics
 
+import com.tgt.trans.common.konsumers.consumers.Consumer
 import com.tgt.trans.common.konsumers.consumers.bottomNBy
 import com.tgt.trans.common.konsumers.consumers.consume
 import com.tgt.trans.common.konsumers.transformations.filterOn
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -42,4 +44,35 @@ class FlightsFinder {
 
         assertEquals(listOf(listOf(listOf(cheapestOnSaturday)), listOf(listOf(earliestAfterSaturday))), actual)
     }
+
+    @Test
+    fun `wrap search results in a data class`() {
+        val cheapestOnSaturdayPlanA = filterOn<Flight> { it.arrival.toLocalDate() == saturday }
+            .bottomNBy(1) { it: Flight -> it.price }
+
+        val earliestAfterSaturdayPlanB = filterOn<Flight> { it.arrival.toLocalDate() > saturday }
+            .bottomNBy(1) { it: Flight -> it.arrival }
+
+        val actual = flights.consume(
+            {consumers: List<Consumer<Flight>> -> getFlightSearchResults(consumers)},
+            cheapestOnSaturdayPlanA,
+            earliestAfterSaturdayPlanB)
+
+        println(actual)
+
+        val expected = FlightSearchResults(Optional.of(cheapestOnSaturday), Optional.of(earliestAfterSaturday))
+        assertEquals(expected, actual)
+    }
+
+    private data class FlightSearchResults(val cheapestOnSaturday: Optional<Flight>,
+                                           val earliestAfterSaturday: Optional<Flight>)
+
+    private fun getFlightSearchResults(consumers: List<Consumer<Flight>>): FlightSearchResults {
+        val cheapestOnSaturday = listToOptional(consumers[0].results() as List<List<Flight>>)
+        val earliestAfterSaturday = listToOptional(consumers[1].results() as List<List<Flight>>)
+        return FlightSearchResults(cheapestOnSaturday, earliestAfterSaturday)
+    }
+
+    private fun<T> listToOptional(list: List<List<T>>) =
+        if (list.isEmpty() || list[0].isEmpty()) Optional.empty() else Optional.of(list[0][0])
 }

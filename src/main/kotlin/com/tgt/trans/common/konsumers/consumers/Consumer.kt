@@ -23,10 +23,31 @@ fun<T> Sequence<T>.consume(vararg consumers: Consumer<T>): List<Any> {
 }
 
 private fun <T> consume(iterator: Iterator<T>, consumersList: List<Consumer<T>>): List<Any> {
+    return consume2(iterator, consumersList) { consumers: List<Consumer<T>> -> defaultResultsMapper(consumers)}
+}
+
+fun<T, V> Sequence<T>.consume(resultsMapper: (consumersList: List<Consumer<T>>) -> V,
+                              vararg consumers: Consumer<T>): V {
+    val consumersList = consumers.toList()
+    val iterator = iterator()
+    return consume2(iterator, consumersList, resultsMapper)
+}
+
+fun<T, V> Iterable<T>.consume(resultsMapper: (consumersList: List<Consumer<T>>) -> V,
+                              vararg consumers: Consumer<T>): V {
+    val consumersList = consumers.toList()
+    val iterator = iterator()
+    return consume2(iterator, consumersList, resultsMapper)
+}
+
+private fun <T, V> consume2(iterator: Iterator<T>, consumersList: List<Consumer<T>>,
+                            resultsMapper: (consumersList: List<Consumer<T>>) -> V): V {
     while (iterator.hasNext()) {
         val value = iterator.next()
         consumersList.forEach { it.process(value) }
     }
     consumersList.forEach { it.stop() }
-    return consumersList.map { it.results() }
+    return resultsMapper(consumersList)
 }
+
+private fun<T> defaultResultsMapper(consumersList: List<Consumer<T>>) = consumersList.map { it.results() }

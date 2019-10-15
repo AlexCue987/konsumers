@@ -50,7 +50,7 @@ In the following example we compute a condition once, and use it in two consumer
             verySlowFilter.allOf(lowestLowTemperature, rainyDaysCount))
 ```
 
-For a complete working example, refer to `examples/basics/BranchingAfterTransformation.kt`.
+For a complete working example, refer to `examples/basics/ReusingFilteringAndMapping.kt`.
 
 ### Process both accepted and rejected items: branching instead of filtering.
 
