@@ -7,6 +7,7 @@ import com.tgt.trans.common.konsumers.transformations.mapTo
 import com.tgt.trans.common.konsumers.transformations.peek
 import com.tgt.trans.common.konsumers.resetters.ResetTrigger
 import com.tgt.trans.common.konsumers.resetters.consumeWithResetting
+import com.tgt.trans.common.konsumers.resetters.consumeWithResetting2
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -19,15 +20,18 @@ class HighAndLowTemperature {
     val tuesday = LocalDate.of(2019, 9, 24)
     val morning = LocalTime.of(7, 15)
     val night = LocalTime.of(17, 20)
+
     private val temperatures = listOf(
         Temperature(monday.atTime(morning), 46),
         Temperature(monday.atTime(night), 58),
         Temperature(tuesday.atTime(morning), 44),
         Temperature(tuesday.atTime(night), 61)
     )
+
     data class Temperature(val takenAt: LocalDateTime, val temperature: Int) {
         fun getDate() = takenAt.toLocalDate()
     }
+
     data class DailyWeather(val date: LocalDate, val low: Int, val high: Int)
 
     @Test
@@ -45,35 +49,43 @@ class HighAndLowTemperature {
         assertEquals(expected, finalDailyAggregates)
     }
 
-    fun resetOnDayChange() =
-        ResetTrigger(
-            stateFactory = { FirstN<Temperature>(1) },
-            stateType = ResetTrigger.StateType.Before,
-            condition = { state: Consumer<Temperature>, value: Temperature -> (state as FirstN).results()[0].getDate() != value.getDate()},
-            seriesDescriptor = { state: Consumer<Temperature> -> (state as FirstN).results()[0].getDate()} )
-
-    fun mapResultsToDailyWeather(intermediateResults: Any, day: Any): DailyWeather {
-        val consumers = intermediateResults as List<Any>
-        val lowTemperature = consumers[0] as Optional<Int>
-        val highTemperature = consumers[1] as Optional<Int>
-        return DailyWeather(day as LocalDate, lowTemperature.get(), highTemperature.get())
+    fun mapResultsToDailyWeather(intermediateConsumers: List<Consumer<Temperature>>): DailyWeather {
+        val results = intermediateConsumers.map { it.results() }
+        val highAndLow = (results[0] as List<Any>)
+        val lowTemperature = highAndLow[0] as Optional<Int>
+        val highTemperature = highAndLow[1] as Optional<Int>
+        val day = results[1] as LocalDate
+        return DailyWeather(day, lowTemperature.get(), highTemperature.get())
     }
 
     @Test
     fun `daily aggregates available as soon as day ends`() {
-        val intermediateResultsTransformer = { intermediateResults: Any, day: Any -> mapResultsToDailyWeather(intermediateResults, day) }
-        val intermediateConsumer = peek<Temperature> { println("Consuming $it") }
+        val intermediateConsumer = {peek<Temperature> { println("Consuming $it") }
             .mapTo { it: Temperature -> it.temperature }
-            .allOf(min(), max())
+            .allOf(min(), max())}
+
+        val stateToStoreCount = { count<Temperature>() }
+        val stateToStoreDay = {mapTo<Temperature, LocalDate> {it.getDate()}.first()}
+
+        val intermediateResultsTransformer =
+            { intermediateConsumers: List<Consumer<Temperature>> -> mapResultsToDailyWeather(intermediateConsumers) }
+
         val dailyAggregates = temperatures.consume(
-            consumeWithResetting(
-                intermediateConsumerFactory = { intermediateConsumer },
-                resetTrigger = resetOnDayChange(),
+            consumeWithResetting2(
+                intermediateConsumersFactory = { listOf(intermediateConsumer(), stateToStoreDay(), stateToStoreCount()) },
+                resetTrigger = dayChange(),
                 intermediateResultsTransformer = intermediateResultsTransformer,
                 finalConsumer = peek<DailyWeather> { println("Consuming $it") }.asList()))
+
         print(dailyAggregates)
+
         val expected = listOf(DailyWeather(monday, 46, 58),
             DailyWeather(tuesday, 44, 61))
+
         assertEquals(expected, dailyAggregates[0])
+    }
+
+    private fun dayChange() = { intermediateConsumers: List<Consumer<Temperature>>, value: Temperature ->
+        intermediateConsumers[2].results() as Long > 0 && intermediateConsumers[1].results() != value.getDate()
     }
 }

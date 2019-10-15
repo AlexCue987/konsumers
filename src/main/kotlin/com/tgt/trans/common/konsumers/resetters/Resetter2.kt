@@ -53,13 +53,13 @@ class Resetter2<T, V>(private val intermediateConsumersFactory: () -> List<Consu
     }
 }
 
-fun<T, V> consumeWithResetting2(intermediateConsumerFactory: () -> Consumer<T>,
-                               resetTrigger: IResetTrigger<T>,
-                               intermediateResultsTransformer: (intermediateResults: Any, seriesDescription: Any) -> V,
+fun<T, V> consumeWithResetting2(intermediateConsumersFactory: () -> List<Consumer<T>>,
+                               resetTrigger: (intermediateConsumers: List<Consumer<T>>, value: T) -> Boolean,
+                               intermediateResultsTransformer: (intermediateConsumers: List<Consumer<T>>) -> V,
                                finalConsumer: Consumer<V>,
                                keepValueThatTriggeredReset: Boolean = false,
                                repeatLastValueInNewSeries: Boolean = false): Consumer<T> =
-    Resetter(intermediateConsumerFactory, resetTrigger, intermediateResultsTransformer, finalConsumer,
+    Resetter2(intermediateConsumersFactory, resetTrigger, intermediateResultsTransformer, finalConsumer,
         keepValueThatTriggeredReset, repeatLastValueInNewSeries)
 
 
