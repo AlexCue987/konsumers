@@ -63,7 +63,7 @@ class HighAndLowTemperature {
             .mapTo { it: Temperature -> it.temperature }
             .allOf(min(), max()) }
 
-        val stateToStoreDay = {mapTo<Temperature, LocalDate> {it.getDate()}.first()}
+        val stateToStoreDay = { mapTo<Temperature, LocalDate> {it.getDate()}.first() }
 
         val intermediateResultsTransformer =
             { intermediateConsumers: List<Consumer<Temperature>> -> mapResultsToDailyWeather(intermediateConsumers) }
@@ -71,7 +71,7 @@ class HighAndLowTemperature {
         val dailyAggregates = temperatures.consume(
             consumeWithResetting(
                 intermediateConsumersFactory = { listOf(intermediateConsumer(), stateToStoreDay()) },
-                resetTrigger = dayChange(),
+                resetTrigger = dateChange(),
                 intermediateResultsTransformer = intermediateResultsTransformer,
                 finalConsumer = peek<DailyWeather> { println("Consuming $it") }.asList()))
 
@@ -83,7 +83,7 @@ class HighAndLowTemperature {
         assertEquals(expected, dailyAggregates[0])
     }
 
-    private fun dayChange() = { intermediateConsumers: List<Consumer<Temperature>>, value: Temperature ->
+    private fun dateChange() = { intermediateConsumers: List<Consumer<Temperature>>, value: Temperature ->
         val optionalDay = intermediateConsumers[1].results() as Optional<LocalDate>
          optionalDay.isPresent && optionalDay.get() != value.getDate()
     }

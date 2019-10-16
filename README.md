@@ -313,23 +313,31 @@ First, we need to define a consumer for the incoming data to compute high and lo
             .allOf(min(), max()) }
 ```
 
-Second, we need to specify that we shall stop consuming whenever the day changes:
+Another consumer will store the date of the first data point. We shall use this state to determine when the date changes:
 
 ```kotlin
-    fun resetOnDayChange() =
-        ResetterOnCondition(keepValueThatTriggeredReset = false,
-            condition = notSameProjectionAsFirst { a: Temperature -> a.getDate() },
-            seriesDescriptor = { it -> getSeriesDate(it) } )
+        val stateToStoreDay = { mapTo<Temperature, LocalDate> {it.getDate()}.first() }
+```
+
+Second, we need to specify that we shall stop consuming whenever the date changes. We are extracting a stored date from a consumer and comparing it against the date of the incoming data point:
+
+```kotlin
+    private fun dateChange() = { intermediateConsumers: List<Consumer<Temperature>>, value: Temperature ->
+        val optionalDay = intermediateConsumers[1].results() as Optional<LocalDate>
+         optionalDay.isPresent && optionalDay.get() != value.getDate()
+    }
 ```
 
 Next, we need to transform the data collected by the consumer into the format that we need, which is similar to populating of `finalDailyAggregates` in the previous section.
 
 ```kotlin
-    fun mapResultsToDailyWeather(intermediateResults: Any, day: Any): DailyWeather {
-        val consumers = intermediateResults as List<Any>
-        val lowTemperature = consumers[0] as Optional<Int>
-        val highTemperature = consumers[1] as Optional<Int>
-        return DailyWeather(day as LocalDate, lowTemperature.get(), highTemperature.get())
+    fun mapResultsToDailyWeather(intermediateConsumers: List<Consumer<Temperature>>): DailyWeather {
+        val results = intermediateConsumers.map { it.results() }
+        val highAndLow = (results[0] as List<Any>)
+        val lowTemperature = highAndLow[0] as Optional<Int>
+        val highTemperature = highAndLow[1] as Optional<Int>
+        val day = (results[1] as Optional<LocalDate>).get()
+        return DailyWeather(day, lowTemperature.get(), highTemperature.get())
     }
 ```
 
@@ -337,9 +345,9 @@ Finally, let us show how all these pieces work together:
 
 ```kotlin
         val dailyAggregates = temperatures.consume(
-            consumeWithResetting2(
-                intermediateConsumerFactory = { intermediateConsumer },
-                resetTrigger = resetOnDayChange(),
+            consumeWithResetting(
+                intermediateConsumersFactory = { listOf(intermediateConsumer(), stateToStoreDay()) },
+                resetTrigger = dateChange(),
                 intermediateResultsTransformer = intermediateResultsTransformer,
                 finalConsumer = peek<DailyWeather> { println("Consuming $it") }.asList()))
 
@@ -351,9 +359,14 @@ Consuming Temperature(takenAt=2019-09-24T17:20, temperature=61)
 Consuming DailyWeather(date=2019-09-24, low=44, high=61)
 ```
 
-As we have seen, a `DailyWeather` daily aggregate is available as soon we know that we have consumed all the data for the day.
+As we have seen, a `DailyWeather` daily aggregate is available as soon as possible: when we know that we have consumed all the data for the day.
 
 For a complete working example, refer to `examples/basics/HighAndLowTemperature.kt`.
+There are other examples of resetting:
+
+`examples/advanced/GroceriesToBags.kt`
+`examples/advanced/ValuesToRanges.kt`
+`examples/advanced/WarmingCooling.kt`
 
 # Consumers
 
