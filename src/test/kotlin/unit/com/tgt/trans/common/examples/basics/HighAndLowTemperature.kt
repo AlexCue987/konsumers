@@ -54,7 +54,7 @@ class HighAndLowTemperature {
         val highAndLow = (results[0] as List<Any>)
         val lowTemperature = highAndLow[0] as Optional<Int>
         val highTemperature = highAndLow[1] as Optional<Int>
-        val day = results[1] as LocalDate
+        val day = (results[1] as Optional<LocalDate>).get()
         return DailyWeather(day, lowTemperature.get(), highTemperature.get())
     }
 
@@ -86,6 +86,7 @@ class HighAndLowTemperature {
     }
 
     private fun dayChange() = { intermediateConsumers: List<Consumer<Temperature>>, value: Temperature ->
-        intermediateConsumers[2].results() as Long > 0 && intermediateConsumers[1].results() != value.getDate()
+        val optionalDay = intermediateConsumers[1].results() as Optional<LocalDate>
+         optionalDay.isPresent && optionalDay.get() != value.getDate()
     }
 }
