@@ -1,56 +1,47 @@
 package com.tgt.trans.common.konsumers.resetters
 
 import com.tgt.trans.common.konsumers.consumers.Consumer
-import com.tgt.trans.common.konsumers.consumers.ConsumerBuilder
-import com.tgt.trans.common.konsumers.consumers.sometimes
 
-class Resetter<T, V>(private val intermediateConsumerFactory: () -> Consumer<T>,
-                     private val resetTrigger: IResetTrigger<T>,
-                     private val intermediateResultsTransformer: (intermediateResults: Any, seriesDescription: Any) -> V,
+class Resetter<T, V>(private val intermediateConsumersFactory: () -> List<Consumer<T>>,
+                     private val resetTrigger: (intermediateConsumers: List<Consumer<T>>, value: T) -> Boolean,
+                     private val intermediateResultsTransformer: (intermediateConsumers: List<Consumer<T>>) -> V,
                      private val finalConsumer: Consumer<V>,
-                     val keepValueThatTriggeredReset: Boolean = false,
-                     val repeatLastValueInNewSeries: Boolean = false): Consumer<T> {
-    private var intermediateConsumer: Consumer<T> = intermediateConsumerFactory()
+                     private val keepValueThatTriggeredReset: Boolean = false,
+                     private val repeatLastValueInNewSeries: Boolean = false): Consumer<T> {
+    private var intermediateConsumers: List<Consumer<T>> = intermediateConsumersFactory()
     private var previousValue: T? = null
 
     override fun process(value: T) {
-        resetTrigger.process(value)
-        if (resetTrigger.needsResetting()) {
+        if (resetTrigger(intermediateConsumers, value)) {
             if (keepValueThatTriggeredReset) {
-                intermediateConsumer.process(value)
+                processByConsumers(value)
                 previousValue = value
             }
 
             processEndOfSeries()
 
             if (repeatLastValueInNewSeries) {
-                if(keepValueThatTriggeredReset) {
-                    submitToConsumerAndToResetTrigger(value)
-                } else if(previousValue != null) {
-                    submitToConsumerAndToResetTrigger(previousValue!!)
-                }
+                val lastValue = if(keepValueThatTriggeredReset) value else previousValue
+                processByConsumers(lastValue!!)
             }
 
             if (!keepValueThatTriggeredReset) {
-                submitToConsumerAndToResetTrigger(value)
+                processByConsumers(value)
             }
         } else {
-            intermediateConsumer.process(value)
+            processByConsumers(value)
         }
         previousValue = value
     }
 
-    private fun submitToConsumerAndToResetTrigger(value: T) {
-        intermediateConsumer.process(value)
-        resetTrigger.process(value)
+    private fun processByConsumers(value: T) {
+        intermediateConsumers.forEach { it.process(value) }
     }
 
     private fun processEndOfSeries() {
-        val transformedResults = intermediateResultsTransformer(intermediateConsumer.results(),
-            resetTrigger.describeSeries())
+        val transformedResults = intermediateResultsTransformer(intermediateConsumers)
         finalConsumer.process(transformedResults)
-        resetTrigger.resetState()
-        intermediateConsumer = intermediateConsumerFactory()
+        intermediateConsumers = intermediateConsumersFactory()
     }
 
     override fun results() = finalConsumer.results()
@@ -60,13 +51,12 @@ class Resetter<T, V>(private val intermediateConsumerFactory: () -> Consumer<T>,
     }
 }
 
-fun<T, V> consumeWithResetting(intermediateConsumerFactory: () -> Consumer<T>,
-                               resetTrigger: IResetTrigger<T>,
-                               intermediateResultsTransformer: (intermediateResults: Any, seriesDescription: Any) -> V,
+fun<T, V> consumeWithResetting(intermediateConsumersFactory: () -> List<Consumer<T>>,
+                               resetTrigger: (intermediateConsumers: List<Consumer<T>>, value: T) -> Boolean,
+                               intermediateResultsTransformer: (intermediateConsumers: List<Consumer<T>>) -> V,
                                finalConsumer: Consumer<V>,
                                keepValueThatTriggeredReset: Boolean = false,
                                repeatLastValueInNewSeries: Boolean = false): Consumer<T> =
-    Resetter(intermediateConsumerFactory, resetTrigger, intermediateResultsTransformer, finalConsumer,
+    Resetter(intermediateConsumersFactory, resetTrigger, intermediateResultsTransformer, finalConsumer,
         keepValueThatTriggeredReset, repeatLastValueInNewSeries)
-
 

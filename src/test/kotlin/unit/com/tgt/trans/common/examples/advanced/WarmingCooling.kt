@@ -2,7 +2,7 @@ package com.tgt.trans.common.examples.advanced
 
 import com.tgt.trans.common.konsumers.consumers.*
 import com.tgt.trans.common.konsumers.dispatchers.allOf
-import com.tgt.trans.common.konsumers.resetters.consumeWithResetting2
+import com.tgt.trans.common.konsumers.resetters.consumeWithResetting
 import com.tgt.trans.common.konsumers.transformations.mapTo
 import com.tgt.trans.common.konsumers.transformations.peek
 import java.time.LocalDateTime
@@ -32,7 +32,7 @@ class WarmingCooling {
         val intermediateResultsTransformer = { intermediateConsumers: List<Consumer<Temperature>> -> getSubseriesStats(intermediateConsumers) }
 
         val actual = temperatures.consume(
-            consumeWithResetting2(
+            consumeWithResetting(
                 intermediateConsumersFactory = { listOf(getStatsConsumer(), LastN<Temperature>(3)) },
             resetTrigger = {intermediateConsumers: List<Consumer<Temperature>>, value: Temperature ->
                 changeInAnotherDirection(intermediateConsumers, value)},

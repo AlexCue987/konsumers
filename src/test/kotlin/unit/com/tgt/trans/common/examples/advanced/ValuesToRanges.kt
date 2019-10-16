@@ -1,7 +1,7 @@
 package com.tgt.trans.common.examples.advanced
 
 import com.tgt.trans.common.konsumers.consumers.*
-import com.tgt.trans.common.konsumers.resetters.consumeWithResetting2
+import com.tgt.trans.common.konsumers.resetters.consumeWithResetting
 import java.time.LocalDateTime
 import java.util.*
 import kotlin.test.Test
@@ -31,7 +31,7 @@ class ValuesToRanges {
     @Test
     fun `coalesce prices to intervals`() {
         val actual = prices.consume(
-            consumeWithResetting2(
+            consumeWithResetting(
                 intermediateConsumersFactory = { listOf(First(), Last())},
                 resetTrigger = { intermediateConsumers: List<Consumer<TimedPrice>>, value: TimedPrice ->
                     val stateResults = (intermediateConsumers[0].results() as Optional<TimedPrice>)

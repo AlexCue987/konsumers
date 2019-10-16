@@ -2,12 +2,9 @@ package com.tgt.trans.common.examples.advanced
 
 import com.tgt.trans.common.konsumers.consumers.*
 import com.tgt.trans.common.konsumers.dispatchers.Branch
-import com.tgt.trans.common.konsumers.resetters.ResetTrigger
 import com.tgt.trans.common.konsumers.resetters.consumeWithResetting
-import com.tgt.trans.common.konsumers.resetters.consumeWithResetting2
 import com.tgt.trans.common.konsumers.transformations.mapTo
 import java.math.BigDecimal
-import java.util.Locale.LanguageRange.MAX_WEIGHT
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -17,7 +14,7 @@ class GroceriesToBags {
     fun `put groceries to bags`() {
         val notBaggedItemsConsumer = asList<GroceryItem>()
 
-        val baggedItemsConsumer = consumeWithResetting2(
+        val baggedItemsConsumer = consumeWithResetting(
             intermediateConsumersFactory = {
                 val itemsInBag = asList<GroceryItem>()
                 val bagWeight = mapTo<GroceryItem, BigDecimal> { it.weight }.toSumOfBigDecimal()
