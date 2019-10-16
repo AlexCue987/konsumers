@@ -62,12 +62,3 @@ fun<T, V> consumeWithResetting2(intermediateConsumersFactory: () -> List<Consume
     Resetter2(intermediateConsumersFactory, resetTrigger, intermediateResultsTransformer, finalConsumer,
         keepValueThatTriggeredReset, repeatLastValueInNewSeries)
 
-
-fun<S, T, V> ConsumerBuilder<S, T>.consumeWithResetting2(intermediateConsumerFactory: () -> Consumer<T>,
-                                                     resetTrigger: IResetTrigger<T>,
-                                                     intermediateResultsTransformer: (intermediateResults: Any, seriesDescription: Any) -> V,
-                                                     finalConsumer: Consumer<V>,
-                                                     keepValueThatTriggeredReset: Boolean = false,
-                                                     repeatLastValueInNewSeries: Boolean = false): Consumer<S> =
-    this.build(Resetter(intermediateConsumerFactory, resetTrigger, intermediateResultsTransformer, finalConsumer,
-        keepValueThatTriggeredReset, repeatLastValueInNewSeries))

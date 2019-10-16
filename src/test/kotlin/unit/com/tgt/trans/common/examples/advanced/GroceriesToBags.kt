@@ -4,8 +4,10 @@ import com.tgt.trans.common.konsumers.consumers.*
 import com.tgt.trans.common.konsumers.dispatchers.Branch
 import com.tgt.trans.common.konsumers.resetters.ResetTrigger
 import com.tgt.trans.common.konsumers.resetters.consumeWithResetting
+import com.tgt.trans.common.konsumers.resetters.consumeWithResetting2
 import com.tgt.trans.common.konsumers.transformations.mapTo
 import java.math.BigDecimal
+import java.util.Locale.LanguageRange.MAX_WEIGHT
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -15,17 +17,22 @@ class GroceriesToBags {
     fun `put groceries to bags`() {
         val notBaggedItemsConsumer = asList<GroceryItem>()
 
-        val baggedItemsConsumer = consumeWithResetting(intermediateConsumerFactory = { asList<GroceryItem>() },
-            resetTrigger = resetWhenExceedsWeightLimit(),
-            intermediateResultsTransformer = { intermediateResults: Any,
-                                               seriesDescription: Any ->
-                intermediateResults as List<GroceryItem>
+        val baggedItemsConsumer = consumeWithResetting2(
+            intermediateConsumersFactory = {
+                val itemsInBag = asList<GroceryItem>()
+                val bagWeight = mapTo<GroceryItem, BigDecimal> { it.weight }.toSumOfBigDecimal()
+                listOf(itemsInBag, bagWeight)
+            },
+            resetTrigger = { intermediateConsumers: List<Consumer<GroceryItem>>, value: GroceryItem ->
+                exceedsWeightLimit(intermediateConsumers, value)},
+            intermediateResultsTransformer = { intermediateConsumers: List<Consumer<GroceryItem>> ->
+                intermediateConsumers[0].results() as List<GroceryItem>
             },
             finalConsumer = asList<List<GroceryItem>>(),
             keepValueThatTriggeredReset = false,
             repeatLastValueInNewSeries = false)
 
-        val actual = groceries.consume(Branch(condition = { item: GroceryItem -> item.weight <= MAX_WEIGHT },
+        groceries.consume(Branch(condition = { item: GroceryItem -> item.weight <= MAX_WEIGHT },
             consumerForAccepted = baggedItemsConsumer,
             consumerForRejected = notBaggedItemsConsumer
         ))
@@ -58,16 +65,11 @@ class GroceriesToBags {
         assertEquals(listOf(milk), notBaggedItemsConsumer.results())
     }
 
-    private fun resetWhenExceedsWeightLimit() = ResetTrigger<GroceryItem>(
-        stateFactory = { mapTo<GroceryItem, BigDecimal> { it.weight }.toSumOfBigDecimal() },
-        stateType = ResetTrigger.StateType.After,
-        condition = { state: Consumer<GroceryItem>, value: GroceryItem -> exceedsWeightLimit(state, value)},
-        seriesDescriptor = { "Ignored" })
-
     private val MAX_WEIGHT = BigDecimal("8")
 
-    private fun exceedsWeightLimit(state: Consumer<GroceryItem>, value: GroceryItem): Boolean {
-        val weightInBag = (state.results() as BigDecimal)
+    private fun exceedsWeightLimit(intermediateConsumers: List<Consumer<GroceryItem>>, value: GroceryItem): Boolean {
+        val bagWeight = intermediateConsumers[1]
+        val weightInBag = (bagWeight.results() as BigDecimal)
         return weightInBag.add(value.weight) > MAX_WEIGHT
     }
 

@@ -30,7 +30,7 @@ class First<T: Any>: Consumer<T> {
         }
     }
 
-    override fun results(): Any = if(itemsProcessed > 0) firstValue else throw IllegalStateException("First item not processed")
+    override fun results(): Any = if(itemsProcessed > 0) firstValue else throw IllegalStateException("No items processed")
 }
 
 fun<T, V: Any> ConsumerBuilder<T, V>.first() = this.build(First())
@@ -44,5 +44,5 @@ class Last<T: Any>: Consumer<T> {
         itemsProcessed++
     }
 
-    override fun results(): Any = if(itemsProcessed > 0) lastValue else throw IllegalStateException("First item not processed")
+    override fun results(): Any = if(itemsProcessed > 0) lastValue else throw IllegalStateException("No items processed")
 }
