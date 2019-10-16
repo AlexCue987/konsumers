@@ -1,9 +1,7 @@
 package com.tgt.trans.common.examples.advanced
 
 import com.tgt.trans.common.konsumers.consumers.*
-import com.tgt.trans.common.konsumers.dispatchers.allOf
-import com.tgt.trans.common.konsumers.resetters.ResetTrigger
-import com.tgt.trans.common.konsumers.resetters.consumeWithResetting
+import com.tgt.trans.common.konsumers.resetters.consumeWithResetting2
 import java.time.LocalDateTime
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -32,12 +30,13 @@ class ValuesToRanges {
     @Test
     fun `coalesce prices to intervals`() {
         val actual = prices.consume(
-            consumeWithResetting(
-                intermediateConsumerFactory = { allOf<TimedPrice>(FirstN(1), LastN(1))},
-                resetTrigger = resetWhenValueChanges(),
-                intermediateResultsTransformer = { intermediateResults: Any,
-                                                   seriesDescription: Any ->
-                    getPriceRange(intermediateResults)
+            consumeWithResetting2(
+                intermediateConsumersFactory = { listOf(FirstN(1), LastN(1))},
+                resetTrigger = { intermediateConsumers: List<Consumer<TimedPrice>>, value: TimedPrice ->
+                    val stateResults = (intermediateConsumers[0].results() as List<TimedPrice>)
+                        !stateResults.isEmpty() && stateResults[0].price != value.price},
+                intermediateResultsTransformer = { intermediateConsumers: List<Consumer<TimedPrice>> ->
+                    getPriceRange(intermediateConsumers)
                 },
                 finalConsumer = asList(),
                 keepValueThatTriggeredReset = true,
@@ -62,19 +61,9 @@ PriceRange(startAt=2019-10-10T05:07, endAt=2019-10-10T11:07, price=42)
         assertEquals(expected, actual[0])
     }
 
-    private fun getPriceRange(intermediateResults: Any): PriceRange {
-        val intermediateResultsList = (intermediateResults as List<*>)
-        val firstPrice = (intermediateResultsList[0] as List<TimedPrice>)[0]
-        val lastPrice = (intermediateResultsList[1] as List<TimedPrice>)[0]
+    private fun getPriceRange(intermediateConsumers: List<Consumer<TimedPrice>>): PriceRange {
+        val firstPrice = (intermediateConsumers[0].results() as List<TimedPrice>)[0]
+        val lastPrice = (intermediateConsumers[1].results() as List<TimedPrice>)[0]
         return PriceRange(firstPrice.takenAt, lastPrice.takenAt, firstPrice.price)
     }
-
-    private fun resetWhenValueChanges() = ResetTrigger<TimedPrice>(
-        stateFactory = { FirstN<TimedPrice>(1) },
-        stateType = ResetTrigger.StateType.After,
-        condition = { state: Consumer<TimedPrice>, value: TimedPrice ->
-            val stateResults = (state.results() as List<TimedPrice>)
-            !stateResults.isEmpty() && stateResults[0].price != value.price},
-        seriesDescriptor = { "Ignored" })
-
 }
