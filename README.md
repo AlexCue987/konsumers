@@ -304,12 +304,13 @@ Yet we know that we are consuming a time series, which means that the data point
 
 In the following example instances of `DailyWeather` will be available as soon as possible, using resetting. We shall accomplish that in several simple steps.
 
-First, we need to define a consumer for the incoming data to compute high and low temperature. The consumer is unaware that it is producing daily aggregates, it just computes high and low temperatures:
+First, we need to define a consumer for the incoming data to compute high and low temperatures. The consumer is unaware that it is producing daily aggregates, it just computes high and low temperatures. We are not creating a consumer, we are defining a lambda that will create a new consumer for every day:
 
 ```kotlin
-        val intermediateConsumer = peek<Temperature> { println("Consuming $it") }
+        val intermediateConsumer = {
+            peek<Temperature> { println("Consuming $it") }
             .mapTo { it: Temperature -> it.temperature }
-            .allOf(min(), max())
+            .allOf(min(), max()) }
 ```
 
 Second, we need to specify that we shall stop consuming whenever the day changes:

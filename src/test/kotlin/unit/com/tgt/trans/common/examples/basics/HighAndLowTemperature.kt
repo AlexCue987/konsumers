@@ -58,9 +58,10 @@ class HighAndLowTemperature {
 
     @Test
     fun `daily aggregates available as soon as day ends`() {
-        val intermediateConsumer = {peek<Temperature> { println("Consuming $it") }
+        val intermediateConsumer = {
+            peek<Temperature> { println("Consuming $it") }
             .mapTo { it: Temperature -> it.temperature }
-            .allOf(min(), max())}
+            .allOf(min(), max()) }
 
         val stateToStoreCount = { count<Temperature>() }
         val stateToStoreDay = {mapTo<Temperature, LocalDate> {it.getDate()}.first()}
