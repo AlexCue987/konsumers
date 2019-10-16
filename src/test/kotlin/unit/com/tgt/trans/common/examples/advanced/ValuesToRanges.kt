@@ -3,6 +3,7 @@ package com.tgt.trans.common.examples.advanced
 import com.tgt.trans.common.konsumers.consumers.*
 import com.tgt.trans.common.konsumers.resetters.consumeWithResetting2
 import java.time.LocalDateTime
+import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -31,10 +32,10 @@ class ValuesToRanges {
     fun `coalesce prices to intervals`() {
         val actual = prices.consume(
             consumeWithResetting2(
-                intermediateConsumersFactory = { listOf(FirstN(1), LastN(1))},
+                intermediateConsumersFactory = { listOf(First(), Last())},
                 resetTrigger = { intermediateConsumers: List<Consumer<TimedPrice>>, value: TimedPrice ->
-                    val stateResults = (intermediateConsumers[0].results() as List<TimedPrice>)
-                        !stateResults.isEmpty() && stateResults[0].price != value.price},
+                    val stateResults = (intermediateConsumers[0].results() as Optional<TimedPrice>)
+                        stateResults.isPresent && stateResults.get().price != value.price},
                 intermediateResultsTransformer = { intermediateConsumers: List<Consumer<TimedPrice>> ->
                     getPriceRange(intermediateConsumers)
                 },
@@ -62,8 +63,8 @@ PriceRange(startAt=2019-10-10T05:07, endAt=2019-10-10T11:07, price=42)
     }
 
     private fun getPriceRange(intermediateConsumers: List<Consumer<TimedPrice>>): PriceRange {
-        val firstPrice = (intermediateConsumers[0].results() as List<TimedPrice>)[0]
-        val lastPrice = (intermediateConsumers[1].results() as List<TimedPrice>)[0]
+        val firstPrice = (intermediateConsumers[0].results() as Optional<TimedPrice>).get()
+        val lastPrice = (intermediateConsumers[1].results() as Optional<TimedPrice>).get()
         return PriceRange(firstPrice.takenAt, lastPrice.takenAt, firstPrice.price)
     }
 }

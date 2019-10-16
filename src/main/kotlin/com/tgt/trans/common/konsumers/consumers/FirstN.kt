@@ -45,5 +45,5 @@ class Last<T: Any>: Consumer<T> {
         itemsProcessed++
     }
 
-    override fun results(): Any = if(itemsProcessed > 0) lastValue else throw IllegalStateException("No items processed")
+    override fun results(): Any = if(itemsProcessed > 0) Optional.of(lastValue) else Optional.empty()
 }
