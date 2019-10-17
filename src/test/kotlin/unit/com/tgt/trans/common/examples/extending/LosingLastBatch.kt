@@ -40,6 +40,8 @@ Saving batch [4, 5]
         }
 
         override fun results(): Any = 42
+
+        override fun stop() {}
     }
 
     private class BatchSaverV2(val batchSize: Int): Consumer<Int> {

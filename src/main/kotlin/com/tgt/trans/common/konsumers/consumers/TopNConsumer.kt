@@ -39,6 +39,8 @@ class TopNConsumer<T>(val count: Int,
     }
 
     override fun results() = items.filter { it.isNotEmpty() }
+
+    override fun stop() {}
 }
 
 fun<T> topNBy(count: Int, comparator: (a:T, b:T) -> Int) =

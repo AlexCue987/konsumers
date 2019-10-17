@@ -17,6 +17,8 @@ class FirstN<T>(private val count: Int): Consumer<T> {
     }
 
     override fun results():List<T> = buffer
+
+    override fun stop() {}
 }
 
 
@@ -32,6 +34,8 @@ class First<T: Any>: Consumer<T> {
     }
 
     override fun results(): Any = firstValue
+
+    override fun stop() {}
 }
 
 fun<T, V: Any> ConsumerBuilder<T, V>.first() = this.build(First())
@@ -46,4 +50,6 @@ class Last<T: Any>: Consumer<T> {
     }
 
     override fun results(): Any = if(itemsProcessed > 0) Optional.of(lastValue) else Optional.empty()
+
+    override fun stop() {}
 }

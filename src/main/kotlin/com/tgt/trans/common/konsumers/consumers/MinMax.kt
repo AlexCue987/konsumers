@@ -10,6 +10,8 @@ class Min<T: Comparable<T>> : Consumer<T> {
     }
 
     override fun results() = min
+
+    override fun stop() {}
 }
 
 fun<T: Comparable<T>> min() = Min<T>()
@@ -24,6 +26,8 @@ class Max<T: Comparable<T>> : Consumer<T> {
     }
 
     override fun results() = max
+
+    override fun stop() {}
 }
 
 fun<T: Comparable<T>> max() = Max<T>()

@@ -20,6 +20,8 @@ class AvgConsumer<T, V> (private val adder: (a: T, b: T) -> T,
         else Optional.of(divider(sum!!, count))
     }
 
+    override fun stop() {}
+
     fun isEmpty() = (count == 0)
 }
 

@@ -17,6 +17,10 @@ class GroupDispatcher<T, K>(private val keyFactory: (a: T) -> K,
 
     override fun results() = groups.entries
             .associateBy({it.key}, {it.value.results()})
+
+    override fun stop() {
+        groups.values.forEach { it.stop() }
+    }
 }
 
 fun<T, K> groupBy(keyFactory: (a: T) -> K, innerConsumerFactory: () -> Consumer<T>) =

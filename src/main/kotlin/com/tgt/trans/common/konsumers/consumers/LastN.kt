@@ -20,4 +20,6 @@ class LastN<T>(private val count: Int): Consumer<T> {
     override fun results() = (maxOf(itemsProcessed - count, 0) until itemsProcessed).asSequence()
         .map{buffer[it % count]}
         .toList()
+
+    override fun stop() {}
 }

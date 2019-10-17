@@ -6,6 +6,8 @@ class Counter<T> : Consumer<T> {
     override fun process(value: T) { counter++ }
 
     override fun results() = counter
+
+    override fun stop() {}
 }
 
 fun<T, V> ConsumerBuilder<T, V>.count() = this.build(Counter())

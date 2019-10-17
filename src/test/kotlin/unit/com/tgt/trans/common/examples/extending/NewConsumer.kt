@@ -65,6 +65,8 @@ class BitwiseAnd: Consumer<Int> {
     }
 
     override fun results(): Any = if(count == 0) 0 else aggregate
+
+    override fun stop() {}
 }
 
 

@@ -13,6 +13,8 @@ class MultipleStatesKeeper<T>(private val innerConsumer: Consumer<T>,
     override fun results() = innerConsumer.results()
 
     fun states(): Sequence<Any> = states.asSequence().map { it.results() }
+
+    override fun stop() = innerConsumer.stop()
 }
 
 class MultipleStatesKeeperBuilder<T>(vararg statesArgs: Consumer<T>): ConsumerBuilder<T, T> {

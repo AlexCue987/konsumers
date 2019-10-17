@@ -8,6 +8,8 @@ class ListConsumer<T>: Consumer<T> {
     }
 
     override fun results() = items.toList()
+
+    override fun stop() {}
 }
 
 fun<T> asList() = ListConsumer<T>()

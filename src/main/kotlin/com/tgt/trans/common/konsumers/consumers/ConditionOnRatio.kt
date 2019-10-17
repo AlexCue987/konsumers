@@ -10,6 +10,8 @@ class ConditionOnRatio<T>(private val conditionOnItem: (a: T) -> Boolean,
     }
 
     override fun results() = conditionOnRatio(consumer.conditionMet, consumer.outOf)
+
+    override fun stop() {}
 }
 
 

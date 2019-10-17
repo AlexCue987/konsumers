@@ -10,6 +10,8 @@ class TransformationConsumer<T, V>(private val transformation: (value: T) -> Seq
     }
 
     override fun results() = innerConsumer.results()
+
+    override fun stop() = innerConsumer.stop()
 }
 
 class TransformationConsumerBuilder<T, V>(private val transformation: (value: T) -> Sequence<V>): ConsumerBuilder<T, V> {

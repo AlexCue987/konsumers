@@ -3,26 +3,6 @@ package com.tgt.trans.common.konsumers.transformations
 import com.tgt.trans.common.konsumers.consumers.Consumer
 import com.tgt.trans.common.konsumers.consumers.ConsumerBuilder
 
-//class MultipleStatesKeeper<T>(private val innerConsumer: Consumer<T>, vararg statesArgs: Consumer<T>): Consumer<T> {
-//    private val states = statesArgs.toList()
-//
-//    override fun process(value: T) {
-//        innerConsumer.process(value)
-//        states.forEach { it.process(value) }
-//    }
-//
-//    override fun results() = innerConsumer.results()
-//
-//    fun states(): Sequence<Any> = states.asSequence().map { it.results() }
-//}
-//
-//
-//fun<T> keepStates(vararg aggregatorsArgs: Consumer<T>) = ListOfConsumers(*aggregatorsArgs)
-//
-//fun<S, T> ConsumerBuilder<S, T>.keepStates(vararg aggregatorsArgs: Consumer<T>) =
-//    this.build(ListOfConsumers(*aggregatorsArgs))
-//
-
 class StateKeeper<T>(private val innerConsumer: Consumer<T>, private val stateToKeep: Consumer<T>): Consumer<T> {
     override fun process(value: T) {
         stateToKeep.process(value)
@@ -31,7 +11,7 @@ class StateKeeper<T>(private val innerConsumer: Consumer<T>, private val stateTo
 
     override fun results() = innerConsumer.results()
 
-    fun state() = stateToKeep.results()
+    override fun stop() = innerConsumer.stop()
 }
 
 class StateKeeperBuilder<T>(private val stateToKeep: Consumer<T>): ConsumerBuilder<T, T> {
