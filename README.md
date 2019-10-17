@@ -903,6 +903,8 @@ class BitwiseAnd: Consumer<Int> {
     }
 
     override fun results(): Any = if(count == 0) 0 else aggregate
+
+    override fun stop() {}
 }
 ```
 
@@ -930,11 +932,11 @@ This method can be used like this:
 
 Complete example: `examples/extending/NewConsumer`
 
-Note that `BitwiseAnd` does not implement `stop()`, which has default implementation in `Consumer` that does nothing. In this case, there is no need to reimplement `stop()`. Let us discuss a case when we need to reimplement `stop()`.
+Note that `BitwiseAnd` provides `stop()` that does nothing. In this case, there is no need to do anything `stop()`. Let us discuss a case when we need to do something meaningful in `stop()`.
 
-#### Implementing `stop()`.
+#### Using `stop()`.
 
-Let us discuss an example when we do need to implement `stop()`.
+Let us discuss an example when we do need to do something meaningful in `stop()`.
 
 `BatchSaverV1` accumulates incoming items in a buffer, and whenever the buffer reaches batch size, it saves that buffer in the database, as follows:
 
@@ -968,7 +970,7 @@ Saving buffer from process()
 Saving batch [1, 2, 3]
 ```
 
-To make sure that the last incomplete batch is not lost, we need to implement `stop()`:
+To make sure that the last incomplete batch is not lost, we need to save it in `stop()`:
 
 ```kotlin
         override fun stop() {
