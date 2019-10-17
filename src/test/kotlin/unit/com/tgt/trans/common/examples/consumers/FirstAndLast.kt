@@ -1,8 +1,7 @@
 package com.tgt.trans.common.examples.consumers
 
-import com.tgt.trans.common.konsumers.consumers.FirstN
-import com.tgt.trans.common.konsumers.consumers.LastN
-import com.tgt.trans.common.konsumers.consumers.consume
+import com.tgt.trans.common.konsumers.consumers.*
+import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -10,10 +9,10 @@ class FirstAndLast {
     @Test
     fun `first and last N`() {
         val actual = (1..10).asSequence()
-            .consume(FirstN(2), LastN(2))
+            .consume(First(), Last(), FirstN(2), LastN(2))
 
         print(actual)
 
-        assertEquals(listOf(listOf(1, 2), listOf(9, 10)), actual)
+        assertEquals(listOf(Optional.of(1), Optional.of(10), listOf(1, 2), listOf(9, 10)), actual)
     }
 }

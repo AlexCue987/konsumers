@@ -4,6 +4,12 @@ interface ConsumerBuilder<T, V> {
     fun build(innerConsumer: Consumer<V>): Consumer<T>
 }
 
+interface Transformation<T> {
+    fun process(value: T)
+    fun results(): Any
+    fun stop()
+}
+
 interface Consumer<T> {
     fun process(value: T)
     fun results(): Any

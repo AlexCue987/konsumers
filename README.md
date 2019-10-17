@@ -6,11 +6,11 @@
 
 Advanced work with Kotlin sequences. Developed to make solving many common problems easier, and to improve performance in cases when iterating the sequence and/or transforming its items is slow.
 
-* Easy to use and extend.
 * Advanced features to split and transform sequences, to make solving complex problems easier.
 * Allows to iterate a sequence once and simultaneously compute multiple results, improving performance.
 * Allows to use one computation, such as filtering or mapping, in multiple results, making code shorter and easier to understand, and improving performance.
 * Uses stateful transformations, such as filters and mappings, which allows for easy solutions to many common problems.
+* Easy to use and extend.
 * Pure Kotlin.
 
 ## Basics
@@ -432,36 +432,36 @@ Example:
 
 Complete example: `examples/consumers/MinMaxCountAvg`
 
-### FirstN
+### First and FirstN
 
 Example:
 
 ```kotlin
         val actual = (1..10).asSequence()
-            .consume(FirstN(2), LastN(2))
+            .consume(First(), Last(), FirstN(2), LastN(2))
 
         print(actual)
 
-        assertEquals(listOf(listOf(1, 2), listOf(9, 10)), actual)
+        assertEquals(listOf(Optional.of(1), Optional.of(10), listOf(1, 2), listOf(9, 10)), actual)
 
-[[1, 2], [9, 10]]
+[Optional[1], Optional[10], [1, 2], [9, 10]]
 ```
 
 Complete example: `examples/consumers/FirstAndLast`
 
-### LastN
+### Last and LastN
 
 Example:
 
 ```kotlin
         val actual = (1..10).asSequence()
-            .consume(FirstN(2), LastN(2))
+            .consume(First(), Last(), FirstN(2), LastN(2))
 
         print(actual)
 
-        assertEquals(listOf(listOf(1, 2), listOf(9, 10)), actual)
+        assertEquals(listOf(Optional.of(1), Optional.of(10), listOf(1, 2), listOf(9, 10)), actual)
 
-[[1, 2], [9, 10]]
+[Optional[1], Optional[10], [1, 2], [9, 10]]
 ```
 
 Complete example: `examples/consumers/FirstAndLast`
@@ -976,8 +976,7 @@ To make sure that the last incomplete batch is not lost, we need to implement `s
             database.save(buffer)
         }
 ```
-
-That done,
+When `consume()` is done iterating through all the items, it calls `stop()` against all the consumers. This allows the consumers to complete whatever they are doing, in this case, save the last incomplete buffer. As a result, the last incomplete batch, `[4,5]` is not lost:
 
 ```kotlin
         (1..5).asSequence().consume(BatchSaverV2(3))
