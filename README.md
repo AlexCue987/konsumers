@@ -4,13 +4,13 @@
 
 # Konsumers
 
-Advanced work with Kotlin sequences. Developed to improve performance in cases when iterating the sequence and/or transforming its items is slow, and to make solving many common problems easier.
+Advanced work with Kotlin sequences. Developed to make solving many common problems easier, and to improve performance in cases when iterating the sequence and/or transforming its items is slow.
 
+* Easy to use and extend.
+* Advanced features to split and transform sequences, to make solving complex problems easier.
 * Allows to iterate a sequence once and simultaneously compute multiple results, improving performance.
 * Allows to use one computation, such as filtering or mapping, in multiple results, making code shorter and easier to understand, and improving performance.
 * Uses stateful transformations, such as filters and mappings, which allows for easy solutions to many common problems.
-* Easy to use and extend.
-* When consuming time series, hourly and daily aggregates are available ASAP, not after consuming the whole sequence.
 * Pure Kotlin.
 
 ## Basics
@@ -877,6 +877,120 @@ Complete example: `examples/transformations/TransformationExample`
 ## Extending
 
 ### Developing a new consumer
+
+To develop a new `Consumer`, we need to implement the following interface:
+
+```kotlin
+interface Consumer<T> {
+    fun process(value: T)
+    fun results(): Any
+    fun stop() {}
+}
+```
+
+#### Basic implementation
+
+The following example implements bitwise and:
+
+```kotlin
+class BitwiseAnd: Consumer<Int> {
+    private var aggregate = Int.MAX_VALUE
+    private var count = 0
+
+    override fun process(value: Int) {
+        aggregate = aggregate and value
+        count++
+    }
+
+    override fun results(): Any = if(count == 0) 0 else aggregate
+}
+```
+
+`BitwiseAnd` can be used like this:
+
+```kotlin
+        val actual = listOf(1, 3).consume(BitwiseAnd())
+        assertEquals(1, actual[0])
+```
+
+To use `BitwiseAnd` after a transformation, we also need to develop an extension method as follows:
+
+```kotlin
+fun<T> ConsumerBuilder<T, Int>.bitwiseAnd() = this.build(BitwiseAnd())
+```
+
+**Note:** for more on `ConsumerBuilder`, refer to the next chapter, transformations.
+
+This method can be used like this:
+
+```kotlin
+        val actual = listOf(1, 3).consume(filterOn<Int> { it>0 }.bitwiseAnd())
+        assertEquals(1, actual[0])
+```
+
+Complete example: `examples/extending/NewConsumer`
+
+Note that `BitwiseAnd` does not implement `stop()`, which has default implementation in `Consumer` that does nothing. In this case, there is no need to reimplement `stop()`. Let us discuss a case when we need to reimplement `stop()`.
+
+#### Implementing `stop()`.
+
+Let us discuss an example when we do need to implement `stop()`.
+
+`BatchSaverV1` accumulates incoming items in a buffer, and whenever the buffer reaches batch size, it saves that buffer in the database, as follows:
+
+```kotlin
+        override fun process(value: Int) {
+            buffer.add(value)
+            if(buffer.size == batchSize) {
+                println("Saving buffer from process()")
+                database.save(buffer)
+                buffer.clear()
+            }
+        }
+```
+
+Instead of a real database we are using a fake one which just prints out the batch:
+
+```kotlin
+    private class FakeDatabase {
+        fun save(batch: List<Int>) {
+            println("Saving batch $batch")
+        }
+    }
+```
+
+Let us consume a sequence, and we shall see that the last incomplete batch is lost:
+
+```kotlin
+        (1..5).asSequence().consume(BatchSaverV1(3))
+
+Saving buffer from process()
+Saving batch [1, 2, 3]
+```
+
+To make sure that the last incomplete batch is not lost, we need to implement `stop()`:
+
+```kotlin
+        override fun stop() {
+            println("Saving buffer from stop()")
+            database.save(buffer)
+        }
+```
+
+That done,
+
+```kotlin
+        (1..5).asSequence().consume(BatchSaverV2(3))
+
+Saving buffer from process()
+Saving batch [1, 2, 3]
+Saving buffer from stop()
+Saving batch [4, 5]
+
+```
+
+Complete example: `examples/extending/LosingLastBatch`
+
 
 ### Developing a new transformation
 
