@@ -368,6 +368,12 @@ There are other examples of resetting:
 `examples/advanced/ValuesToRanges.kt`
 `examples/advanced/WarmingCooling.kt`
 
+#### Resetting flags: `keepValueThatTriggeredReset` and `repeatLastValueInNewSeries`
+
+These two flags are explained in the following example:
+
+`examples/basic/ResetterFlags.kt`
+
 # Consumers
 
 ### Always
@@ -1076,7 +1082,7 @@ Note that in this example data points at which the trend changes from warming to
 
 ### Putting groceries in bags
 
-Demonstrates branching and splitting.
+Demonstrates branching and splitting into subseries.
 
 Complete example: `examples/advanced/GroceriesToBags`
 
