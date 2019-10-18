@@ -873,6 +873,8 @@ Unpacked to Orange
 
 Complete example: `examples/transformations/TransformationExample`
 
+More advanced example: `examples/advanced/UnpackItems`
+
 
 ## Extending
 
@@ -1084,3 +1086,8 @@ Yet another example of resetting.
 
 Complete example: `examples/advanced/ValuesToRanges`
 
+### Divide heavy items into smaller chunks
+
+Demonstrates use of transformations, filtering and mapping in one step. Also shows how one incoming item can be transformed into several.
+
+Complete example: `examples/advanced/UnpackItems`
