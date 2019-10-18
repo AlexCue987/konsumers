@@ -921,7 +921,7 @@ We can provide this function along with a list of consumers:
 
 Complete example: `examples/basics/TransformingResults`
 
-# Extending
+# Extending Konsumers
 
 ### Developing a new consumer
 
