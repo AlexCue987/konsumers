@@ -14,9 +14,27 @@ class ConsumerTest {
     }
 
     @Test
+    fun `works with Sequence and resultsMapper`() {
+        val actual = (1..3).asSequence().consume(
+            {consumersList: List<Consumer<Int>> -> resultsAsString(consumersList) },
+            max())
+        assertEquals("Optional[3]", actual)
+    }
+
+    fun resultsAsString(consumersList: List<Consumer<Int>>) = consumersList[0].results().toString()
+
+    @Test
     fun worksWithIterable() {
         val actual = (1..3).asIterable().consume(max())
         assertEquals(listOf(Optional.of(3)), actual)
+    }
+
+    @Test
+    fun `works with Iterable and resultsMapper`() {
+        val actual = (1..3).asIterable().consume(
+            {consumersList: List<Consumer<Int>> -> resultsAsString(consumersList) },
+            max())
+        assertEquals("Optional[3]", actual)
     }
 
     @Test
