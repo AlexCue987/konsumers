@@ -995,6 +995,66 @@ Complete example: `examples/extending/LosingLastBatch`
 
 ### Developing a new transformation
 
+Transformations implement the same interface as consumers: `Consumer`. They always must provide a meaningful implementation of `stop()`.
+
+#### Basic example
+
+The following simple transformation prints the incoming value and passes it downstream:
+
+```kotlin
+    private class Printer<T>(private val innerConsumer: Consumer<T>): Consumer<T> {
+        override fun process(value: T) {
+            print("Processing item $value\n")
+            innerConsumer.process(value)
+        }
+
+        override fun results() = innerConsumer.results()
+
+        override fun stop() { innerConsumer.stop() }
+    }
+
+    private class PrinterBuilder<T>: ConsumerBuilder<T, T> {
+        override fun build(innerConsumer: Consumer<T>): Consumer<T> = Printer(innerConsumer)
+    }
+
+    private fun<T> print() = PrinterBuilder<T>()
+```
+
+That done, our simple transformation is ready to be the first in a chain of transformations and a consumer at the end:
+
+```kotlin
+        (0..2).asSequence().consume(print<Int>().asList())
+
+Processing item 0
+Processing item 1
+Processing item 2
+```
+
+To be able to plug our simple transformation in the middle of the chain, we need to do the following:
+
+```kotlin
+
+    private class ChainedPrinterBuilder<T, V>(val previousBuilder: ConsumerBuilder<T, V>): ConsumerBuilder<T, V> {
+        override fun build(innerConsumer: Consumer<V>): Consumer<T> = previousBuilder.build(Printer(innerConsumer))
+    }
+
+    private fun<T, V> ConsumerBuilder<T, V>.print(): ConsumerBuilder<T, V> = ChainedPrinterBuilder(this)
+```
+
+Now we are ready to use our new transformation anywhere, in this example after filtering:
+
+```kotlin
+        (0..2).asSequence().consume(filterOn<Int> { it>0 }.print().asList())
+
+Processing item 1
+Processing item 2
+```
+
+Complete example: `examples/extending/NewTransformation`
+
+#### We must always implement `stop()`
+
+A transformation must always pass `stop()` call downstream. The following example explains why: `examples/extending/LosingLastBatch`
 
 ## Learning by example
 

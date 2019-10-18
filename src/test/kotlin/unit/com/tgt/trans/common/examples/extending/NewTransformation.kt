@@ -5,7 +5,6 @@ import com.tgt.trans.common.konsumers.consumers.ConsumerBuilder
 import com.tgt.trans.common.konsumers.consumers.asList
 import com.tgt.trans.common.konsumers.consumers.consume
 import com.tgt.trans.common.konsumers.dispatchers.allOf
-import com.tgt.trans.common.konsumers.transformations.StopperTest
 import com.tgt.trans.common.konsumers.transformations.filterOn
 import com.tgt.trans.common.testutils.StopTester
 import kotlin.test.Test
@@ -56,11 +55,11 @@ Processing item 2
         override fun build(innerConsumer: Consumer<T>): Consumer<T> = Printer(innerConsumer)
     }
 
+    private fun<T> print() = PrinterBuilder<T>()
+
     private class ChainedPrinterBuilder<T, V>(val previousBuilder: ConsumerBuilder<T, V>): ConsumerBuilder<T, V> {
         override fun build(innerConsumer: Consumer<V>): Consumer<T> = previousBuilder.build(Printer(innerConsumer))
     }
-
-    private fun<T> print() = PrinterBuilder<T>()
 
     private fun<T, V> ConsumerBuilder<T, V>.print(): ConsumerBuilder<T, V> = ChainedPrinterBuilder(this)
 }
