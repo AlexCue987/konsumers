@@ -881,8 +881,47 @@ Complete example: `examples/transformations/TransformationExample`
 
 More advanced example: `examples/advanced/UnpackItems`
 
+# Transforming results
 
-## Extending
+By default, `consume` returns a `List<Any>`, as shown in te following example:
+
+```kotlin
+        val actual = (0..10).asSequence().consume(min(), max(), count())
+        assertEquals(listOf(
+                Optional.of(0),
+                Optional.of(10),
+                11L),
+            actual)
+```
+
+Instead, we can develop a function to transform these results into something more structured, like an instance of a data class:
+
+```kotlin
+
+    private data class BasicStats(val min: Optional<Int>, val max: Optional<Int>, val count: Long)
+
+    private fun resultsMapper(consumers: List<Consumer<Int>>) =
+        BasicStats(
+            min = (consumers[0] as Min<Int>).results(),
+            max = (consumers[1] as Max<Int>).results(),
+            count= (consumers[2] as Counter<Int>).results()
+            )
+```
+
+We can provide this function along with a list of consumers:
+
+```kotlin
+        val actual = (0..10).asSequence().consume(
+            {consumersList: List<Consumer<Int>> -> resultsMapper(consumersList) },
+            min(), max(), count())
+        assertEquals(
+            BasicStats(Optional.of(0), Optional.of(10), 11L),
+            actual)
+```
+
+Complete example: `examples/basics/TransformingResults`
+
+# Extending
 
 ### Developing a new consumer
 
