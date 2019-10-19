@@ -42,6 +42,7 @@ class Resetter<T, V>(private val intermediateConsumersFactory: () -> List<Consum
 
     private fun processEndOfSeries() {
         if (!empty) {
+            intermediateConsumers.forEach { it.stop() }
             val transformedResults = intermediateResultsTransformer(intermediateConsumers)
             finalConsumer.process(transformedResults)
         }
