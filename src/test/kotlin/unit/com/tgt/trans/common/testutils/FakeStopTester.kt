@@ -1,6 +1,7 @@
 package com.tgt.trans.common.testutils
 
 import com.tgt.trans.common.konsumers.consumers.Consumer
+import com.tgt.trans.common.konsumers.consumers.ConsumerBuilder
 
 class FakeStopTester<T>: Consumer<T>{
     private var stopped = false
@@ -18,3 +19,6 @@ class FakeStopTester<T>: Consumer<T>{
 
     fun isStopped() = stopped
 }
+
+
+fun<T, V> ConsumerBuilder<T, V>.fakeStopTester() = this.build(FakeStopTester())

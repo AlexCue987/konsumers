@@ -2,12 +2,13 @@ package com.tgt.trans.common.konsumers.transformations
 
 import com.tgt.trans.common.konsumers.consumers.asList
 import com.tgt.trans.common.konsumers.consumers.consume
+import com.tgt.trans.common.konsumers.dispatchers.allOf
+import com.tgt.trans.common.testutils.FakeStopTester
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-import kotlin.test.Test
-
-class Batcher2Test {
+class BatcherTest {
     @Test
     fun handlesEmpty() {
         val actual = listOf<Int>().consume(
@@ -59,4 +60,13 @@ class Batcher2Test {
             filterOn { a: Int -> a > 0 }.batches(batchSize).asList())
         assertEquals(listOf(listOf(batch1, batch2), listOf(batch1, batch2)), actual)
     }
+
+    @Test
+    fun `passes stop downstream`() {
+        val fakeStopTester = FakeStopTester<List<Int>>()
+        val sut = batches<Int>(2).allOf<Int, List<Int>>(fakeStopTester)
+        sut.stop()
+        assertTrue(fakeStopTester.isStopped())
+    }
 }
+
