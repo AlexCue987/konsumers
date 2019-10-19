@@ -3,6 +3,7 @@ package com.tgt.trans.common.examples.basics
 import com.tgt.trans.common.konsumers.consumers.asList
 import com.tgt.trans.common.konsumers.consumers.consume
 import com.tgt.trans.common.konsumers.dispatchers.Branch
+import com.tgt.trans.common.konsumers.transformations.filterOn
 import org.junit.jupiter.api.assertAll
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,6 +22,20 @@ class Passengers {
         HanSolo,
         Chewbacca
     )
+
+    @Test
+    fun `code using two filters is repetitive, difficult to maintain, our intent is not clear`() {
+        val spaceportName = "Tattoine"
+        val actual = passengers.consume(
+            filterOn{ it: Passenger -> it.destination == spaceportName }.asList(),
+            filterOn{ it: Passenger -> it.destination != spaceportName }.asList()
+            )
+
+        assertAll(
+            { assertEquals(listOf(Yoda, Chewbacca), actual[0])},
+            { assertEquals(listOf(R2D2, HanSolo), actual[1])}
+        )
+    }
 
     @Test
     fun `passengers leaving spaceport or transferring to another flight`() {

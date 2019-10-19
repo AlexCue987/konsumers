@@ -54,12 +54,23 @@ For a complete working example, refer to `examples/basics/ReusingFilteringAndMap
 
 ### Process both accepted and rejected items: branching instead of filtering.
 
-In some case we want to branch, not to filter. For instance, if passenger have arrived at an airport, we may want to make sure that every passenger does exactly one of the two following actions:
+In some case we want to make sure each item is processed exactly once, and we use a condition to determine how to process it. For instance, if passenger have arrived at an airport, we may want to make sure that every passenger does exactly one of the two following actions:
 
 * Exit the airport, if arrived at their final destination.
 * Transfer to another flight.
 
-We can use a `Branch` to compute a filter condition only once, and process both accepted and rejected items by two different consumers. This makes our intent more clear, and may improve performance:
+We can do it with two filters, but the code is repetitive, the intent is not clear, and the condition is computed twice, which can hurt performance:
+
+```kotlin
+        val spaceportName = "Tattoine"
+        val actual = passengers.consume(
+            filterOn{ it: Passenger -> it.destination == spaceportName }.asList(),
+            filterOn{ it: Passenger -> it.destination != spaceportName }.asList()
+            )
+
+```
+
+Instead, we can use a `Branch` to compute a filter condition only once, and process both accepted and rejected items by two different consumers. This makes our intent more clear, and may improve performance:
 
 ```kotlin
         val leavingSpaceport = asList<Passenger>()
@@ -143,16 +154,18 @@ After filtering, change: 1, current balance: 2
 
 For a complete working example, refer to `examples/basics/NonNegativeAccountBalance.kt`.
 
+**Note:** Kotlin standard library does provide this ability in some special cases, such as `filterIndexed` which uses an item's index, a state. `konsumers` allows us to use any `Consumer` as a state in a filter.
+
 #### Combining mapping and filtering in one transformation.
 
 Typically a `filter` will accept or reject items without transforming them, and a `map` must produce a transformed item for every incoming one.
 
 Sometimes this approach forces us to produce a lot of short-lived objects. For example, suppose that whenever more than a half of the amount on a bank account is withdrawn at once, we need to do something, such as trigger an alert. Traditionally, we would:
-* map an incoming transaction amount into an instance of another class with two fields, `(previousBalance, transactionAmount)`
+* map an incoming transaction amount into an instance of another class `TransactionWithCurrentBalance` with two fields, `(previousBalance, transactionAmount)`
 * filter these instances
 * alert
 
-This is demonstrated in the following example, where four instances of `TransactionWithCurrentBalance` are created, and only one is actually used:
+In the following example, three out of four instances of `TransactionWithCurrentBalance` are very short-lived, and only one is actually passed after filtering:
 
 ```kotlin
         val amounts = listOf(BigDecimal(100), BigDecimal(-10), BigDecimal(-1), BigDecimal(-50))
@@ -197,6 +210,8 @@ After transformation: TransactionWithCurrentBalance(currentBalance=39, amount=-5
 ```
 
 For a complete working example, refer to `examples/basics/LargeWithdrawals.kt`.
+
+Note that we are returning either an empty `sequenceOf()` or a sequence of one element. We are not limited to transforming one incoming item to one item passed downstream. We transform an item into a sequence, which can contain more than one element. This is shown in `examples\advanced\UnpackItems`
 
 
 ### Grouping and Resetting
@@ -248,7 +263,9 @@ For a complete working example, refer to `examples/basics/BasicGroups.kt`.
 
 #### Why resetting?
 
-Suppose that we are consuming a time series of weather readings like this,
+Results of grouping are only available after all the sequence has been consumed. In some cases we know that we are done with some bucket, and produce the results off that bucket immediately - and this ability to produce results as soon as possible may be important.
+
+For example, suppose that we are consuming a time series of weather readings like this,
 
 ```kotlin
     data class Temperature(val takenAt: LocalDateTime, val temperature: Int) {
@@ -272,7 +289,7 @@ and need to provide daily aggregates, high and low temperatures, as follows:
     data class DailyWeather(val date: LocalDate, val low: Int, val high: Int)
 ```
 
-The following code accomplishes that:
+The following code accomplishes that via grouping:
 
 ```kotlin
         val rawDailyAggregates = temperatures.consume(
@@ -298,7 +315,7 @@ For a complete working example, refer to `examples/basics/HighAndLowTemperature.
 
 This code works, but the daily aggregates are not available until we have consumed the whole sequence.
 
-Yet we know that we are consuming a time series, which means that the data points are ordered by time. As soon as we get a data point for Tuesday, we know that we are done consuming Monday's data. As such, we should be able to produce Monday's aggregates. This is why we need resetting, which is explained in the next section.
+Yet we know that we are consuming a time series of data points ordered by time. As soon as we get a data point for Tuesday, for example, we know that we are done consuming Monday's data. As such, we should be able to produce Monday's aggregates. This is why we need resetting, which is explained in the next section.
 
 #### Resetting
 
@@ -362,11 +379,12 @@ Consuming DailyWeather(date=2019-09-24, low=44, high=61)
 As we have seen, a `DailyWeather` daily aggregate is available as soon as possible: when we know that we have consumed all the data for the day.
 
 For a complete working example, refer to `examples/basics/HighAndLowTemperature.kt`.
-There are other examples of resetting:
 
-`examples/advanced/GroceriesToBags.kt`
-`examples/advanced/ValuesToRanges.kt`
-`examples/advanced/WarmingCooling.kt`
+There are other examples when resetting makes solving complex problems easier:
+
+* `examples/advanced/GroceriesToBags.kt`
+* `examples/advanced/ValuesToRanges.kt`
+* `examples/advanced/WarmingCooling.kt`
 
 #### Resetting flags: `keepValueThatTriggeredReset` and `repeatLastValueInNewSeries`
 
@@ -375,6 +393,8 @@ These two flags are explained in the following example:
 `examples/basic/ResetterFlags.kt`
 
 # Consumers
+
+All consumers, in alphabetical order.
 
 ### Always
 
@@ -652,6 +672,8 @@ Advanced examples: `examples/basics/BasicGroups`
 
 ## Transformations
 
+All transformations, in alphabetical order.
+
 ### Batch
 
 Example:
@@ -729,7 +751,7 @@ Complete example: `examples/transformations/KeepStateExample`
 
 ### KeepStates
 
-Passes items to several consumers which stores several states, and passes these items, unchanged, downstream to the next consumer.
+Passes items to several consumers which store several states, and also passes these items, unchanged, downstream to the next consumer.
 
 Example:
 
@@ -831,6 +853,8 @@ Complete example: `examples/transformations/FirstSkipLastStep`
 
 ### Step
 
+Takes a slice out of a sequence.
+
 Example:
 
 ```kotlin
@@ -881,12 +905,13 @@ Complete example: `examples/transformations/TransformationExample`
 
 More advanced example: `examples/advanced/UnpackItems`
 
-# Transforming results
+# Transforming results after consuming
 
 By default, `consume` returns a `List<Any>`, as shown in te following example:
 
 ```kotlin
         val actual = (0..10).asSequence().consume(min(), max(), count())
+
         assertEquals(listOf(
                 Optional.of(0),
                 Optional.of(10),
@@ -914,6 +939,7 @@ We can provide this function along with a list of consumers:
         val actual = (0..10).asSequence().consume(
             {consumersList: List<Consumer<Int>> -> resultsMapper(consumersList) },
             min(), max(), count())
+
         assertEquals(
             BasicStats(Optional.of(0), Optional.of(10), 11L),
             actual)
@@ -921,7 +947,7 @@ We can provide this function along with a list of consumers:
 
 Complete example: `examples/basics/TransformingResults`
 
-# Extending Konsumers
+# Extending Consumers
 
 ### Developing a new consumer
 
