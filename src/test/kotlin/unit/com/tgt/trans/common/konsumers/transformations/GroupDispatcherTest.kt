@@ -5,6 +5,7 @@ import com.tgt.trans.common.konsumers.consumers.consume
 import com.tgt.trans.common.konsumers.consumers.count
 import com.tgt.trans.common.konsumers.dispatchers.allOf
 import com.tgt.trans.common.konsumers.dispatchers.groupBy
+import com.tgt.trans.common.testutils.FakeStopTester
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -16,8 +17,8 @@ class GroupDispatcherTest {
     @Test
     fun groups() {
         val actual = things
-                .consume(groupBy(keyFactory = { it: Thing -> it.color },
-                    innerConsumerFactory = { count() }))
+            .consume(groupBy(keyFactory = { it: Thing -> it.color },
+                innerConsumerFactory = { count() }))
         assertEquals(mapOf("Amber" to 2L, "Red" to 1L), actual[0])
     }
 
@@ -43,6 +44,18 @@ class GroupDispatcherTest {
             "Red" to listOf(1L, mapOf("Oval" to listOf(1L))))
         assertEquals(expected, actual[0])
     }
-    data class Thing(val color: String, val shape: String)
+
+    @Test
+    fun `passes stop downstream`() {
+        val things = listOf(Thing("Amber", "Circle"),
+            Thing("Red", "Oval"))
+        val sut = groupBy(keyFactory = { a: Thing -> a.color },
+            innerConsumerFactory = { FakeStopTester() })
+        val actual = things.consume(sut)
+        val expected = mapOf("Amber" to true, "Red" to true)
+        assertEquals(expected, actual[0])
+    }
+
+    private data class Thing(val color: String, val shape: String)
 }
 
