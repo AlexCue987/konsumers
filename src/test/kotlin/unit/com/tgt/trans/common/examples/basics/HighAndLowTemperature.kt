@@ -5,7 +5,7 @@ import com.tgt.trans.common.konsumers.dispatchers.allOf
 import com.tgt.trans.common.konsumers.dispatchers.groupBy
 import com.tgt.trans.common.konsumers.transformations.mapTo
 import com.tgt.trans.common.konsumers.transformations.peek
-import com.tgt.trans.common.konsumers.resetters.consumeWithResetting
+import com.tgt.trans.common.konsumers.dispatchers.consumeWithResetting
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime

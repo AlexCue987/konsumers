@@ -1,4 +1,4 @@
-package com.tgt.trans.common.konsumers.resetters
+package com.tgt.trans.common.konsumers.dispatchers
 
 import com.tgt.trans.common.konsumers.consumers.Consumer
 
@@ -10,6 +10,7 @@ class Resetter<T, V>(private val intermediateConsumersFactory: () -> List<Consum
                      private val repeatLastValueInNewSeries: Boolean = false): Consumer<T> {
     private var intermediateConsumers: List<Consumer<T>> = intermediateConsumersFactory()
     private var previousValue: T? = null
+    private var empty = true
 
     override fun process(value: T) {
         if (resetTrigger(intermediateConsumers, value)) {
@@ -36,12 +37,16 @@ class Resetter<T, V>(private val intermediateConsumersFactory: () -> List<Consum
 
     private fun processByConsumers(value: T) {
         intermediateConsumers.forEach { it.process(value) }
+        empty = false
     }
 
     private fun processEndOfSeries() {
-        val transformedResults = intermediateResultsTransformer(intermediateConsumers)
-        finalConsumer.process(transformedResults)
+        if (!empty) {
+            val transformedResults = intermediateResultsTransformer(intermediateConsumers)
+            finalConsumer.process(transformedResults)
+        }
         intermediateConsumers = intermediateConsumersFactory()
+        empty = true
     }
 
     override fun results() = finalConsumer.results()

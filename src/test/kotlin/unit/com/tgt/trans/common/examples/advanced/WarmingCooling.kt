@@ -2,7 +2,7 @@ package com.tgt.trans.common.examples.advanced
 
 import com.tgt.trans.common.konsumers.consumers.*
 import com.tgt.trans.common.konsumers.dispatchers.allOf
-import com.tgt.trans.common.konsumers.resetters.consumeWithResetting
+import com.tgt.trans.common.konsumers.dispatchers.consumeWithResetting
 import com.tgt.trans.common.konsumers.transformations.mapTo
 import com.tgt.trans.common.konsumers.transformations.peek
 import java.time.LocalDateTime
@@ -34,11 +34,12 @@ class WarmingCooling {
         val actual = temperatures.consume(
             consumeWithResetting(
                 intermediateConsumersFactory = { listOf(getStatsConsumer(), LastN<Temperature>(3)) },
-            resetTrigger = {intermediateConsumers: List<Consumer<Temperature>>, value: Temperature ->
-                changeInAnotherDirection(intermediateConsumers, value)},
-            intermediateResultsTransformer = intermediateResultsTransformer,
-            finalConsumer = peek<SubseriesStats> { println("Consuming $it") }.asList(),
-            repeatLastValueInNewSeries = true))
+                resetTrigger = { intermediateConsumers: List<Consumer<Temperature>>, value: Temperature ->
+                    changeInAnotherDirection(intermediateConsumers, value)
+                },
+                intermediateResultsTransformer = intermediateResultsTransformer,
+                finalConsumer = peek<SubseriesStats> { println("Consuming $it") }.asList(),
+                repeatLastValueInNewSeries = true))
 
         val expected = listOf(
             SubseriesStats(wednesdayMorning, warmestTime, 44, 56),

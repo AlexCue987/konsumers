@@ -2,7 +2,7 @@ package com.tgt.trans.common.examples.advanced
 
 import com.tgt.trans.common.konsumers.consumers.*
 import com.tgt.trans.common.konsumers.dispatchers.Branch
-import com.tgt.trans.common.konsumers.resetters.consumeWithResetting
+import com.tgt.trans.common.konsumers.dispatchers.consumeWithResetting
 import com.tgt.trans.common.konsumers.transformations.mapTo
 import java.math.BigDecimal
 import kotlin.test.Test
@@ -21,7 +21,8 @@ class GroceriesToBags {
                 listOf(itemsInBag, bagWeight)
             },
             resetTrigger = { intermediateConsumers: List<Consumer<GroceryItem>>, value: GroceryItem ->
-                exceedsWeightLimit(intermediateConsumers, value)},
+                exceedsWeightLimit(intermediateConsumers, value)
+            },
             intermediateResultsTransformer = { intermediateConsumers: List<Consumer<GroceryItem>> ->
                 intermediateConsumers[0].results() as List<GroceryItem>
             },

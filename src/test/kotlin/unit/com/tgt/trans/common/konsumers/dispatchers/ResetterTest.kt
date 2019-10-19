@@ -1,4 +1,4 @@
-package com.tgt.trans.common.examples.basics
+package com.tgt.trans.common.konsumers.dispatchers
 
 import com.tgt.trans.common.konsumers.consumers.Consumer
 import com.tgt.trans.common.konsumers.consumers.asList
@@ -7,9 +7,22 @@ import com.tgt.trans.common.konsumers.dispatchers.consumeWithResetting
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ResetterFlags {
+class ResetterTest {
     private val commands = listOf("right", "left", "stop", "up")
     val intermediateResultsTransformer = { intermediateConsumers: List<Consumer<String>> -> intermediateConsumers[0].results() }
+
+    @Test
+    fun `handles empty sequence`() {
+        val actual = listOf<String>().consume(
+            consumeWithResetting(
+                intermediateConsumersFactory = { listOf(asList<String>()) },
+                resetTrigger = { _: List<Consumer<String>>, value: String -> value == "stop" },
+                intermediateResultsTransformer = intermediateResultsTransformer,
+                finalConsumer = asList()
+            ))
+        val expected = listOf<List<List<String>>>()
+        assertEquals(expected, actual[0])
+    }
 
     @Test
     fun `no flags set`() {
