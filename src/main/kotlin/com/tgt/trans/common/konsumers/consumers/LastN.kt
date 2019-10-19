@@ -23,3 +23,5 @@ class LastN<T>(private val count: Int): Consumer<T> {
 
     override fun stop() {}
 }
+
+fun<T, V> ConsumerBuilder<T, V>.lastN(count: Int) = this.build(LastN<V>(count))

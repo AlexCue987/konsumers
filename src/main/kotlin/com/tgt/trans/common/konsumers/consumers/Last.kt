@@ -11,7 +11,9 @@ class Last<T: Any>: Consumer<T> {
         itemsProcessed++
     }
 
-    override fun results(): Any = if(itemsProcessed > 0) Optional.of(lastValue) else Optional.empty()
+    override fun results() = if(itemsProcessed > 0) Optional.of(lastValue) else Optional.empty()
 
     override fun stop() {}
 }
+
+fun<T, V: Any> ConsumerBuilder<T, V>.last() = this.build(Last())

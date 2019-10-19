@@ -19,6 +19,5 @@ class FirstN<T>(private val count: Int): Consumer<T> {
     override fun stop() {}
 }
 
-
 fun<T, V> ConsumerBuilder<T, V>.firstN(count: Int) = this.build(FirstN<V>(count))
 
