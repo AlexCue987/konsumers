@@ -6,7 +6,7 @@ import com.tgt.trans.common.konsumers.consumers.asList
 import com.tgt.trans.common.konsumers.consumers.consume
 import com.tgt.trans.common.konsumers.dispatchers.allOf
 import com.tgt.trans.common.konsumers.transformations.filterOn
-import com.tgt.trans.common.testutils.StopTester
+import com.tgt.trans.common.testutils.FakeStopTester
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -35,7 +35,7 @@ Processing item 2
 
     @Test
     fun `passes stop() call downstream`() {
-        val innerConsumer = StopTester<Int>()
+        val innerConsumer = FakeStopTester<Int>()
         (0..2).asSequence().consume(filterOn<Int> { it>0 }.print().allOf(innerConsumer))
         assertTrue(innerConsumer.results())
     }

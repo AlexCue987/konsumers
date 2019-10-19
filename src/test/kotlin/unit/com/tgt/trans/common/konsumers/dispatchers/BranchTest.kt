@@ -2,9 +2,11 @@ package com.tgt.trans.common.konsumers.dispatchers
 
 import com.tgt.trans.common.konsumers.consumers.asList
 import com.tgt.trans.common.konsumers.consumers.consume
-import com.tgt.trans.common.konsumers.dispatchers.branchOn
+import com.tgt.trans.common.testutils.FakeStopTester
+import org.junit.jupiter.api.assertAll
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class BranchTest {
     private val rejected = asList<Int>()
@@ -33,5 +35,20 @@ class BranchTest {
     fun `handles both not empty`() {
         val actual = listOf(1, -1).consume(sut)
         assertEquals(listOf(listOf<Int>(1), listOf<Int>(-1)), actual[0])
+    }
+
+    @Test
+    fun `passes stop downstream`() {
+        val acceptedBranch = FakeStopTester<Int>()
+        val rejectedBranch = FakeStopTester<Int>()
+        val sut = Branch<Int>(
+            condition = { a: Int -> a > 0 },
+            consumerForAccepted = acceptedBranch,
+            consumerForRejected = rejectedBranch)
+        sut.stop()
+        assertAll(
+            { assertTrue(acceptedBranch.isStopped()) },
+            { assertTrue(rejectedBranch.isStopped()) }
+        )
     }
 }

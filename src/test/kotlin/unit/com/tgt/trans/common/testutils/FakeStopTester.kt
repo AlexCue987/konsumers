@@ -2,7 +2,7 @@ package com.tgt.trans.common.testutils
 
 import com.tgt.trans.common.konsumers.consumers.Consumer
 
-class StopTester<T>: Consumer<T>{
+class FakeStopTester<T>: Consumer<T>{
     private var stopped = false
 
     override fun process(value: T) {}
@@ -15,4 +15,6 @@ class StopTester<T>: Consumer<T>{
         }
         stopped = true
     }
+
+    fun isStopped() = stopped
 }
