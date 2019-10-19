@@ -38,3 +38,8 @@ fun<T> ConsumerBuilder<T, T>.branchOn(condition: (value: T) -> Boolean, consumer
     ChainedBranchBuilder<T>(this, condition, consumerForRejected)
 
 fun<T> branchOn(condition: (value: T) -> Boolean, consumerForRejected: Consumer<T>) = BranchBuilder(condition, consumerForRejected)
+
+fun<T> ConsumerBuilder<T, T>.branchOn(condition: (value: T) -> Boolean,
+                consumerForAccepted: Consumer<T>,
+                consumerForRejected: Consumer<T>) =
+    this.build(Branch(condition, consumerForAccepted, consumerForRejected))

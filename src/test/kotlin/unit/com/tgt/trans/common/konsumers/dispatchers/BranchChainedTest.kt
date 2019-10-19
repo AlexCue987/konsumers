@@ -37,4 +37,19 @@ class BranchChainedTest {
         val actual = listOf(1, -1).consume(sut)
         assertEquals(listOf(listOf<Int>(1), listOf<Int>(-1)), actual[0])
     }
+
+    @Test
+    fun `passes stop downstream`() {
+        val acceptedBranch = FakeStopTester<Int>()
+        val rejectedBranch = FakeStopTester<Int>()
+        val sut = filterOn<Int> {it > 0}.branchOn(
+            condition = { a: Int -> a > 0 },
+            consumerForAccepted = acceptedBranch,
+            consumerForRejected = rejectedBranch)
+        sut.stop()
+        assertAll(
+            { assertTrue(acceptedBranch.isStopped()) },
+            { assertTrue(rejectedBranch.isStopped()) }
+        )
+    }
 }
