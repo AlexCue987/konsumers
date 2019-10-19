@@ -3,6 +3,8 @@ package com.tgt.trans.common.konsumers.transformations
 import com.tgt.trans.common.konsumers.consumers.asList
 import com.tgt.trans.common.konsumers.consumers.consume
 import com.tgt.trans.common.konsumers.consumers.count
+import com.tgt.trans.common.konsumers.dispatchers.allOf
+import com.tgt.trans.common.testutils.FakeStopTester
 import org.junit.jupiter.api.assertAll
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -41,5 +43,14 @@ class MultipleStatesKeeperTest {
             { assertEquals (items, listToKeep.results()) },
             { assertEquals(2L, countToKeep.results()) }
         )
+    }
+
+    @Test
+    fun `passes stop call downstream`() {
+        val fakeStopTester = FakeStopTester<Int>()
+        val sut = keepStates(listToKeep, countToKeep).allOf(fakeStopTester)
+        sut.stop()
+
+        assertTrue(fakeStopTester.isStopped())
     }
 }

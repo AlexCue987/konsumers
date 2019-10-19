@@ -1,15 +1,14 @@
-package com.tgt.trans.common.konsumers.transformations
+package com.tgt.trans.common.konsumers.dispatchers
 
 import com.tgt.trans.common.konsumers.consumers.asList
 import com.tgt.trans.common.konsumers.consumers.consume
 import com.tgt.trans.common.konsumers.consumers.count
-import com.tgt.trans.common.konsumers.dispatchers.allOf
-import com.tgt.trans.common.konsumers.dispatchers.groupBy
+import com.tgt.trans.common.konsumers.transformations.mapTo
 import com.tgt.trans.common.testutils.FakeStopTester
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class GroupDispatcherTest {
+class GroupDispatcherTest2 {
     private val things = listOf(Thing("Amber", "Circle"),
         Thing("Amber", "Square"),
         Thing("Red", "Oval"))

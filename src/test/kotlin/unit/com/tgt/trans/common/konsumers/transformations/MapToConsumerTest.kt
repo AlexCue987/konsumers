@@ -44,5 +44,4 @@ class MapToConsumerTest {
         sut.stop()
         verify(exactly = 1) { consumer.stop() }
     }
-
 }
