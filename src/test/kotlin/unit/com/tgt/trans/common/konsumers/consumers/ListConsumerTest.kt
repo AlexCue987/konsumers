@@ -20,4 +20,12 @@ class ListConsumerTest {
             filterOn { a: Int -> a > 0 }.asList())
         assertEquals(listOf(listOf(answer), listOf(answer)), actual)
     }
+
+    @Test
+    fun `works after transformation`() {
+        val items = listOf(42, 43)
+        val actual = items.consume(
+            filterOn { a: Int -> a > 0 }.asList())
+        assertEquals(listOf(items), actual)
+    }
 }
