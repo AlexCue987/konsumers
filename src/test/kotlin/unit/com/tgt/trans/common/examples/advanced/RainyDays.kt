@@ -14,15 +14,15 @@ class RainyDays {
     @Test
     fun `series of consecutive rainy days`() {
         val longestSeriesOfRainyDaysConsumer =
-            { topBy { it: List<DailyWeather> -> it.size } }
+            topBy { it: List<DailyWeather> -> it.size }
 
         val seriesWithLargestTotalRainfallConsumer =
-            { topBy { it: List<DailyWeather> -> it.map { it.rainAmount.toDouble() }.sum() } }
+            topBy { it: List<DailyWeather> -> it.map { it.rainAmount.toDouble() }.sum() }
 
         val seriesWithLargestRainfallInOneDayConsumer =
-            { topBy { it: List<DailyWeather> -> it.map { it.rainAmount.toDouble() }.max()!! } }
+            topBy { it: List<DailyWeather> -> it.map { it.rainAmount.toDouble() }.max()!! }
 
-        val actual = dailyWeather.consume(
+        dailyWeather.consumeByOne(
             filterOn<DailyWeather> { it.rainAmount > BigDecimal.ZERO }
                 .consumeWithResetting(
                     intermediateConsumersFactory = {
@@ -36,27 +36,25 @@ class RainyDays {
                         intermediateConsumers[0].results() as List<DailyWeather>
                     },
                     finalConsumer = allOf(
-                        longestSeriesOfRainyDaysConsumer(),
-                        seriesWithLargestTotalRainfallConsumer(),
-                        seriesWithLargestRainfallInOneDayConsumer()
+                        longestSeriesOfRainyDaysConsumer,
+                        seriesWithLargestTotalRainfallConsumer,
+                        seriesWithLargestRainfallInOneDayConsumer
                     )))
 
-        val unwrappedResults = (actual[0] as List<List<List<DailyWeather>>>)
-
-        println("longestSeriesOfRainyDays: ${unwrappedResults[0][0]}")
-        println("seriesWithLargestTotalRainfall: ${unwrappedResults[1][0]}")
-        println("seriesLargestRainfallInOneDay: ${unwrappedResults[2][0]}")
+        println("longestSeriesOfRainyDays: ${longestSeriesOfRainyDaysConsumer.results()}")
+        println("seriesWithLargestTotalRainfall: ${seriesWithLargestTotalRainfallConsumer.results()}")
+        println("seriesLargestRainfallInOneDay: ${seriesWithLargestRainfallInOneDayConsumer.results()}")
 
         assertEquals(listOf(dailyWeather.subList(1, 4)),
-            unwrappedResults[0],
+            longestSeriesOfRainyDaysConsumer.results(),
             "longestSeriesOfRainyDays")
 
         assertEquals(listOf(dailyWeather.subList(10, 12)),
-            unwrappedResults[1],
+            seriesWithLargestTotalRainfallConsumer.results(),
             "seriesWithLargestTotalRainfall")
 
         assertEquals(listOf(dailyWeather.subList(7, 8), dailyWeather.subList(10, 12)),
-            unwrappedResults[2],
+            seriesWithLargestRainfallInOneDayConsumer.results(),
             "seriesLargestRainfallInOneDay")
     }
 }

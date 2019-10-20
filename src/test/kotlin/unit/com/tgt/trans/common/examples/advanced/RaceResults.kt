@@ -17,9 +17,9 @@ class RaceResults {
     val yoda = Finisher("Yoda", LocalTime.of(0, 25), ageGroup2)
     val luke = Finisher("Luke", LocalTime.of(0, 26), ageGroup1)
     val r2d2 = Finisher("R2D2", LocalTime.of(0, 27), ageGroup1)
-    val chhewbacca = Finisher("Chewbacca", LocalTime.of(0, 28), ageGroup2)
+    val chewbacca = Finisher("Chewbacca", LocalTime.of(0, 28), ageGroup2)
 
-    private val finishers = listOf(yoda, luke, r2d2, chhewbacca)
+    private val finishers = listOf(yoda, luke, r2d2, chewbacca)
 
     data class RaceResult(val finisher: Finisher, val overallPlace: Int, val ageGroupPlace: Int, val minutesAfterWinnerFinished: Int)
 
@@ -27,18 +27,18 @@ class RaceResults {
     fun `uses states to store overall and age group place and best time`() {
         val overallPlace = count<Finisher>()
         val bestTime = FirstN<Finisher>(1)
-        val raceResults = finishers.consume(
+        val raceResults = finishers.consumeByOne(
             keepStates(overallPlace, bestTime)
                 .groupBy(keyFactory = { finisher: Finisher -> finisher.ageGroup },
                     innerConsumerFactory = { ageGroupConsumer(overallPlace, bestTime) })
         )
 
-        raceResults.forEach { println(it) }
+        println(raceResults)
 
         val expected = mapOf(
             ageGroup2 to listOf(
                 RaceResult(yoda, overallPlace = 1, ageGroupPlace = 1, minutesAfterWinnerFinished = 0),
-                RaceResult(chhewbacca, overallPlace = 4, ageGroupPlace = 2, minutesAfterWinnerFinished = 3)
+                RaceResult(chewbacca, overallPlace = 4, ageGroupPlace = 2, minutesAfterWinnerFinished = 3)
             ),
             ageGroup1 to listOf(
                 RaceResult(luke, overallPlace = 2, ageGroupPlace = 1, minutesAfterWinnerFinished = 1),
@@ -46,7 +46,7 @@ class RaceResults {
             )
         )
 
-        assertEquals(expected, raceResults[0])
+        assertEquals(expected, raceResults)
     }
 
     private fun ageGroupConsumer(overallPlace: Counter<Finisher>, bestTime: FirstN<Finisher>): Consumer<Finisher> {
