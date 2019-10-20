@@ -1,6 +1,7 @@
 package com.tgt.trans.common.konsumers.dispatchers
 
 import com.tgt.trans.common.konsumers.consumers.Consumer
+import com.tgt.trans.common.konsumers.consumers.ConsumerBuilder
 
 class Resetter<T, V>(private val intermediateConsumersFactory: () -> List<Consumer<T>>,
                      private val resetTrigger: (intermediateConsumers: List<Consumer<T>>, value: T) -> Boolean,
@@ -66,3 +67,13 @@ fun<T, V> consumeWithResetting(intermediateConsumersFactory: () -> List<Consumer
     Resetter(intermediateConsumersFactory, resetTrigger, intermediateResultsTransformer, finalConsumer,
         keepValueThatTriggeredReset, repeatLastValueInNewSeries)
 
+
+fun<S, T, V> ConsumerBuilder<S, T>.consumeWithResetting(intermediateConsumersFactory: () -> List<Consumer<T>>,
+                                                     resetTrigger: (intermediateConsumers: List<Consumer<T>>, value: T) -> Boolean,
+                                                     intermediateResultsTransformer: (intermediateConsumers: List<Consumer<T>>) -> V,
+                                                     finalConsumer: Consumer<V>,
+                                                     keepValueThatTriggeredReset: Boolean = false,
+                                                     repeatLastValueInNewSeries: Boolean = false): Consumer<S> =
+    this.build(
+    Resetter(intermediateConsumersFactory, resetTrigger, intermediateResultsTransformer, finalConsumer,
+        keepValueThatTriggeredReset, repeatLastValueInNewSeries))
