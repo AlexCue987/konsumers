@@ -4,16 +4,16 @@ class RatioCounter<T>(val condition: (a: T) -> Boolean) : Consumer<T> {
     var outOf = 0L
     var conditionMet = 0L
 
-    override inline fun process(value: T) {
+    override  fun process(value: T) {
         outOf++
         if(condition(value)) {
             conditionMet++
         }
     }
 
-    override inline fun results() = Ratio(conditionMet, outOf)
+    override  fun results() = Ratio(conditionMet, outOf)
 
-    override inline fun stop() {}
+    override  fun stop() {}
 }
 
 data class Ratio(val conditionMet: Long, val outOf: Long)

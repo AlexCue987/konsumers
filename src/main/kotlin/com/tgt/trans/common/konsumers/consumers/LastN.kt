@@ -8,7 +8,7 @@ class LastN<T>(val count: Int): Consumer<T> {
         require(count > 0) {"Count must be positive, is: $count"}
     }
 
-    override inline fun process(value: T) {
+    override  fun process(value: T) {
         if(itemsProcessed < count) {
             buffer.add(value)
         } else {
@@ -17,11 +17,11 @@ class LastN<T>(val count: Int): Consumer<T> {
         itemsProcessed++
     }
 
-    override inline fun results() = (maxOf(itemsProcessed - count, 0) until itemsProcessed).asSequence()
+    override  fun results() = (maxOf(itemsProcessed - count, 0) until itemsProcessed).asSequence()
         .map{buffer[it % count]}
         .toList()
 
-    override inline fun stop() {}
+    override  fun stop() {}
 }
 
-inline fun<T, V> ConsumerBuilder<T, V>.lastN(count: Int) = this.build(LastN<V>(count))
+ fun<T, V> ConsumerBuilder<T, V>.lastN(count: Int) = this.build(LastN<V>(count))

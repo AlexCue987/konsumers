@@ -5,13 +5,13 @@ class ConditionOnRatio<T>(private val conditionOnItem: (a: T) -> Boolean,
     : Consumer<T> {
     val consumer = RatioCounter(conditionOnItem)
 
-    override inline fun process(value: T) {
+    override  fun process(value: T) {
         consumer.process(value)
     }
 
-    override inline fun results() = conditionOnRatio(consumer.conditionMet, consumer.outOf)
+    override  fun results() = conditionOnRatio(consumer.conditionMet, consumer.outOf)
 
-    override inline fun stop() {}
+    override  fun stop() {}
 }
 
 
