@@ -1,17 +1,17 @@
 package com.tgt.trans.common.konsumers.consumers
 
 class ConditionOnRatio<T>(private val conditionOnItem: (a: T) -> Boolean,
-                          private val conditionOnRatio: (conditionMet: Long, outOf: Long) -> Boolean)
+                          val conditionOnRatio: (conditionMet: Long, outOf: Long) -> Boolean)
     : Consumer<T> {
-    private val consumer = RatioCounter(conditionOnItem)
+    val consumer = RatioCounter(conditionOnItem)
 
-    override fun process(value: T) {
+    override inline fun process(value: T) {
         consumer.process(value)
     }
 
-    override fun results() = conditionOnRatio(consumer.conditionMet, consumer.outOf)
+    override inline fun results() = conditionOnRatio(consumer.conditionMet, consumer.outOf)
 
-    override fun stop() {}
+    override inline fun stop() {}
 }
 
 

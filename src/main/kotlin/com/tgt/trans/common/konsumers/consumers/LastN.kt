@@ -1,6 +1,6 @@
 package com.tgt.trans.common.konsumers.consumers
 
-class LastN<T>(private val count: Int): Consumer<T> {
+class LastN<T>(val count: Int): Consumer<T> {
     var itemsProcessed = 0
     val buffer = mutableListOf<T>()
 
@@ -8,7 +8,7 @@ class LastN<T>(private val count: Int): Consumer<T> {
         require(count > 0) {"Count must be positive, is: $count"}
     }
 
-    override fun process(value: T) {
+    override inline fun process(value: T) {
         if(itemsProcessed < count) {
             buffer.add(value)
         } else {
@@ -17,11 +17,11 @@ class LastN<T>(private val count: Int): Consumer<T> {
         itemsProcessed++
     }
 
-    override fun results() = (maxOf(itemsProcessed - count, 0) until itemsProcessed).asSequence()
+    override inline fun results() = (maxOf(itemsProcessed - count, 0) until itemsProcessed).asSequence()
         .map{buffer[it % count]}
         .toList()
 
-    override fun stop() {}
+    override inline fun stop() {}
 }
 
-fun<T, V> ConsumerBuilder<T, V>.lastN(count: Int) = this.build(LastN<V>(count))
+inline fun<T, V> ConsumerBuilder<T, V>.lastN(count: Int) = this.build(LastN<V>(count))

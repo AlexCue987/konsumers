@@ -6,14 +6,14 @@ class Last<T: Any>: Consumer<T> {
     var itemsProcessed = 0
     lateinit var lastValue: T
 
-    override fun process(value: T) {
+    override inline fun process(value: T) {
         lastValue = value
         itemsProcessed++
     }
 
-    override fun results() = if(itemsProcessed > 0) Optional.of(lastValue) else Optional.empty()
+    override inline fun results() = if(itemsProcessed > 0) Optional.of(lastValue) else Optional.empty()
 
-    override fun stop() {}
+    override inline fun stop() {}
 }
 
-fun<T, V: Any> ConsumerBuilder<T, V>.last() = this.build(Last())
+inline fun<T, V: Any> ConsumerBuilder<T, V>.last() = this.build(Last())
