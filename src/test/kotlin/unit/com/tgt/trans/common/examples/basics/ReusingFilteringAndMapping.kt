@@ -7,7 +7,9 @@ import com.tgt.trans.common.konsumers.transformations.mapTo
 import com.tgt.trans.common.examples.DailyWeather
 import com.tgt.trans.common.examples.dailyWeather
 import java.math.BigDecimal
+import java.util.*
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ReusingFilteringAndMapping {
     @Test
@@ -19,12 +21,15 @@ class ReusingFilteringAndMapping {
 
         val rainyDaysCount = count<DailyWeather>()
 
-        val allResults = dailyWeather.consume(
+        val allResults = dailyWeather.consumeByOne(
             verySlowFilter.allOf(lowestLowTemperature, rainyDaysCount))
 
         println(lowestLowTemperature.results())
         println(rainyDaysCount.results())
         println(allResults)
+
+        assertEquals(Optional.of(20), lowestLowTemperature.results())
+        assertEquals(6, rainyDaysCount.results())
     }
 
     @Test

@@ -46,7 +46,7 @@ In the following example we compute a condition once, and use it in two consumer
 
         val rainyDaysCount = count<DailyWeather>()
 
-        val allResults = dailyWeather.consume(
+        val allResults = dailyWeather.consumeByOne(
             verySlowFilter.allOf(lowestLowTemperature, rainyDaysCount))
 ```
 
