@@ -443,6 +443,28 @@ Example:
 
 Complete example: `examples/consumers/MinMaxCountAvg`
 
+### BottomBy and BottomNBy
+
+In the following example we provide a `Comparator`, and find bottom one and bottom two two items, with possible ties:
+
+```kotlin
+        val comparator = { a: Thing, b: Thing -> a.quantity.compareTo(b.quantity) }
+        val actual = things.consume(bottomBy(comparator), bottomNBy(2, comparator))
+
+```
+
+Complete example: `examples/consumers/BottomN`
+
+We can also project items to `Comparable` values, and find bottom values by that projection. In that case all we need to do is to provide a projection to `Comparable`. A built-in `Comparator` for that projection will be used:
+
+
+```kotlin
+        val projection = { a: Thing -> a.quantity }
+        val actual = things.consume(bottomBy(projection), bottomNBy(2, projection))
+```
+
+Complete example: `examples/consumers/BottomN`
+
 ### Count
 
 Example:
@@ -583,13 +605,13 @@ Example:
 
 Complete example: `examples/consumers/SumExample`
 
-### TopN
+### TopBy and TopNBy
 
-In the following example we provide a `Comparator`, and find top two items, with ties:
+In the following example we provide a `Comparator`, and find top one and top two two items, with possible ties:
 
 ```kotlin
         val comparator = { a: Thing, b: Thing -> a.quantity.compareTo(b.quantity) }
-        val actual = things.consume(topNBy(2, comparator))
+        val actual = things.consume(topBy(comparator), topNBy(2, comparator))
 
 ```
 
@@ -600,7 +622,7 @@ We can also project items to `Comparable` values, and find top values by that pr
 
 ```kotlin
         val projection = { a: Thing -> a.quantity }
-        val actual = things.consume(topNBy(2, projection))
+        val actual = things.consume(topBy(projection), topNBy(2, projection))
 ```
 
 Complete example: `examples/consumers/TopN`
@@ -1162,3 +1184,9 @@ Complete example: `examples/advanced/ValuesToRanges`
 Demonstrates use of transformations, filtering and mapping in one step. Also shows how one incoming item can be transformed into several.
 
 Complete example: `examples/advanced/UnpackItems`
+
+### Consecutive rainy days.
+
+Demonstrates advanced use of resetting. Finds series of consecutive rainy days that meet several criteria, all at once.
+
+Complete example: `examples/advanced/RainyDays`

@@ -1,6 +1,7 @@
 package com.tgt.trans.common.examples.consumers
 
 import com.tgt.trans.common.konsumers.consumers.consume
+import com.tgt.trans.common.konsumers.consumers.topBy
 import com.tgt.trans.common.konsumers.consumers.topNBy
 import kotlin.test.assertEquals
 import kotlin.test.Test
@@ -19,18 +20,20 @@ class TopNConsumerTest {
     fun `compare by a projection`() {
         val things = listOf(ball, puck, ski, pole, boot)
         val projection = { a: Thing -> a.quantity }
-        val actual = things.consume(topNBy(2, projection))
-        val expected = listOf(listOf(pole), listOf(ski, boot))
-        assertEquals(expected, actual[0])
+        val actual = things.consume(topBy(projection), topNBy(2, projection))
+        val expected2 = listOf(listOf(pole), listOf(ski, boot))
+        assertEquals(listOf(pole), actual[0])
+        assertEquals(expected2, actual[1])
     }
 
     @Test
     fun `provide a comparator`() {
         val things = listOf(ball, puck, ski, pole, boot)
         val comparator = { a: Thing, b: Thing -> a.quantity.compareTo(b.quantity) }
-        val actual = things.consume(topNBy(2, comparator))
-        val expected = listOf(listOf(pole), listOf(ski, boot))
-        assertEquals(expected, actual[0])
+        val actual = things.consume(topBy(comparator), topNBy(2, comparator))
+        val expected2 = listOf(listOf(pole), listOf(ski, boot))
+        assertEquals(listOf(pole), actual[0])
+        assertEquals(expected2, actual[1])
     }
 }
 

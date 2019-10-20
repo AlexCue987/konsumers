@@ -2,15 +2,23 @@ package com.tgt.trans.common.konsumers.consumers
 
 import com.tgt.trans.common.konsumers.transformations.filterOn
 import com.tgt.trans.common.konsumers.transformations.mapTo
+import com.tgt.trans.common.testutils.FakeStopTester
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ConsumerTest {
     @Test
     fun worksWithSequence() {
         val actual = (1..3).asSequence().consume(max())
         assertEquals(listOf(Optional.of(3)), actual)
+    }
+
+    @Test
+    fun `works with Sequence and one Consumer`() {
+        val actual = (1..3).asSequence().consumeByOne(max())
+        assertEquals(Optional.of(3), actual)
     }
 
     @Test
@@ -30,11 +38,48 @@ class ConsumerTest {
     }
 
     @Test
+    fun `works with Iterable and one Consumer`() {
+        val actual = (1..3).asIterable().consumeByOne(max())
+        assertEquals(Optional.of(3), actual)
+    }
+
+    @Test
     fun `works with Iterable and resultsMapper`() {
         val actual = (1..3).asIterable().consume(
             {consumersList: List<Consumer<Int>> -> resultsAsString(consumersList) },
             max())
         assertEquals("Optional[3]", actual)
+    }
+
+    @Test
+    fun `consume stops after consuming all`() {
+        val consumer = FakeStopTester<Int>()
+        val consumer2 = FakeStopTester<Int>()
+        (1..3).asSequence().consume(consumer, consumer2)
+        assertTrue(consumer.isStopped())
+        assertTrue(consumer2.isStopped())
+    }
+
+    @Test
+    fun `consume stops after consuming empty `() {
+        val consumer = FakeStopTester<Int>()
+        val consumer2 = FakeStopTester<Int>()
+        listOf<Int>().asSequence().consume(consumer, consumer2)
+        assertTrue(consumer.isStopped())
+    }
+
+    @Test
+    fun `consumeByOne stops after consuming all`() {
+        val consumer = FakeStopTester<Int>()
+        (1..3).asSequence().consumeByOne(consumer)
+        assertTrue(consumer.isStopped())
+    }
+
+    @Test
+    fun `consumeByOne stops after consuming empty `() {
+        val consumer = FakeStopTester<Int>()
+        listOf<Int>().asSequence().consumeByOne(consumer)
+        assertTrue(consumer.isStopped())
     }
 
     @Test

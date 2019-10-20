@@ -44,14 +44,14 @@ fun<T, V, F: Comparable<F>> ConsumerBuilder<T, V>.topBy(projection: (a:V) -> F) 
     this.build(TopConsumer(comparator = { a:V, b:V -> projection(a).compareTo(projection(b)) }))
 
 
-fun<T> bottomNBy(comparator: (a:T, b:T) -> Int) =
+fun<T> bottomBy(comparator: (a:T, b:T) -> Int) =
     TopConsumer( 1, comparator)
 
-fun<T, F: Comparable<F>> bottomNBy(projection: (a:T) -> F) =
+fun<T, F: Comparable<F>> bottomBy(projection: (a:T) -> F) =
     TopConsumer(1, comparator = { a:T, b:T -> projection(a).compareTo(projection(b)) })
 
-fun<T, V> ConsumerBuilder<T, V>.bottomNBy(comparator: (a:V, b:V) -> Int) =
+fun<T, V> ConsumerBuilder<T, V>.bottomBy(comparator: (a:V, b:V) -> Int) =
     this.build(TopConsumer(1, comparator))
 
-fun<T, V, F: Comparable<F>> ConsumerBuilder<T, V>.bottomNBy(projection: (a:V) -> F) =
+fun<T, V, F: Comparable<F>> ConsumerBuilder<T, V>.bottomBy(projection: (a:V) -> F) =
     this.build(TopConsumer(1, comparator = { a:V, b:V -> projection(a).compareTo(projection(b)) }))

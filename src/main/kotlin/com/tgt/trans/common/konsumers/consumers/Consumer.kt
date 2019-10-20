@@ -50,4 +50,23 @@ private fun <T, V> consume2(iterator: Iterator<T>, consumersList: List<Consumer<
     return resultsMapper(consumersList)
 }
 
+fun<T> Iterable<T>.consumeByOne(consumer: Consumer<T>): Any {
+    val iterator = iterator()
+    return consume2(iterator, consumer)
+}
+
+fun<T> Sequence<T>.consumeByOne(consumer: Consumer<T>): Any {
+    val iterator = iterator()
+    return consume2(iterator, consumer)
+}
+
+private fun <T> consume2(iterator: Iterator<T>, consumer: Consumer<T>): Any {
+    while (iterator.hasNext()) {
+        val value = iterator.next()
+        consumer.process(value)
+    }
+    consumer.stop()
+    return consumer.results()
+}
+
 private fun<T> defaultResultsMapper(consumersList: List<Consumer<T>>) = consumersList.map { it.results() }
