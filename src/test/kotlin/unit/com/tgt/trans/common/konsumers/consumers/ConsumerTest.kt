@@ -49,7 +49,7 @@ class ConsumerTest {
     fun ratio() {
         val sut = com.tgt.trans.common.konsumers.transformations.mapTo { a: Int -> a + 1 }.ratioOf { it%2 == 1 }
         (1..5).forEach { sut.process(it) }
-        assertEquals(Ratio2(2, 5), sut.results())
+        assertEquals(Ratio(2, 5), sut.results())
     }
 
     @Test
