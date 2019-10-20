@@ -14,13 +14,13 @@ class RainyDays {
     @Test
     fun `series of consecutive rainy days`() {
         val longestSeriesOfRainyDaysConsumer =
-            { topNBy(1) { it: List<DailyWeather> -> it.size } }
+            { topBy { it: List<DailyWeather> -> it.size } }
 
         val seriesWithLargestTotalRainfallConsumer =
-            { topNBy(1) { it: List<DailyWeather> -> it.map { it.rainAmount.toDouble() }.sum() } }
+            { topBy { it: List<DailyWeather> -> it.map { it.rainAmount.toDouble() }.sum() } }
 
         val seriesWithLargestRainfallInOneDayConsumer =
-            { topNBy(1) { it: List<DailyWeather> -> it.map { it.rainAmount.toDouble() }.max()!! } }
+            { topBy { it: List<DailyWeather> -> it.map { it.rainAmount.toDouble() }.max()!! } }
 
         val actual = dailyWeather.consume(
             filterOn<DailyWeather> { it.rainAmount > BigDecimal.ZERO }
@@ -48,15 +48,15 @@ class RainyDays {
         println("seriesLargestRainfallInOneDay: ${unwrappedResults[2][0]}")
 
         assertEquals(listOf(dailyWeather.subList(1, 4)),
-            unwrappedResults[0][0] as List<List<DailyWeather>>,
+            unwrappedResults[0],
             "longestSeriesOfRainyDays")
 
         assertEquals(listOf(dailyWeather.subList(10, 12)),
-            unwrappedResults[1][0] as List<List<DailyWeather>>,
+            unwrappedResults[1],
             "seriesWithLargestTotalRainfall")
 
         assertEquals(listOf(dailyWeather.subList(7, 8), dailyWeather.subList(10, 12)),
-            unwrappedResults[2][0] as List<List<DailyWeather>>,
+            unwrappedResults[2],
             "seriesLargestRainfallInOneDay")
     }
 }
