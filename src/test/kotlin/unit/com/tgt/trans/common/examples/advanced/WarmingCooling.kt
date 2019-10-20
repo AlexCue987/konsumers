@@ -31,7 +31,7 @@ class WarmingCooling {
     fun `split temperatures into increasing and decreasing subseries`() {
         val intermediateResultsTransformer = { intermediateConsumers: List<Consumer<Temperature>> -> getSubseriesStats(intermediateConsumers) }
 
-        val actual = temperatures.consume(
+        val actual = temperatures.consumeByOne(
             consumeWithResetting(
                 intermediateConsumersFactory = { listOf(getStatsConsumer(), LastN<Temperature>(3)) },
                 resetTrigger = { intermediateConsumers: List<Consumer<Temperature>>, value: Temperature ->
@@ -47,7 +47,7 @@ class WarmingCooling {
             SubseriesStats(coldestTime, thursdayMorning, 42, 49)
         )
 
-        assertEquals(expected, actual[0])
+        assertEquals(expected, actual)
     }
 
     private fun getStatsConsumer() = peek<Temperature> { println("Consuming $it") }.

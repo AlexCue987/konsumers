@@ -30,7 +30,7 @@ class ValuesToRanges {
 
     @Test
     fun `coalesce prices to intervals`() {
-        val actual = prices.consume(
+        val actual = prices.consumeByOne(
             consumeWithResetting(
                 intermediateConsumersFactory = { listOf(First(), Last()) },
                 resetTrigger = { intermediateConsumers: List<Consumer<TimedPrice>>, value: TimedPrice ->
@@ -45,7 +45,7 @@ class ValuesToRanges {
                 repeatLastValueInNewSeries = true)
         )
 
-        (actual[0] as List<*>).forEach { println(it) }
+        println(actual)
         /* Output:
 PriceRange(startAt=2019-10-09T08:07, endAt=2019-10-09T15:07, price=44)
 PriceRange(startAt=2019-10-09T15:07, endAt=2019-10-09T23:59, price=46)
@@ -60,7 +60,7 @@ PriceRange(startAt=2019-10-10T05:07, endAt=2019-10-10T11:07, price=42)
             PriceRange(thursdayMorning, thursdayNight, 42)
         )
 
-        assertEquals(expected, actual[0])
+        assertEquals(expected, actual)
     }
 
     private fun getPriceRange(intermediateConsumers: List<Consumer<TimedPrice>>): PriceRange {

@@ -2,6 +2,7 @@ package com.tgt.trans.common.examples.advanced
 
 import com.tgt.trans.common.konsumers.consumers.asList
 import com.tgt.trans.common.konsumers.consumers.consume
+import com.tgt.trans.common.konsumers.consumers.consumeByOne
 import com.tgt.trans.common.konsumers.transformations.transformTo
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -10,11 +11,11 @@ class UnpackItems {
 
     @Test
     fun `divide too heavy items if possible`() {
-        val itemsOfFivePoundsOrLess = items.consume(
+        val itemsOfFivePoundsOrLess = items.consumeByOne(
             transformTo<Item, WeightedItem> { item: Item -> unpack(item) }
                 .asList()
         )
-        (itemsOfFivePoundsOrLess[0] as List<*>).forEach { println(it) }
+        println(itemsOfFivePoundsOrLess)
 
         /* Output:
 Rejecting item: Item(name=pumpkin, canDivide=false)
@@ -31,7 +32,7 @@ WeightedItem(name=Bread, weight=1)
             WeightedItem(name = "bread", weight = 1)
         )
 
-        assertEquals(expected, itemsOfFivePoundsOrLess[0])
+        assertEquals(expected, itemsOfFivePoundsOrLess)
     }
 
     private val MAX_WEIGHT = 5
