@@ -6,6 +6,10 @@ class TopNConsumer<T>(val count: Int,
     constructor(count: Int,
                 comparator: (a:T, b:T) -> Int) : this(count, -1, comparator)
 
+    init {
+        require(count > 0) {"Count must be greater than 0, is: $count"}
+    }
+
     private val items = (1..count).asIterable()
         .map {mutableListOf<T>()}
         .toMutableList()

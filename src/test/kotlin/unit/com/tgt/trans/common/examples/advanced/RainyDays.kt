@@ -59,6 +59,4 @@ class RainyDays {
             unwrappedResults[2][0] as List<List<DailyWeather>>,
             "seriesLargestRainfallInOneDay")
     }
-
-//    fun lengthOfSeries(series: List<DailyWeather>)
 }
