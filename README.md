@@ -50,7 +50,7 @@ In the following example we compute a condition once, and use it in two consumer
             verySlowFilter.allOf(lowestLowTemperature, rainyDaysCount))
 ```
 
-For a complete working example, refer to [`examples/basics/ReusingFilteringAndMapping.kt`].
+For a complete working example, refer to [`examples/basics/ReusingFilteringAndMapping.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/ReusingFilteringAndMapping.kt).
 
 ### Process both accepted and rejected items: branching instead of filtering.
 
@@ -88,7 +88,7 @@ Left spaceport: [Passenger(name=Yoda, destination=Tattoine), Passenger(name=Chew
 Transferred: [Passenger(name=R2D2, destination=Alderaan), Passenger(name=Han Solo, destination=Alderaan)]
 ```
 
-For a complete working example, refer to [`examples/basics/Passengers.kt`].
+For a complete working example, refer to [`examples/basics/Passengers.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/Passengers.kt).
 
 
 ### Using states in transformations
@@ -120,7 +120,7 @@ current item Temperature(takenAt=2019-09-24T07:15, temperature=44)
   change: TemperatureChange(takenAt=2019-09-24T07:15, temperature=44, change=-14)
 ```
 
-For a complete working example, refer to [`examples/basics/TemperatureChanges.kt`].
+For a complete working example, refer to [`examples/basics/TemperatureChanges.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/TemperatureChanges.kt).
 
 Any implementation of `Consumer` can be used to store a state. Multiple states can be collected at the same time, or at different times. All this is demonstrated in `examples/advanced/RaceResults.kt`.
 
@@ -152,7 +152,7 @@ Before filtering: 1, current balance : 1
 After filtering, change: 1, current balance: 2
 ```
 
-For a complete working example, refer to [`examples/basics/NonNegativeAccountBalance.kt`].
+For a complete working example, refer to [`examples/basics/NonNegativeAccountBalance.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/NonNegativeAccountBalance.kt).
 
 **Note:** Kotlin standard library does provide this ability in some special cases, such as `filterIndexed` which uses an item's index, a state. `konsumers` allows us to use any `Consumer` as a state in a filter.
 
@@ -209,7 +209,7 @@ Before transformation: item -50, currentBalance 39
 After transformation: TransactionWithCurrentBalance(currentBalance=39, amount=-50)
 ```
 
-For a complete working example, refer to [`examples/basics/LargeWithdrawals.kt`].
+For a complete working example, refer to [`examples/basics/LargeWithdrawals.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/LargeWithdrawals.kt).
 
 Note that in this case we are returning either an empty `sequenceOf()` or a sequence of one element. In general, we can transform one incoming item into a sequence, which can contain more than one element. This is shown in `examples\advanced\UnpackItems`.
 
@@ -232,7 +232,7 @@ We can group items by any key, which is equivalent to the standard function `ass
         assertEquals(mapOf("Amber" to 2L, "Red" to 1L), actual[0])
 ```
 
-For a complete working example, refer to [`examples/basics/BasicGroups.kt`].
+For a complete working example, refer to [`examples/basics/BasicGroups.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/BasicGroups.kt).
 
 #### Grouping with multiple consumers
 
@@ -249,7 +249,7 @@ After grouping by a key, we can submit values to more than one consumer:
             actual[0])
 ```
 
-For a complete working example, refer to [`examples/basics/BasicGroups.kt`].
+For a complete working example, refer to [`examples/basics/BasicGroups.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/BasicGroups.kt).
 
 #### Nested groups
 
@@ -266,7 +266,7 @@ Groups can be nested. In the following example we group things by color, then gr
         )
 ```
 
-For a complete working example, refer to [`examples/basics/BasicGroups.kt`].
+For a complete working example, refer to [`examples/basics/BasicGroups.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/BasicGroups.kt).
 
 #### Why resetting?
 
@@ -292,7 +292,7 @@ The following code accomplishes that via grouping:
             ))
 ```
 
-For a complete working example, refer to [`examples/basics/HighAndLowTemperature.kt`].
+For a complete working example, refer to [`examples/basics/HighAndLowTemperature.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/HighAndLowTemperature.kt).
 
 This code works, but the daily aggregates are not available until we have consumed the whole sequence.
 
@@ -359,7 +359,7 @@ Consuming DailyWeather(date=2019-09-24, low=44, high=61)
 
 As we have seen, a `DailyWeather` daily aggregate is available as soon as possible: when we know that we have consumed all the data for the day.
 
-For a complete working example, refer to [`examples/basics/HighAndLowTemperature.kt`].
+For a complete working example, refer to [`examples/basics/HighAndLowTemperature.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/HighAndLowTemperature.kt).
 
 There are other examples when resetting makes solving complex problems easier:
 
@@ -369,7 +369,7 @@ There are other examples when resetting makes solving complex problems easier:
 
 #### Resetting flags: `keepValueThatTriggeredReset` and `repeatLastValueInNewSeries`
 
-These two flags are explained in the following example: [`examples/basic/ResetterFlags.kt`]
+These two flags are explained in the following example: [`examples/basic/ResetterFlags.kt`](src/test/kotlin/unit/org/kollektions/examples/basic/ResetterFlags.kt).
 
 # Consumers
 
@@ -389,7 +389,7 @@ Example:
         assertEquals(listOf(false, false, true), actual)
 ```
 
-Complete example: [`examples/consumers/AlwaysSometimesNever.kt`]
+Complete example: [`examples/consumers/AlwaysSometimesNever.kt`](src/test/kotlin/unit/org/kollektions/examples/consumers/AlwaysSometimesNever.kt).
 
 ### AsList
 
@@ -401,7 +401,7 @@ Example:
         assertEquals(listOf(2, 3), actual[0])
 ```
 
-Complete example: [`examples/consumers/AsList.kt`]
+Complete example: [`examples/consumers/AsList.kt`](src/test/kotlin/unit/org/kollektions/examples/consumers/AsList.kt).
 
 ### Averages
 
@@ -420,7 +420,7 @@ Example:
 [Optional[5.50], Optional[5.50], Optional[5.50]]
 ```
 
-Complete example: [`examples/consumers/MinMaxCountAvg.kt`].
+Complete example: [`examples/consumers/MinMaxCountAvg.kt`](src/test/kotlin/unit/org/kollektions/examples/consumers/MinMaxCountAvg.kt).
 
 ### BottomBy and BottomNBy
 
@@ -432,7 +432,7 @@ In the following example we provide a `Comparator`, and find bottom one and bott
 
 ```
 
-Complete example: [`examples/consumers/BottomN.kt`].
+Complete example: [`examples/consumers/BottomN.kt`](src/test/kotlin/unit/org/kollektions/examples/consumers/BottomN.kt).
 
 We can also project items to `Comparable` values, and find bottom values by that projection. In that case all we need to do is to provide a projection to `Comparable`. A built-in `Comparator` for that projection will be used:
 
@@ -442,7 +442,7 @@ We can also project items to `Comparable` values, and find bottom values by that
         val actual = things.consume(bottomBy(projection), bottomNBy(2, projection))
 ```
 
-Complete example: `examples/consumers/BottomN`
+Complete example: [`examples/consumers/BottomN.kt`](src/test/kotlin/unit/org/kollektions/examples/consumers/BottomN.kt).
 
 ### Count
 
@@ -457,7 +457,7 @@ Example:
 [10]
 ```
 
-Complete example: [`examples/consumers/MinMaxCountAvg.kt`]
+Complete example: [`examples/consumers/MinMaxCountAvg.kt`](src/test/kotlin/unit/org/kollektions/examples/consumers/MinMaxCountAvg.kt).
 
 ### First and FirstN
 
@@ -474,7 +474,7 @@ Example:
 [Optional[1], Optional[10], [1, 2], [9, 10]]
 ```
 
-Complete example: [`examples/consumers/FirstAndLast.kt`]
+Complete example: [`examples/consumers/FirstAndLast.kt`](src/test/kotlin/unit/org/kollektions/examples/consumers/FirstAndLast.kt).
 
 ### Last and LastN
 
@@ -491,7 +491,7 @@ Example:
 [Optional[1], Optional[10], [1, 2], [9, 10]]
 ```
 
-Complete example: [`examples/consumers/FirstAndLast.kt`]
+Complete example: [`examples/consumers/FirstAndLast.kt`](src/test/kotlin/unit/org/kollektions/examples/consumers/FirstAndLast.kt).
 
 ### Max
 
@@ -506,7 +506,7 @@ Example:
 [Optional[1], Optional[10]]
 ```
 
-Complete example: [`examples/consumers/MinMaxCountAvg.kt`]
+Complete example: [`examples/consumers/MinMaxCountAvg.kt`](src/test/kotlin/unit/org/kollektions/examples/consumers/MinMaxCountAvg.kt).
 
 ### Min
 
@@ -521,7 +521,7 @@ Example:
 [Optional[1], Optional[10]]
 ```
 
-Complete example: [`examples/consumers/MinMaxCountAvg.kt`]
+Complete example: [`examples/consumers/MinMaxCountAvg.kt`](src/test/kotlin/unit/org/kollektions/examples/consumers/MinMaxCountAvg.kt).
 
 ### Never
 
@@ -537,7 +537,7 @@ Example:
         assertEquals(listOf(false, false, true), actual)
 ```
 
-Complete example: [`examples/consumers/AlwaysSometimesNever.kt`]
+Complete example: [`examples/consumers/AlwaysSometimesNever.kt`](src/test/kotlin/unit/org/kollektions/examples/consumers/AlwaysSometimesNever.kt).
 
 ### RatioOf
 
@@ -550,7 +550,7 @@ Example:
 [Ratio2(conditionMet=1, outOf=3)]
 ```
 
-Complete example: [`examples/consumers/RatioOf..kt`]
+Complete example: [`examples/consumers/RatioOf.kt`](src/test/kotlin/unit/org/kollektions/examples/consumers/RatioOf.kt).
 
 ### Sometimes
 
@@ -566,7 +566,7 @@ Example:
         assertEquals(listOf(false, false, true), actual)
 ```
 
-Complete example: [`examples/consumers/AlwaysSometimesNever.kt`]
+Complete example: [`examples/consumers/AlwaysSometimesNever.kt`](src/test/kotlin/unit/org/kollektions/examples/consumers/AlwaysSometimesNever.kt).
 
 
 ### Sum
@@ -582,7 +582,7 @@ Example:
         assertEquals(listOf(3, 3L, BigDecimal.valueOf(3L)), actual)
 ```
 
-Complete example: [`examples/consumers/SumExample.kt`]
+Complete example: [`examples/consumers/SumExample.kt`](src/test/kotlin/unit/org/kollektions/examples/consumers/SumExample.kt).
 
 ### TopBy and TopNBy
 
@@ -594,7 +594,7 @@ In the following example we provide a `Comparator`, and find top one and top two
 
 ```
 
-Complete example: [`examples/consumers/TopN.kt`]
+Complete example: [`examples/consumers/TopN.kt`](src/test/kotlin/unit/org/kollektions/examples/consumers/TopN.kt).
 
 We can also project items to `Comparable` values, and find top values by that projection. In that case all we need to do is to provide a projection to `Comparable`. A built-in `Comparator` for that projection will be used:
 
@@ -604,7 +604,7 @@ We can also project items to `Comparable` values, and find top values by that pr
         val actual = things.consume(topBy(projection), topNBy(2, projection))
 ```
 
-Complete example: [`examples/consumers/TopN..kt`]
+Complete example: [`examples/consumers/TopN.kt`](src/test/kotlin/unit/org/kollektions/examples/consumers/TopN.kt).
 
 
 ## Dispatchers
@@ -630,8 +630,8 @@ Example:
             actual)
 ```
 
-Complete example: [`examples/transformations/AllOfExample..kt`].
-Another example with nested uses of `allOf``: [`examples/transformations/AllOfNestedExample.kt`].
+Complete example: [`examples/transformations/AllOfExample.kt`](src/test/kotlin/unit/org/kollektions/examples/transformations/AllOfExample.kt).
+Another example with nested uses of `allOf``: [`examples/transformations/AllOfNestedExample.kt`](src/test/kotlin/unit/org/kollektions/examples/transformations/AllOfNestedExample.kt).
 
 
 ### Branch
@@ -649,7 +649,7 @@ Example:
             consumerForRejected = transferringToAnotherFlight))
 ```
 
-Complete example: `examples/basics/Passengers`
+Complete example: [`examples/basics/Passengers.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/Passengers.kt).
 
 ### Group
 
@@ -667,8 +667,8 @@ Example:
         assertEquals(mapOf("Amber" to 2L, "Red" to 1L), actual[0])
 ```
 
-Complete example: [`examples/transformations/GroupsExample.kt`].
-Advanced examples: [`examples/basics/BasicGroups.kt`].
+Complete example: [`examples/transformations/GroupsExample.kt`](src/test/kotlin/unit/org/kollektions/examples/transformations/GroupsExample.kt).
+Advanced examples: [`examples/basics/BasicGroups.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/BasicGroups.kt).
 
 
 ## Transformations
@@ -687,7 +687,7 @@ Example:
         assertEquals(listOf(listOf(1, 2), listOf(3)), actual[0])
 ```
 
-Complete example: [`examples/transformations/Batches.kt`]
+Complete example: [`examples/transformations/Batches.kt`](src/test/kotlin/unit/org/kollektions/examples/transformations/Batches.kt).
 
 Note: each batch is accumulated in a list, which is passed downstream only when it is completed. Alternatively, we can use resetting and consume batches of data without the need to materialize batches in lists.
 
@@ -705,7 +705,7 @@ Example:
         assertEquals(listOf(2, 4), actual[0])
 ```
 
-Complete example: [`examples/transformations/FilterExample..kt`]
+Complete example: [`examples/transformations/FilterExample.kt`](src/test/kotlin/unit/org/kollektions/examples/transformations/FilterExample.kt).
 
 ### First
 
@@ -722,7 +722,7 @@ Example:
             actual)
 ```
 
-Complete example: [`examples/transformations/FirstSkipLastStep.kt`]
+Complete example: [`examples/transformations/FirstSkipLastStep.kt`](src/test/kotlin/unit/org/kollektions/examples/transformations/FirstSkipLastStep.kt).
 
 
 ### KeepState
@@ -748,7 +748,7 @@ Processing item 2, state: Optional[3]
 Processing item 4, state: Optional[4]
 ```
 
-Complete example: [`examples/transformations/KeepStateExample.kt`].
+Complete example: [`examples/transformations/KeepStateExample.kt`](src/test/kotlin/unit/org/kollektions/examples/transformations/KeepStateExample.kt).
 
 ### KeepStates
 
@@ -774,7 +774,7 @@ Processing item 1, minimum: Optional[1], maximum: Optional[3]
 Processing item 4, minimum: Optional[1], maximum: Optional[4]
 ```
 
-Complete example: [`examples/transformations/KeepSeveralStatesExample.kt`].
+Complete example: [`examples/transformations/KeepSeveralStatesExample.kt`](src/test/kotlin/unit/org/kollektions/examples/transformations/KeepSeveralStatesExample.kt).
 
 
 ### Last
@@ -794,7 +794,7 @@ Example:
             actual)
 ```
 
-Complete example: [`examples/transformations/FirstSkipLastStep.kt`].
+Complete example: [`examples/transformations/FirstSkipLastStep.kt`](src/test/kotlin/unit/org/kollektions/examples/transformations/FirstSkipLastStep.kt).
 
 
 ### MapTo
@@ -810,7 +810,7 @@ Example:
         assertEquals(listOf("Apple", "Orange"), names[0])
 ```
 
-Complete example: `examples/transformations/MapToExample`
+Complete example: [`examples/transformations/MapToExample.kt`](src/test/kotlin/unit/org/kollektions/examples/transformations/MapToExample.kt).
 
 
 ### Peek
@@ -830,7 +830,7 @@ Processing item 2
 Processing item 3
 ```
 
-Complete example: [`examples/transformations/PeekExample.kt`]
+Complete example: [`examples/transformations/PeekExample.kt`](src/test/kotlin/unit/org/kollektions/examples/transformations/PeekExample.kt).
 
 ### Skip
 
@@ -849,7 +849,7 @@ Example:
             actual)
 ```
 
-Complete example: [`examples/transformations/FirstSkipLastStep.kt`]
+Complete example: [`examples/transformations/FirstSkipLastStep.kt`](src/test/kotlin/unit/org/kollektions/examples/transformations/FirstSkipLastStep.kt).
 
 
 ### Step
@@ -871,7 +871,7 @@ Example:
             actual)
 ```
 
-Complete example: [`examples/transformations/FirstSkipLastStep.kt`].
+Complete example: [`examples/transformations/FirstSkipLastStep.kt`](src/test/kotlin/unit/org/kollektions/examples/transformations/FirstSkipLastStep.kt).
 
 ### TransformTo
 
@@ -902,7 +902,7 @@ Processing ShoppingListItem(name=Orange, quantity=1)
 Unpacked to Orange
 ```
 
-Complete example: [`examples/transformations/TransformationExample.kt`].
+Complete example: [`examples/transformations/TransformationExample.kt`](src/test/kotlin/unit/org/kollektions/examples/transformations/TransformationExample.kt).
 
 More advanced example: `examples/advanced/UnpackItems`
 
@@ -946,7 +946,7 @@ We can provide this function along with a list of consumers:
             actual)
 ```
 
-Complete example: [`examples/basics/TransformingResults.kt`].
+Complete example: [`examples/basics/TransformingResults.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/TransformingResults.kt).
 
 # Extending Consumers
 
@@ -1004,7 +1004,7 @@ This method can be used like this:
         assertEquals(1, actual[0])
 ```
 
-Complete example: [`examples/extending/NewConsumer.kt`].
+Complete example: [`examples/extending/NewConsumer.kt`](src/test/kotlin/unit/org/kollektions/examples/extending/NewConsumer.kt).
 
 Note that `BitwiseAnd` provides `stop()` that does nothing. In this case, there is no need to do anything `stop()`. Let us discuss a case when we need to do something meaningful in `stop()`.
 
@@ -1064,7 +1064,7 @@ Saving batch [4, 5]
 
 ```
 
-Complete example: [`examples/extending/LosingLastBatch.kt`].
+Complete example: [`examples/extending/LosingLastBatch.kt`](src/test/kotlin/unit/org/kollektions/examples/extending/LosingLastBatch.kt).
 
 
 ### Developing a new transformation
@@ -1124,7 +1124,7 @@ Processing item 1
 Processing item 2
 ```
 
-Complete example: [`examples/extending/NewTransformation.kt`].
+Complete example: [`examples/extending/NewTransformation.kt`](src/test/kotlin/unit/org/kollektions/examples/extending/NewTransformation.kt).
 
 #### We must always implement `stop()`
 
@@ -1136,13 +1136,13 @@ A transformation must always pass `stop()` call downstream. The following exampl
 
 Using two states to compute overall and age group place for race finishers.
 
-Complete example: [`examples/advanced/RaceResults.kt`].
+Complete example: [`examples/advanced/RaceResults.kt`](src/test/kotlin/unit/org/kollektions/examples/advanced/RaceResults.kt).
 
 ### Splitting time series of temperature into increasing and decreasing subseries
 
 Using a `Resetter` to split.
 
-Complete example: [`examples/advanced/WarmingCooling.kt`].
+Complete example: [`examples/advanced/WarmingCooling.kt`](src/test/kotlin/unit/org/kollektions/examples/advanced/WarmingCooling.kt).
 
 Note that in this example data points at which the trend changes from warming to cooling or vice versa, is included in both increasing and decreasing subseries.
 
@@ -1150,22 +1150,22 @@ Note that in this example data points at which the trend changes from warming to
 
 Demonstrates branching and splitting into subseries.
 
-Complete example: [`examples/advanced/GroceriesToBags.kt`].
+Complete example: [`examples/advanced/GroceriesToBags.kt`](src/test/kotlin/unit/org/kollektions/examples/advanced/GroceriesToBags.kt).
 
 ### Coalescing time series of prices to to time ranges
 
 Yet another example of resetting.
 
-Complete example: [`examples/advanced/ValuesToRanges.kt`]
+Complete example: [`examples/advanced/ValuesToRanges.kt`](src/test/kotlin/unit/org/kollektions/examples/advanced/ValuesToRanges.kt).
 
 ### Divide heavy items into smaller chunks
 
 Demonstrates use of transformations, filtering and mapping in one step. Also shows how one incoming item can be transformed into several.
 
-Complete example: [`examples/advanced/UnpackItems.kt`].
+Complete example: [`examples/advanced/UnpackItems.kt`](src/test/kotlin/unit/org/kollektions/examples/advanced/UnpackItems.kt).
 
 ### Consecutive rainy days.
 
 Demonstrates advanced use of resetting. Finds series of consecutive rainy days that meet several criteria, all at once.
 
-Complete example: [`examples/advanced/RainyDays.kt`].
+Complete example: [`examples/advanced/RainyDays.kt`](src/test/kotlin/unit/org/kollektions/examples/advanced/RainyDays.kt).
