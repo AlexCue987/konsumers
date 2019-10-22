@@ -32,7 +32,7 @@ In following example we are searching for a flight that meets one of the followi
         val actual = flights.consume(cheapestOnSaturdayPlanA, earliestAfterSaturdayPlanB)
 ```
 
-For a complete working example, refer to [`examples/basics/FlightsFinder.kt`].
+For a complete working example, refer to [`src/test/kotlin/unit/org/kollektions/examples/basics/FlightsFinder.kt`].
 
 ### Reusing one filtering or mapping in multiple consumers.
 
@@ -457,7 +457,7 @@ Example:
 [10]
 ```
 
-Complete example: `examples/consumers/MinMaxCountAvg`
+Complete example: [`examples/consumers/MinMaxCountAvg.kt`]
 
 ### First and FirstN
 
@@ -474,7 +474,7 @@ Example:
 [Optional[1], Optional[10], [1, 2], [9, 10]]
 ```
 
-Complete example: `examples/consumers/FirstAndLast`
+Complete example: [`examples/consumers/FirstAndLast.kt`]
 
 ### Last and LastN
 
@@ -491,7 +491,7 @@ Example:
 [Optional[1], Optional[10], [1, 2], [9, 10]]
 ```
 
-Complete example: `examples/consumers/FirstAndLast`
+Complete example: [`examples/consumers/FirstAndLast.kt`]
 
 ### Max
 
@@ -506,7 +506,7 @@ Example:
 [Optional[1], Optional[10]]
 ```
 
-Complete example: `examples/consumers/MinMaxCountAvg`
+Complete example: [`examples/consumers/MinMaxCountAvg.kt`]
 
 ### Min
 
@@ -521,7 +521,7 @@ Example:
 [Optional[1], Optional[10]]
 ```
 
-Complete example: `examples/consumers/MinMaxCountAvg`
+Complete example: [`examples/consumers/MinMaxCountAvg.kt`]
 
 ### Never
 
@@ -537,7 +537,7 @@ Example:
         assertEquals(listOf(false, false, true), actual)
 ```
 
-Complete example: `examples/consumers/AlwaysSometimesNever`
+Complete example: [`examples/consumers/AlwaysSometimesNever.kt`]
 
 ### RatioOf
 
@@ -550,7 +550,7 @@ Example:
 [Ratio2(conditionMet=1, outOf=3)]
 ```
 
-Complete example: `examples/consumers/RatioOf`
+Complete example: [`examples/consumers/RatioOf..kt`]
 
 ### Sometimes
 
@@ -566,7 +566,7 @@ Example:
         assertEquals(listOf(false, false, true), actual)
 ```
 
-Complete example: `examples/consumers/AlwaysSometimesNever`
+Complete example: [`examples/consumers/AlwaysSometimesNever.kt`]
 
 
 ### Sum
@@ -582,7 +582,7 @@ Example:
         assertEquals(listOf(3, 3L, BigDecimal.valueOf(3L)), actual)
 ```
 
-Complete example: `examples/consumers/SumExample`
+Complete example: [`examples/consumers/SumExample.kt`]
 
 ### TopBy and TopNBy
 
@@ -594,7 +594,7 @@ In the following example we provide a `Comparator`, and find top one and top two
 
 ```
 
-Complete example: `examples/consumers/TopN`
+Complete example: [`examples/consumers/TopN.kt`]
 
 We can also project items to `Comparable` values, and find top values by that projection. In that case all we need to do is to provide a projection to `Comparable`. A built-in `Comparator` for that projection will be used:
 
@@ -604,7 +604,7 @@ We can also project items to `Comparable` values, and find top values by that pr
         val actual = things.consume(topBy(projection), topNBy(2, projection))
 ```
 
-Complete example: `examples/consumers/TopN`
+Complete example: [`examples/consumers/TopN..kt`]
 
 
 ## Dispatchers
@@ -630,8 +630,8 @@ Example:
             actual)
 ```
 
-Complete example: `examples/transformations/AllOfExample`
-Another example with nested uses of `allOf``: `examples/transformations/AllOfNestedExample`
+Complete example: [`examples/transformations/AllOfExample..kt`].
+Another example with nested uses of `allOf``: [`examples/transformations/AllOfNestedExample.kt`].
 
 
 ### Branch
@@ -667,8 +667,8 @@ Example:
         assertEquals(mapOf("Amber" to 2L, "Red" to 1L), actual[0])
 ```
 
-Complete example: `examples/transformations/GroupsExample`
-Advanced examples: `examples/basics/BasicGroups`
+Complete example: [`examples/transformations/GroupsExample.kt`].
+Advanced examples: [`examples/basics/BasicGroups.kt`].
 
 
 ## Transformations
@@ -687,7 +687,7 @@ Example:
         assertEquals(listOf(listOf(1, 2), listOf(3)), actual[0])
 ```
 
-Complete example: `examples/transformations/Batches`
+Complete example: [`examples/transformations/Batches.kt`]
 
 Note: each batch is accumulated in a list, which is passed downstream only when it is completed. Alternatively, we can use resetting and consume batches of data without the need to materialize batches in lists.
 
@@ -705,7 +705,7 @@ Example:
         assertEquals(listOf(2, 4), actual[0])
 ```
 
-Complete example: `examples/transformations/FilterExample`
+Complete example: [`examples/transformations/FilterExample..kt`]
 
 ### First
 
@@ -722,7 +722,7 @@ Example:
             actual)
 ```
 
-Complete example: `examples/transformations/FirstSkipLastStep`
+Complete example: [`examples/transformations/FirstSkipLastStep.kt`]
 
 
 ### KeepState
@@ -748,7 +748,7 @@ Processing item 2, state: Optional[3]
 Processing item 4, state: Optional[4]
 ```
 
-Complete example: `examples/transformations/KeepStateExample`
+Complete example: [`examples/transformations/KeepStateExample.kt`].
 
 ### KeepStates
 
@@ -774,7 +774,7 @@ Processing item 1, minimum: Optional[1], maximum: Optional[3]
 Processing item 4, minimum: Optional[1], maximum: Optional[4]
 ```
 
-Complete example: `examples/transformations/KeepSeveralStatesExample`
+Complete example: [`examples/transformations/KeepSeveralStatesExample.kt`].
 
 
 ### Last
@@ -794,7 +794,7 @@ Example:
             actual)
 ```
 
-Complete example: `examples/transformations/FirstSkipLastStep`
+Complete example: [`examples/transformations/FirstSkipLastStep.kt`].
 
 
 ### MapTo
@@ -830,7 +830,7 @@ Processing item 2
 Processing item 3
 ```
 
-Complete example: `examples/transformations/PeekExample`
+Complete example: [`examples/transformations/PeekExample.kt`]
 
 ### Skip
 
@@ -849,7 +849,7 @@ Example:
             actual)
 ```
 
-Complete example: `examples/transformations/FirstSkipLastStep`
+Complete example: [`examples/transformations/FirstSkipLastStep.kt`]
 
 
 ### Step
@@ -871,7 +871,7 @@ Example:
             actual)
 ```
 
-Complete example: `examples/transformations/FirstSkipLastStep`
+Complete example: [`examples/transformations/FirstSkipLastStep.kt`].
 
 ### TransformTo
 
@@ -902,7 +902,7 @@ Processing ShoppingListItem(name=Orange, quantity=1)
 Unpacked to Orange
 ```
 
-Complete example: `examples/transformations/TransformationExample`
+Complete example: [`examples/transformations/TransformationExample.kt`].
 
 More advanced example: `examples/advanced/UnpackItems`
 
@@ -946,7 +946,7 @@ We can provide this function along with a list of consumers:
             actual)
 ```
 
-Complete example: `examples/basics/TransformingResults`
+Complete example: [`examples/basics/TransformingResults.kt`].
 
 # Extending Consumers
 
@@ -1004,7 +1004,7 @@ This method can be used like this:
         assertEquals(1, actual[0])
 ```
 
-Complete example: `examples/extending/NewConsumer`
+Complete example: [`examples/extending/NewConsumer.kt`].
 
 Note that `BitwiseAnd` provides `stop()` that does nothing. In this case, there is no need to do anything `stop()`. Let us discuss a case when we need to do something meaningful in `stop()`.
 
@@ -1064,7 +1064,7 @@ Saving batch [4, 5]
 
 ```
 
-Complete example: `examples/extending/LosingLastBatch`
+Complete example: [`examples/extending/LosingLastBatch.kt`].
 
 
 ### Developing a new transformation
@@ -1124,7 +1124,7 @@ Processing item 1
 Processing item 2
 ```
 
-Complete example: `examples/extending/NewTransformation`
+Complete example: [`examples/extending/NewTransformation.kt`].
 
 #### We must always implement `stop()`
 
@@ -1136,13 +1136,13 @@ A transformation must always pass `stop()` call downstream. The following exampl
 
 Using two states to compute overall and age group place for race finishers.
 
-Complete example: `examples/advanced/RaceResults`
+Complete example: [`examples/advanced/RaceResults.kt`].
 
 ### Splitting time series of temperature into increasing and decreasing subseries
 
 Using a `Resetter` to split.
 
-Complete example: `examples/advanced/WarmingCooling`
+Complete example: [`examples/advanced/WarmingCooling.kt`].
 
 Note that in this example data points at which the trend changes from warming to cooling or vice versa, is included in both increasing and decreasing subseries.
 
@@ -1150,22 +1150,22 @@ Note that in this example data points at which the trend changes from warming to
 
 Demonstrates branching and splitting into subseries.
 
-Complete example: `examples/advanced/GroceriesToBags`
+Complete example: [`examples/advanced/GroceriesToBags.kt`].
 
 ### Coalescing time series of prices to to time ranges
 
 Yet another example of resetting.
 
-Complete example: `examples/advanced/ValuesToRanges`
+Complete example: [`examples/advanced/ValuesToRanges.kt`]
 
 ### Divide heavy items into smaller chunks
 
 Demonstrates use of transformations, filtering and mapping in one step. Also shows how one incoming item can be transformed into several.
 
-Complete example: `examples/advanced/UnpackItems`
+Complete example: [`examples/advanced/UnpackItems.kt`].
 
 ### Consecutive rainy days.
 
 Demonstrates advanced use of resetting. Finds series of consecutive rainy days that meet several criteria, all at once.
 
-Complete example: `examples/advanced/RainyDays`
+Complete example: [`examples/advanced/RainyDays.kt`].
