@@ -32,7 +32,7 @@ In following example we are searching for a flight that meets one of the followi
         val actual = flights.consume(cheapestOnSaturdayPlanA, earliestAfterSaturdayPlanB)
 ```
 
-For a complete working example, refer to `examples/basics/FlightsFinder.kt`.
+For a complete working example, refer to [`examples/basics/FlightsFinder.kt`].
 
 ### Reusing one filtering or mapping in multiple consumers.
 
@@ -50,7 +50,7 @@ In the following example we compute a condition once, and use it in two consumer
             verySlowFilter.allOf(lowestLowTemperature, rainyDaysCount))
 ```
 
-For a complete working example, refer to `examples/basics/ReusingFilteringAndMapping.kt`.
+For a complete working example, refer to [`examples/basics/ReusingFilteringAndMapping.kt`].
 
 ### Process both accepted and rejected items: branching instead of filtering.
 
@@ -88,7 +88,7 @@ Left spaceport: [Passenger(name=Yoda, destination=Tattoine), Passenger(name=Chew
 Transferred: [Passenger(name=R2D2, destination=Alderaan), Passenger(name=Han Solo, destination=Alderaan)]
 ```
 
-For a complete working example, refer to `examples/basics/Passengers.kt`.
+For a complete working example, refer to [`examples/basics/Passengers.kt`].
 
 
 ### Using states in transformations
@@ -120,7 +120,7 @@ current item Temperature(takenAt=2019-09-24T07:15, temperature=44)
   change: TemperatureChange(takenAt=2019-09-24T07:15, temperature=44, change=-14)
 ```
 
-For a complete working example, refer to `examples/basics/TemperatureChanges.kt`.
+For a complete working example, refer to [`examples/basics/TemperatureChanges.kt`].
 
 Any implementation of `Consumer` can be used to store a state. Multiple states can be collected at the same time, or at different times. All this is demonstrated in `examples/advanced/RaceResults.kt`.
 
@@ -152,7 +152,7 @@ Before filtering: 1, current balance : 1
 After filtering, change: 1, current balance: 2
 ```
 
-For a complete working example, refer to `examples/basics/NonNegativeAccountBalance.kt`.
+For a complete working example, refer to [`examples/basics/NonNegativeAccountBalance.kt`].
 
 **Note:** Kotlin standard library does provide this ability in some special cases, such as `filterIndexed` which uses an item's index, a state. `konsumers` allows us to use any `Consumer` as a state in a filter.
 
@@ -165,7 +165,7 @@ Sometimes this approach forces us to produce a lot of short-lived objects. For e
 * filter these instances
 * alert
 
-In the following example, three out of four instances of `TransactionWithCurrentBalance` are very short-lived, and only one is actually passed after filtering:
+In the following example, three out of four instances of `TransactionWithCurrentBalance` are very short-lived, and only passes the filter condition:
 
 ```kotlin
         val amounts = listOf(BigDecimal(100), BigDecimal(-10), BigDecimal(-1), BigDecimal(-50))
@@ -185,7 +185,7 @@ After filtering: TransactionWithCurrentBalance(currentBalance=39, amount=-50)
 Using `konsumers`, we can both filter and transform in the same transformation, eliminating the need to create short-lived-objects, as follows:
 
 ```kotlin
-        val currentBalance = com.tgt.trans.common.konsumers.consumers.sumOfBigDecimal()
+        val currentBalance = sumOfBigDecimal()
         val amounts = listOf(BigDecimal(100), BigDecimal(-10), BigDecimal(-1), BigDecimal(-50))
         val transformation =
             { value: BigDecimal ->
@@ -209,9 +209,9 @@ Before transformation: item -50, currentBalance 39
 After transformation: TransactionWithCurrentBalance(currentBalance=39, amount=-50)
 ```
 
-For a complete working example, refer to `examples/basics/LargeWithdrawals.kt`.
+For a complete working example, refer to [`examples/basics/LargeWithdrawals.kt`].
 
-Note that we are returning either an empty `sequenceOf()` or a sequence of one element. We are not limited to transforming one incoming item to one item passed downstream. We transform an item into a sequence, which can contain more than one element. This is shown in `examples\advanced\UnpackItems`
+Note that in this case we are returning either an empty `sequenceOf()` or a sequence of one element. In general, we can transform one incoming item into a sequence, which can contain more than one element. This is shown in `examples\advanced\UnpackItems`.
 
 
 ### Grouping and Resetting
@@ -228,10 +228,11 @@ We can group items by any key, which is equivalent to the standard function `ass
         val actual = things
                 .consume(groupBy(keyFactory =  { it: Thing -> it.color },
                     innerConsumerFactory = { counter() }))
+
         assertEquals(mapOf("Amber" to 2L, "Red" to 1L), actual[0])
 ```
 
-For a complete working example, refer to `examples/basics/BasicGroups.kt`.
+For a complete working example, refer to [`examples/basics/BasicGroups.kt`].
 
 #### Grouping with multiple consumers
 
@@ -241,47 +242,40 @@ After grouping by a key, we can submit values to more than one consumer:
         val actual = things
             .consume(groupBy(keyFactory =  { it: Thing -> it.color },
                 innerConsumerFactory = { allOf(counter(), mapTo { it: Thing -> it.shape }.asList()) }))
-        assertEquals(mapOf("Amber" to listOf(2L, listOf("Circle", "Square")), "Red" to listOf(1L, listOf("Oval"))), actual[0])
+
+        assertEquals(
+            mapOf("Amber" to listOf(2L, listOf("Circle", "Square")),
+                "Red" to listOf(1L, listOf("Oval"))),
+            actual[0])
 ```
 
-For a complete working example, refer to `examples/basics/BasicGroups.kt`.
+For a complete working example, refer to [`examples/basics/BasicGroups.kt`].
 
 #### Nested groups
 
-Groups can be nested In the following example we group things by color, then group by shape:
+Groups can be nested. In the following example we group things by color, then group by shape:
 
 ```kotlin
-        val actual = things.consume(groupBy(keyFactory = { a: Thing -> a.color },
-            innerConsumerFactory = {
-                allOf(counter(), groupBy(keyFactory = { a: Thing -> a.shape },
-                    innerConsumerFactory = { allOf(counter()) }))
-            })
+        val actual = things.consume(
+            groupBy(
+                keyFactory = { a: Thing -> a.color },
+                innerConsumerFactory = {
+                    allOf(count(), groupBy(keyFactory = { a: Thing -> a.shape },
+                        innerConsumerFactory = { count() }))
+                })
         )
 ```
 
-For a complete working example, refer to `examples/basics/BasicGroups.kt`.
+For a complete working example, refer to [`examples/basics/BasicGroups.kt`].
 
 #### Why resetting?
 
-Results of grouping are only available after all the sequence has been consumed. In some cases we know that we are done with some bucket, and produce the results off that bucket immediately - and this ability to produce results as soon as possible may be important.
+Results of grouping are only available after all the sequence has been consumed. In some cases we can do better: once we know that we are done with some bucket, we can produce the results off that bucket immediately - and in many cases this ability is important.
 
 For example, suppose that we are consuming a time series of weather readings like this,
 
 ```kotlin
-    data class Temperature(val takenAt: LocalDateTime, val temperature: Int) {
-        fun getDate() = takenAt.toLocalDate()
-    }
-
-    val monday = LocalDate.of(2019, 9, 23)
-    val tuesday = LocalDate.of(2019, 9, 24)
-    val morning = LocalTime.of(7, 15)
-    val night = LocalTime.of(17, 20)
-    private val temperatures = listOf(
-        Temperature(monday.atTime(morning), 46),
-        Temperature(monday.atTime(night), 58),
-        Temperature(tuesday.atTime(morning), 44),
-        Temperature(tuesday.atTime(night), 61)
-    )
+    data class Temperature(val takenAt: LocalDateTime, val temperature: Int)
 ```
 and need to provide daily aggregates, high and low temperatures, as follows:
 
@@ -296,32 +290,19 @@ The following code accomplishes that via grouping:
             groupBy(keyFactory = { it: Temperature -> it.getDate() },
                 innerConsumerFactory = { mapTo { it: Temperature -> it.temperature }.allOf(min(), max()) }
             ))
-        print(rawDailyAggregates)
-
-[{2019-09-23=[Optional[46], Optional[58]], 2019-09-24=[Optional[44], Optional[61]]}]
-
-        val finalDailyAggregates = (rawDailyAggregates[0] as Map<LocalDate, List<Optional<Int>>>)
-            .entries
-            .map { DailyWeather(it.key, it.value[0].get(), it.value[1].get()) }
-
-        val expected = listOf(
-            DailyWeather(monday, 46, 58),
-            DailyWeather(tuesday, 44, 61))
-
-        assertEquals(expected, finalDailyAggregates)
 ```
 
-For a complete working example, refer to `examples/basics/HighAndLowTemperature.kt`.
+For a complete working example, refer to [`examples/basics/HighAndLowTemperature.kt`].
 
 This code works, but the daily aggregates are not available until we have consumed the whole sequence.
 
-Yet we know that we are consuming a time series of data points ordered by time. As soon as we get a data point for Tuesday, for example, we know that we are done consuming Monday's data. As such, we should be able to produce Monday's aggregates. This is why we need resetting, which is explained in the next section.
+Yet we know that we are consuming a time series of data points ordered by time. So, for example, as soon as we get a data point for Tuesday, we know that we are done consuming Monday's data. As such, we should be able to produce Monday's aggregates immediately. Resetting was developed to allow that, and is explained in the next section.
 
 #### Resetting
 
 In the following example instances of `DailyWeather` will be available as soon as possible, using resetting. We shall accomplish that in several simple steps.
 
-First, we need to define a consumer for the incoming data to compute high and low temperatures. The consumer is unaware that it is producing daily aggregates, it just computes high and low temperatures. We are not creating a consumer, we are defining a lambda that will create a new consumer for every day:
+First, we need to define a consumer for the incoming data to compute high and low temperatures. The consumer is unaware that it is producing daily aggregates, it just computes high and low temperatures. We are not creating a consumer, we are defining a lambda that will create a new consumer for every day, because we shall need a new consumer for every day:
 
 ```kotlin
         val intermediateConsumer = {
@@ -330,13 +311,13 @@ First, we need to define a consumer for the incoming data to compute high and lo
             .allOf(min(), max()) }
 ```
 
-Another consumer will store the date of the first data point. We shall use this state to determine when the date changes:
+Another consumer will be used as a state, to store the date of the first data point. We shall use this state to determine when the date changes:
 
 ```kotlin
         val stateToStoreDay = { mapTo<Temperature, LocalDate> {it.getDate()}.first() }
 ```
 
-Second, we need to specify that we shall stop consuming whenever the date changes. We are extracting a stored date from a consumer and comparing it against the date of the incoming data point:
+Second, we need to specify when to stop consuming: whenever the date changes. We are extracting a stored date from the state and comparing it against the date of the incoming data point:
 
 ```kotlin
     private fun dateChange() = { intermediateConsumers: List<Consumer<Temperature>>, value: Temperature ->
@@ -378,7 +359,7 @@ Consuming DailyWeather(date=2019-09-24, low=44, high=61)
 
 As we have seen, a `DailyWeather` daily aggregate is available as soon as possible: when we know that we have consumed all the data for the day.
 
-For a complete working example, refer to `examples/basics/HighAndLowTemperature.kt`.
+For a complete working example, refer to [`examples/basics/HighAndLowTemperature.kt`].
 
 There are other examples when resetting makes solving complex problems easier:
 
@@ -388,9 +369,7 @@ There are other examples when resetting makes solving complex problems easier:
 
 #### Resetting flags: `keepValueThatTriggeredReset` and `repeatLastValueInNewSeries`
 
-These two flags are explained in the following example:
-
-`examples/basic/ResetterFlags.kt`
+These two flags are explained in the following example: [`examples/basic/ResetterFlags.kt`]
 
 # Consumers
 
@@ -410,7 +389,7 @@ Example:
         assertEquals(listOf(false, false, true), actual)
 ```
 
-Complete example: `examples/consumers/AlwaysSometimesNever`
+Complete example: [`examples/consumers/AlwaysSometimesNever.kt`]
 
 ### AsList
 
@@ -422,7 +401,7 @@ Example:
         assertEquals(listOf(2, 3), actual[0])
 ```
 
-Complete example: `examples/consumers/AsList`
+Complete example: [`examples/consumers/AsList.kt`]
 
 ### Averages
 
@@ -441,7 +420,7 @@ Example:
 [Optional[5.50], Optional[5.50], Optional[5.50]]
 ```
 
-Complete example: `examples/consumers/MinMaxCountAvg`
+Complete example: [`examples/consumers/MinMaxCountAvg.kt`].
 
 ### BottomBy and BottomNBy
 
@@ -453,7 +432,7 @@ In the following example we provide a `Comparator`, and find bottom one and bott
 
 ```
 
-Complete example: `examples/consumers/BottomN`
+Complete example: [`examples/consumers/BottomN.kt`].
 
 We can also project items to `Comparable` values, and find bottom values by that projection. In that case all we need to do is to provide a projection to `Comparable`. A built-in `Comparator` for that projection will be used:
 
