@@ -32,7 +32,7 @@ In following example we are searching for a flight that meets one of the followi
         val actual = flights.consume(cheapestOnSaturdayPlanA, earliestAfterSaturdayPlanB)
 ```
 
-For a complete working example, refer to [`examples/basics/FlightsFinder.kt`] (src/test/kotlin/unit/org/kollektions/examples/basics/FlightsFinder.kt).
+For a complete working example, refer to [`examples/basics/FlightsFinder.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/FlightsFinder.kt).
 
 ### Reusing one filtering or mapping in multiple consumers.
 
