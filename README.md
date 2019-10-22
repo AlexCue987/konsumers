@@ -122,7 +122,7 @@ current item Temperature(takenAt=2019-09-24T07:15, temperature=44)
 
 For a complete working example, refer to [`examples/basics/TemperatureChanges.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/TemperatureChanges.kt).
 
-Any implementation of `Consumer` can be used to store a state. Multiple states can be collected at the same time, or at different times. All this is demonstrated in `examples/advanced/RaceResults.kt`.
+Any implementation of `Consumer` can be used to store a state. Multiple states can be collected at the same time, or at different times. All this is demonstrated in [`examples/advanced/RaceResults.kt`](src/test/kotlin/unit/org/kollektions/examples/advanced/RaceResults.kt).
 
 #### Using states with filters.
 
@@ -211,7 +211,7 @@ After transformation: TransactionWithCurrentBalance(currentBalance=39, amount=-5
 
 For a complete working example, refer to [`examples/basics/LargeWithdrawals.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/LargeWithdrawals.kt).
 
-Note that in this case we are returning either an empty `sequenceOf()` or a sequence of one element. In general, we can transform one incoming item into a sequence, which can contain more than one element. This is shown in `examples\advanced\UnpackItems`.
+Note that in this case we are returning either an empty `sequenceOf()` or a sequence of one element. In general, we can transform one incoming item into a sequence, which can contain more than one element. This is shown in [`examples/advanced/UnpackItems.kt`](src/test/kotlin/unit/org/kollektions/examples/advanced/UnpackItems.kt).
 
 
 ### Grouping and Resetting
@@ -363,13 +363,13 @@ For a complete working example, refer to [`examples/basics/HighAndLowTemperature
 
 There are other examples when resetting makes solving complex problems easier:
 
-* `examples/advanced/GroceriesToBags.kt`
-* `examples/advanced/ValuesToRanges.kt`
-* `examples/advanced/WarmingCooling.kt`
+* [`examples/advanced/GroceriesToBags.kt`](src/test/kotlin/unit/org/kollektions/examples/advanced/GroceriesToBags.kt)
+* [`examples/advanced/ValuesToRanges.kt`](src/test/kotlin/unit/org/kollektions/examples/advanced/ValuesToRanges.kt)
+* [`examples/advanced/WarmingCooling.kt`](src/test/kotlin/unit/org/kollektions/examples/advanced/WarmingCooling.kt)
 
 #### Resetting flags: `keepValueThatTriggeredReset` and `repeatLastValueInNewSeries`
 
-These two flags are explained in the following example: [`examples/basic/ResetterFlags.kt`](src/test/kotlin/unit/org/kollektions/examples/basic/ResetterFlags.kt).
+These two flags are explained in the following example: [`examples/basics/ResetterFlags.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/ResetterFlags.kt).
 
 # Consumers
 
@@ -630,8 +630,8 @@ Example:
             actual)
 ```
 
-Complete example: [`examples/transformations/AllOfExample.kt`](src/test/kotlin/unit/org/kollektions/examples/transformations/AllOfExample.kt).
-Another example with nested uses of `allOf``: [`examples/transformations/AllOfNestedExample.kt`](src/test/kotlin/unit/org/kollektions/examples/transformations/AllOfNestedExample.kt).
+Complete example: [`examples/transformations/AllOfExample.kt`](src/test/kotlin/unit/org/kollektions/examples/dispatchers/AllOfExample.kt).
+Another example with nested uses of `allOf``: [`examples/dispatchers/AllOfNestedExample.kt`](src/test/kotlin/unit/org/kollektions/examples/dispatchers/AllOfNestedExample.kt).
 
 
 ### Branch
@@ -667,7 +667,7 @@ Example:
         assertEquals(mapOf("Amber" to 2L, "Red" to 1L), actual[0])
 ```
 
-Complete example: [`examples/transformations/GroupsExample.kt`](src/test/kotlin/unit/org/kollektions/examples/transformations/GroupsExample.kt).
+Complete example: [`examples/dispatchers/GroupsExample.kt`](src/test/kotlin/unit/org/kollektions/examples/dispatchers/GroupsExample.kt).
 Advanced examples: [`examples/basics/BasicGroups.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/BasicGroups.kt).
 
 
@@ -904,7 +904,7 @@ Unpacked to Orange
 
 Complete example: [`examples/transformations/TransformationExample.kt`](src/test/kotlin/unit/org/kollektions/examples/transformations/TransformationExample.kt).
 
-More advanced example: `examples/advanced/UnpackItems`
+More advanced example: [`examples/advanced/UnpackItems.kt`](src/test/kotlin/unit/org/kollektions/examples/advanced/UnpackItems.kt)
 
 # Transforming results after consuming
 
@@ -1128,7 +1128,7 @@ Complete example: [`examples/extending/NewTransformation.kt`](src/test/kotlin/un
 
 #### We must always implement `stop()`
 
-A transformation must always pass `stop()` call downstream. The following example explains why: `examples/extending/LosingLastBatch`
+A transformation must always pass `stop()` call downstream. The following example explains why: [`examples/extending/LosingLastBatch.kt`](src/test/kotlin/unit/org/kollektions/examples/extending/LosingLastBatch.kt)
 
 ## Learning by example
 
