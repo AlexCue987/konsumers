@@ -371,6 +371,80 @@ There are other examples when resetting makes solving complex problems easier:
 
 These two flags are explained in the following example: [`examples/basics/ResetterFlags.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/ResetterFlags.kt).
 
+## Reusing code.
+
+A consumer can be unit tested in isolation and reused multiple times with different sequences and other consumers. For example, we can implement the following consumer:
+
+```kotlin
+private data class Thing(val color: String, val shape: String)
+
+private fun getCountOfRedSquares() =
+    filterOn<Thing> { it.color == "Red" && it.shape == "Square" }.count()
+```
+
+We can unit test it in isolation:
+
+```kotlin
+    private val things = listOf(
+        Thing("Blue", "Circle"),
+        Thing("Red", "Square")
+    )
+
+    @Test
+    fun `counts read squares`() {
+        val sut = getCountOfRedSquares()
+        things.consumeByOne(sut)
+        assertEquals(1L, sut.results())
+    }
+```
+
+We can use this consumer in multiple places:
+
+```kotlin
+    @Test
+    fun `use unit tested consumer with other consumers`() {
+        val actual = things.consume(getCountOfRedSquares(), getBlueThings())
+        println(actual)
+
+        assertEquals(listOf(1L, things.subList(0, 1)), actual)
+    }
+```
+
+We don't even need a `Sequence` to use this `Consumer`. We can just invoke `process()` and `stop()`. Suppose, for example, that instead of iterating a sequence we want to reuse this `Consumer` in the following Kafka listener:
+
+```kotlin
+    private class ThingMessageListener {
+         var results: Long = 0L
+
+         private val consumer = getCountOfRedSquares()
+
+         fun onMessage(thing: Thing) {
+             consumer.process(thing)
+         }
+
+         fun onShutdown() {
+             consumer.stop()
+             results = consumer.results() as Long
+         }
+     }
+```
+
+It works as follows:
+
+```kotlin
+
+    @Test
+    fun `use unit tested consumer without sequences`() {
+        val listener = ThingMessageListener()
+        listener.onMessage(Thing("Blue", "Circle"))
+        listener.onMessage(Thing("Red", "Square"))
+        listener.onShutdown()
+        assertEquals(1L, listener.results)
+    }
+```
+
+Complete example: [`examples/basics/ReusingCode.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/ReusingCode.kt).
+
 # Consumers
 
 All consumers, in alphabetical order.
