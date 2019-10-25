@@ -10,12 +10,40 @@ Advanced work with Kotlin sequences. Developed to make solving many common probl
 * Allows to iterate a sequence once and simultaneously compute multiple results, improving performance.
 * Allows to use one computation, such as filtering or mapping, in multiple results, making code shorter and easier to understand, and improving performance.
 * Uses stateful transformations, such as filters and mappings, which allows for easy solutions to many common problems.
-* Easy to use and extend.
+* Easy to use, reuse, and extend.
 * Pure Kotlin.
+
+[Basics](#basics)
+* [Computing multiple results while iterating a sequence once](#computing-multiple-results-while-iterating-a-sequence-once)
+* [Reusing one filtering or mapping in multiple consumers](#reusing-one-filtering-or-mapping-in-multiple-consumers)
+* [Branching instead of filtering](#branching-instead-of-filtering)
+* [Using states in transformations](#using-states-in-transformations)
+  * [Using states with filters](#using-states-with-filters)
+  * [Combining mapping and filtering in one transformation](#combining-mapping-and-filtering-in-one-transformation)
+* [Grouping and Resetting](#grouping-and-resetting)
+  * [Basic Grouping](#basic-grouping)
+  * [Grouping with multiple consumers](#grouping-with-multiple-consumers)
+  * [Nested groups](#nested-groups)
+  * [Why do we need resetting?](#why-do-we-need-resetting)
+  * [Resetting Basics](#resetting-basics)
+  * [Resetting flags `keepValueThatTriggeredReset` and `repeatLastValueInNewSeries](#Resetting-flags-keepValueThatTriggeredReset-and-repeatLastValueInNewSeries)
+* [Reusing code](#reusing-code)
+* [Documentation)(#documentation)
+  * [Consumers](#consumers)
+  * [Dispatchers](#dispatchers)
+  * [Transformations](#transformations)
+* [Extending Konsumers](#extending-konsumers)
+  * [Developing a new consumer](#developing-a-new-consumer)
+    * [Basic implementation of a new consumer](#basic-implementation-of-a-new-consumer)
+    * [Using stop](#using-stop)
+  * [Developing a new transformation](#developing-a-new-transformation)
+    * [Basic implementation of a new transformation](#basic-implementation-of-a-new-transformation)
+    * [We must always implement stop](#we-must-always-implement-stop)
+* [Learning by example](#learning-by-example)
 
 ## Basics
 
-### Computing multiple results while iterating a sequence once, to improve performance.
+### Computing multiple results while iterating a sequence once.
 
 In following example we are searching for a flight that meets one of the following two criteria:
 
@@ -52,7 +80,7 @@ In the following example we compute a condition once, and use it in two consumer
 
 For a complete working example, refer to [`examples/basics/ReusingFilteringAndMapping.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/ReusingFilteringAndMapping.kt).
 
-### Process both accepted and rejected items: branching instead of filtering.
+### Branching instead of filtering.
 
 In some case we want to make sure each item is processed exactly once, and we use a condition to determine how to process it. For instance, if passenger have arrived at an airport, we may want to make sure that every passenger does exactly one of the two following actions:
 
@@ -268,7 +296,7 @@ Groups can be nested. In the following example we group things by color, then gr
 
 For a complete working example, refer to [`examples/basics/BasicGroups.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/BasicGroups.kt).
 
-#### Why resetting?
+#### Why do we need resetting?
 
 Results of grouping are only available after all the sequence has been consumed. In some cases we can do better: once we know that we are done with some bucket, we can produce the results off that bucket immediately - and in many cases this ability is important.
 
@@ -298,7 +326,7 @@ This code works, but the daily aggregates are not available until we have consum
 
 Yet we know that we are consuming a time series of data points ordered by time. So, for example, as soon as we get a data point for Tuesday, we know that we are done consuming Monday's data. As such, we should be able to produce Monday's aggregates immediately. Resetting was developed to allow that, and is explained in the next section.
 
-#### Resetting
+#### Resetting Basics
 
 In the following example instances of `DailyWeather` will be available as soon as possible, using resetting. We shall accomplish that in several simple steps.
 
@@ -367,7 +395,7 @@ There are other examples when resetting makes solving complex problems easier:
 * [`examples/advanced/ValuesToRanges.kt`](src/test/kotlin/unit/org/kollektions/examples/advanced/ValuesToRanges.kt)
 * [`examples/advanced/WarmingCooling.kt`](src/test/kotlin/unit/org/kollektions/examples/advanced/WarmingCooling.kt)
 
-#### Resetting flags: `keepValueThatTriggeredReset` and `repeatLastValueInNewSeries`
+#### Resetting flags `keepValueThatTriggeredReset` and `repeatLastValueInNewSeries`
 
 These two flags are explained in the following example: [`examples/basics/ResetterFlags.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/ResetterFlags.kt).
 
@@ -445,7 +473,9 @@ It works as follows:
 
 Complete example: [`examples/basics/ReusingCode.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/ReusingCode.kt).
 
-# Consumers
+# Documentation
+
+## Consumers
 
 All consumers, in alphabetical order.
 
@@ -1022,7 +1052,7 @@ We can provide this function along with a list of consumers:
 
 Complete example: [`examples/basics/TransformingResults.kt`](src/test/kotlin/unit/org/kollektions/examples/basics/TransformingResults.kt).
 
-# Extending Consumers
+# Extending Konsumers
 
 ### Developing a new consumer
 
@@ -1036,7 +1066,7 @@ interface Consumer<T> {
 }
 ```
 
-#### Basic implementation
+#### Basic implementation of a new consumer
 
 The following example implements bitwise and:
 
@@ -1082,7 +1112,7 @@ Complete example: [`examples/extending/NewConsumer.kt`](src/test/kotlin/unit/org
 
 Note that `BitwiseAnd` provides `stop()` that does nothing. In this case, there is no need to do anything `stop()`. Let us discuss a case when we need to do something meaningful in `stop()`.
 
-#### Using `stop()`.
+#### Using stop.
 
 Let us discuss an example when we do need to do something meaningful in `stop()`.
 
@@ -1145,7 +1175,7 @@ Complete example: [`examples/extending/LosingLastBatch.kt`](src/test/kotlin/unit
 
 Transformations implement the same interface as consumers: `Consumer`. They always must provide a meaningful implementation of `stop()`.
 
-#### Basic example
+#### Basic implementation of a new transformation
 
 The following simple transformation prints the incoming value and passes it downstream:
 
@@ -1200,11 +1230,11 @@ Processing item 2
 
 Complete example: [`examples/extending/NewTransformation.kt`](src/test/kotlin/unit/org/kollektions/examples/extending/NewTransformation.kt).
 
-#### We must always implement `stop()`
+#### We must always implement stop
 
 A transformation must always pass `stop()` call downstream. The following example explains why: [`examples/extending/LosingLastBatch.kt`](src/test/kotlin/unit/org/kollektions/examples/extending/LosingLastBatch.kt)
 
-## Learning by example
+# Learning by example
 
 ### Converting finishers' times to complete race results
 
