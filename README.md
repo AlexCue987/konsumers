@@ -26,7 +26,7 @@ Advanced work with Kotlin sequences. Developed to make solving many common probl
   * [Nested groups](#nested-groups)
   * [Why do we need resetting?](#why-do-we-need-resetting)
   * [Resetting Basics](#resetting-basics)
-  * [Resetting flags `keepValueThatTriggeredReset` and `repeatLastValueInNewSeries](#Resetting-flags-keepValueThatTriggeredReset-and-repeatLastValueInNewSeries)
+  * [Resetting flags `keepValueThatTriggeredReset` and `repeatLastValueInNewSeries`](#Resetting-flags-keepValueThatTriggeredReset-and-repeatLastValueInNewSeries)
 * [Reusing code](#reusing-code)
 
 [Documentation](#documentation)
